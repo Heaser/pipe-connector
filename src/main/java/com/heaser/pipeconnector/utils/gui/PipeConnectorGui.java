@@ -6,7 +6,7 @@ import net.minecraft.network.chat.Component;
 
 
 public class PipeConnectorGui extends Screen {
-    protected PipeConnectorGui(Component title) {
+    public PipeConnectorGui(Component title) {
         super(title);
     }
 
@@ -16,8 +16,11 @@ public class PipeConnectorGui extends Screen {
         super.render(matrixStack, mouseX, mouseY, partialTicks);
     }
 
+
     @Override
     public boolean isPauseScreen() {
         return false;
     }
+
+
 }
