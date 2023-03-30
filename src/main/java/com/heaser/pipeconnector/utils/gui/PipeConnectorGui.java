@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
+
 public class PipeConnectorGui extends Screen {
     protected PipeConnectorGui(Component title) {
         super(title);
