@@ -53,7 +53,10 @@ public class PipeConnectorItem extends Item {
     public InteractionResult useOn(UseOnContext context) {
         if (!context.getLevel().isClientSide) {
             BlockPos clickedPosition = context.getClickedPos();
-            if (firstPosition == null) {
+            if(context.getPlayer().isShiftKeyDown()) {
+                resetBlockPosFirstAndSecondPositions();
+            }
+            else if (firstPosition == null) {
                 firstPosition = clickedPosition;
                 LOGGER.info("firstPosition found: {}", firstPosition);
                 facingSideStart = context.getClickedFace();
@@ -63,8 +66,7 @@ public class PipeConnectorItem extends Item {
                 LOGGER.info("secondPosition found: {}", secondPosition);
                 if (secondPosition != null && firstPosition != null) {
                     connectBlocks(context.getLevel(), firstPosition, secondPosition);
-                    firstPosition = null;
-                    secondPosition = null;
+                    resetBlockPosFirstAndSecondPositions();
                 }
             }
         }
@@ -75,6 +77,8 @@ public class PipeConnectorItem extends Item {
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> components, TooltipFlag tooltipFlag) {
         if (Screen.hasShiftDown()) {
             components.add(Component.literal("Shift + Right-Click to open GUI").withStyle(ChatFormatting.GREEN));
+            components.add(Component.literal("Shift + Right-Click on a block will cancel selection").withStyle(ChatFormatting.BLUE));
+
         } else {
             components.add(Component.literal("Hold Shift for more info").withStyle(ChatFormatting.GOLD));
         }
@@ -82,15 +86,9 @@ public class PipeConnectorItem extends Item {
     }
 
     private void connectBlocks(Level level, BlockPos start, BlockPos end) {
-
         int depth = 10;
-
-        BlockPos setFacingS = getNeighborInFacingDirection(start, facingSideStart);
-        BlockPos setFacingE = getNeighborInFacingDirection(end, facingSideEnd);
-
-        BlockPos adjustedStart = setFacingS.below();
-        BlockPos adjustedEnd = setFacingE.below();
-
+        BlockPos adjustedStart = getNeighborInFacingDirection(start, facingSideStart);
+        BlockPos adjustedEnd = getNeighborInFacingDirection(end, facingSideEnd);
 
         connectPathWithSegments(level, adjustedStart, adjustedEnd, depth);
     }
@@ -103,6 +101,7 @@ public class PipeConnectorItem extends Item {
         blockPosList.forEach((blockPos -> setBlockAtDepth(level, blockPos)));
 
     }
+
 
     private List<BlockPos> getBlockPosList(BlockPos start, BlockPos end, int depth) {
         List<BlockPos> blockPosList = new ArrayList<>();
@@ -152,10 +151,10 @@ public class PipeConnectorItem extends Item {
     }
 
     private void setBlockAtDepth(Level level, BlockPos pos) {
-            if (isBreakable(level, pos)) {
-                level.setBlockAndUpdate(pos, Blocks.GLOWSTONE.defaultBlockState());
-            }
+        if (isBreakable(level, pos)) {
+            level.setBlockAndUpdate(pos, Blocks.GLOWSTONE.defaultBlockState());
         }
+    }
 
 
     private boolean isBreakable(Level level, BlockPos pos) {
@@ -164,6 +163,10 @@ public class PipeConnectorItem extends Item {
         return hardness != -1;
     }
 
+    private void resetBlockPosFirstAndSecondPositions() {
+        firstPosition = null;
+        secondPosition = null;
+    }
 
     public BlockPos getNeighborInFacingDirection(BlockPos pos, Direction facing) {
         return pos.relative(facing);
