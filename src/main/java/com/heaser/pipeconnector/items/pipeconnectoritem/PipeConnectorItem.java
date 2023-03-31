@@ -106,6 +106,11 @@ public class PipeConnectorItem extends Item {
     private List<BlockPos> getBlockPosList(BlockPos start, BlockPos end, int depth) {
         List<BlockPos> blockPosList = new ArrayList<>();
 
+        int deltaY = (start.getY() > end.getY()) ? (start.getY() - end.getY()) : (end.getY() - start.getY());
+
+
+
+
         // TODO Fix a bug where's there's a little chupchick when the start Y value is lower than the end
         for (int i = 0; i < depth; i++) {
             blockPosList.add(start);
