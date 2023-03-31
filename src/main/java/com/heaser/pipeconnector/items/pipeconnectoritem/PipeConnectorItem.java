@@ -1,14 +1,10 @@
 package com.heaser.pipeconnector.items.pipeconnectoritem;
 
 import com.heaser.pipeconnector.utils.gui.PipeConnectorGui;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -28,6 +24,7 @@ import net.minecraft.client.gui.screens.Screen;
 
 import javax.annotation.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class PipeConnectorItem extends Item {
@@ -54,7 +51,6 @@ public class PipeConnectorItem extends Item {
 
     @Override
     public InteractionResult useOn(UseOnContext context) {
-
         if (!context.getLevel().isClientSide) {
             BlockPos clickedPosition = context.getClickedPos();
             if (firstPosition == null) {
@@ -87,7 +83,7 @@ public class PipeConnectorItem extends Item {
 
     private void connectBlocks(Level level, BlockPos start, BlockPos end) {
 
-        int depth = 5;
+        int depth = 10;
 
         BlockPos setFacingS = getNeighborInFacingDirection(start, facingSideStart);
         BlockPos setFacingE = getNeighborInFacingDirection(end, facingSideEnd);
@@ -101,17 +97,23 @@ public class PipeConnectorItem extends Item {
 
     private void connectPathWithSegments(Level level, BlockPos start, BlockPos end, int depth) {
 
-        // TODO Fix a bug where big depth numbers create an H shape instead of a bridge
-        // Create downward segment
+        List<BlockPos> blockPosList = getBlockPosList(start, end, depth);
+
+        LOGGER.info(blockPosList.toString());
+        blockPosList.forEach((blockPos -> setBlockAtDepth(level, blockPos)));
+
+    }
+
+    private List<BlockPos> getBlockPosList(BlockPos start, BlockPos end, int depth) {
+        List<BlockPos> blockPosList = new ArrayList<>();
+
+        // TODO Fix a bug where's there's a little chupchick when the start Y value is lower than the end
         for (int i = 0; i < depth; i++) {
-            setBlockAtDepth(level, start, i);
+            blockPosList.add(start);
             start = start.below();
-        }
-        for (int i = 0; i < depth; i++) {
-            setBlockAtDepth(level, end, i);
+            blockPosList.add(end);
             end = end.below();
         }
-
 
         // Create bridge
         int dx = end.getX() - start.getX();
@@ -126,41 +128,35 @@ public class PipeConnectorItem extends Item {
         int yDirection = dy > 0 ? 1 : -1;
         int zDirection = dz > 0 ? 1 : -1;
 
-        BlockPos currentPos = start;
+        BlockPos currentPos = start.above();
+
+        //         Move along the Y-axis
+        for (int i = 0; i < ySteps; i++) {
+            blockPosList.add(currentPos);
+            currentPos = currentPos.offset(0, yDirection, 0);
+        }
 
         // Move along the X-axis
         for (int i = 0; i < xSteps; i++) {
+            blockPosList.add(currentPos);
             currentPos = currentPos.offset(xDirection, 0, 0);
-            setBlockAtDepth(level, currentPos, 0);
         }
 
         // Move along the Z-axis
         for (int i = 0; i < zSteps; i++) {
+            blockPosList.add(currentPos);
             currentPos = currentPos.offset(0, 0, zDirection);
-            setBlockAtDepth(level, currentPos, 0);
         }
 
-//         Move along the Y-axis
-        for (int i = 0; i < ySteps; i++) {
-            currentPos = currentPos.offset(0, yDirection, 0);
-            setBlockAtDepth(level, currentPos, 0);
-        }
-
+        return blockPosList;
     }
 
-
-    private void setBlockAtDepth(Level level, BlockPos pos, int depth) {
-        // Loop through each depth level from the clicked position to the specified
-        // depth
-        for (int i = 0; i <= depth; i++) {
-            BlockPos targetPos = pos.below(i);
-            BlockState targetBlockState = level.getBlockState(targetPos);
-
+    private void setBlockAtDepth(Level level, BlockPos pos) {
             if (isBreakable(level, pos)) {
-                level.setBlockAndUpdate(targetPos, Blocks.COBBLESTONE.defaultBlockState());
+                level.setBlockAndUpdate(pos, Blocks.GLOWSTONE.defaultBlockState());
             }
         }
-    }
+
 
     private boolean isBreakable(Level level, BlockPos pos) {
         BlockState blockPos = level.getBlockState(pos);
