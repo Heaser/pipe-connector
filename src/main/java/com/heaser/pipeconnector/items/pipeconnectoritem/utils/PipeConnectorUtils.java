@@ -9,8 +9,8 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import org.slf4j.Logger;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 public class PipeConnectorUtils {
 
@@ -19,16 +19,34 @@ public class PipeConnectorUtils {
 
     public static void connectPathWithSegments(Level level, BlockPos start, BlockPos end, int depth) {
 
-        List<BlockPos> blockPosList = getBlockPosList(start, end, depth);
+        Set<BlockPos> blockPosSet = getBlockPosSet(start, end, depth);
 
-        LOGGER.info(blockPosList.toString());
-        blockPosList.forEach((blockPos -> setBlockAtDepth(level, blockPos)));
+        LOGGER.info(blockPosSet.toString());
+        blockPosSet.forEach((blockPos -> breakAndSetBlock(level, blockPos)));
 
     }
 
+    public static BlockPos getNeighborInFacingDirection(BlockPos pos, Direction facing) {
+        return pos.relative(facing);
+    }
 
-    private static List<BlockPos> getBlockPosList(BlockPos start, BlockPos end, int depth) {
-        List<BlockPos> blockPosList = new ArrayList<>();
+
+    // TODO: Setup a fucntion that shows an overlay path before pipe connection happens.
+    public static void displayOverlayPath(Level level, BlockPos start, BlockPos end, int depth) {
+
+        Set<BlockPos> blockPosList = getBlockPosSet(start, end, depth);
+
+        blockPosList.forEach((blockPos -> {
+            breakAndSetBlock(level, blockPos);
+        }
+        ));
+
+
+
+    }
+    private static Set<BlockPos> getBlockPosSet(BlockPos start, BlockPos end, int depth) {
+          Set<BlockPos> blockPosList = new HashSet<>();
+//        List<BlockPos> blockPosList = new ArrayList<>();
 
         int deltaY = (start.getY() > end.getY()) ? Math.abs((start.getY() - end.getY())) : Math.abs(end.getY() - start.getY());
         int startDepth = depth, endDepth = depth;
@@ -85,8 +103,9 @@ public class PipeConnectorUtils {
         return blockPosList;
     }
 
-    private static void setBlockAtDepth(Level level, BlockPos pos) {
+    private static void breakAndSetBlock(Level level, BlockPos pos) {
         if (isBreakable(level, pos)) {
+            level.destroyBlock(pos,true);
             level.setBlockAndUpdate(pos, Blocks.GLOWSTONE.defaultBlockState());
         }
     }
@@ -99,9 +118,8 @@ public class PipeConnectorUtils {
     }
 
 
-    public static BlockPos getNeighborInFacingDirection(BlockPos pos, Direction facing) {
-        return pos.relative(facing);
-    }
+
+
 
 
 }
