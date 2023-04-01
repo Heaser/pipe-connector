@@ -26,27 +26,17 @@ public class PipeConnectorUtils {
 
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
+
     public static BlockPos getNeighborInFacingDirection(BlockPos pos, Direction facing) {
         return pos.relative(facing);
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
 
-    // TODO: Setup a fucntion that shows an overlay path before pipe connection happens.
-    public static void displayOverlayPath(Level level, BlockPos start, BlockPos end, int depth) {
-
-        Set<BlockPos> blockPosList = getBlockPosSet(start, end, depth);
-
-        blockPosList.forEach((blockPos -> {
-            breakAndSetBlock(level, blockPos);
-        }
-        ));
-
-
-
-    }
     private static Set<BlockPos> getBlockPosSet(BlockPos start, BlockPos end, int depth) {
           Set<BlockPos> blockPosList = new HashSet<>();
-//        List<BlockPos> blockPosList = new ArrayList<>();
+
 
         int deltaY = (start.getY() > end.getY()) ? Math.abs((start.getY() - end.getY())) : Math.abs(end.getY() - start.getY());
         int startDepth = depth, endDepth = depth;
@@ -103,6 +93,8 @@ public class PipeConnectorUtils {
         return blockPosList;
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
+
     private static void breakAndSetBlock(Level level, BlockPos pos) {
         if (isBreakable(level, pos)) {
             level.destroyBlock(pos,true);
@@ -110,6 +102,7 @@ public class PipeConnectorUtils {
         }
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
 
     private static boolean isBreakable(Level level, BlockPos pos) {
         BlockState blockPos = level.getBlockState(pos);

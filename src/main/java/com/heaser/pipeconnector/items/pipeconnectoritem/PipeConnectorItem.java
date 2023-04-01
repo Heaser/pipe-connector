@@ -41,7 +41,7 @@ public class PipeConnectorItem extends Item {
         super(properties);
     }
 
-
+    // -----------------------------------------------------------------------------------------------------------------
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand useHand) {
@@ -50,6 +50,8 @@ public class PipeConnectorItem extends Item {
         }
         return super.use(level, player, useHand);
     }
+
+    // -----------------------------------------------------------------------------------------------------------------
 
     @Override
     public InteractionResult useOn(UseOnContext context) {
@@ -81,6 +83,8 @@ public class PipeConnectorItem extends Item {
         return InteractionResult.SUCCESS;
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
+
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> components, TooltipFlag tooltipFlag) {
         if (Screen.hasShiftDown()) {
@@ -97,10 +101,14 @@ public class PipeConnectorItem extends Item {
         super.appendHoverText(stack, level, components, tooltipFlag);
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
+
     private void resetBlockPosFirstAndSecondPositions() {
         firstPosition = null;
         secondPosition = null;
     }
+
+    // -----------------------------------------------------------------------------------------------------------------
 
     public void connectBlocks(Level level, BlockPos start, BlockPos end) {
 
@@ -109,13 +117,6 @@ public class PipeConnectorItem extends Item {
 
         PipeConnectorUtils.connectPathWithSegments(level, adjustedStart, adjustedEnd, depth);
     }
-
-
-    PipeConnectorGui openGui = new PipeConnectorGui(Component.literal("Test"));
-// Todo: Implement a Method that opens the GUI
-
-
-
 
 }
 
