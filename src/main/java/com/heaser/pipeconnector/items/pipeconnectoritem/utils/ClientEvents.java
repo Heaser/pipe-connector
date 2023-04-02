@@ -18,7 +18,7 @@ public class ClientEvents {
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void MouseScrollEvent(InputEvent.MouseScrollingEvent event) {
         Player player = Minecraft.getInstance().player;
-        double scroll = event.getScrollDelta();
+        int scroll = (int) Math.round(event.getScrollDelta());
 
         if(player == null || !player.isShiftKeyDown() || scroll == 0) {
             return;
@@ -28,17 +28,16 @@ public class ClientEvents {
             return;
         }
 
-        CompoundTag nbtData = pipeConnectorStack.getOrCreateTag();
-        int depth = nbtData.getInt("Depth");
+        int depth = PipeConnectorUtils.getDepth();
 
-        if(depth >= 0 && depth <= 100) {
-            if(depth <= 100)
-            {
-                nbtData.putInt("Depth", 100);
-            } else if(depth >= 0) {
-                nbtData.putInt("Depth", 0);
-            }
-            nbtData.putInt("Depth", depth = depth + (int)scroll);
+        depth += scroll;
+
+        if (depth < 1) {
+            PipeConnectorUtils.setDepth(99);
+        } else if (depth > 99) {
+            PipeConnectorUtils.setDepth(1);
+        } else {
+            PipeConnectorUtils.setDepth(depth);
         }
         event.setCanceled(true);
     }

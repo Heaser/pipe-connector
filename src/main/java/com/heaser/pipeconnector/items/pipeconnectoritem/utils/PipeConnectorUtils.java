@@ -18,6 +18,8 @@ import java.util.Set;
 
 public class PipeConnectorUtils {
 
+
+    private static int depth = 2;
     private static final Logger LOGGER = LogUtils.getLogger();
 
 
@@ -122,7 +124,15 @@ public class PipeConnectorUtils {
         return null;
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
 
+    public static int getDepth() {
+        return depth;
+    }
 
+    // -----------------------------------------------------------------------------------------------------------------
 
+    public static void setDepth(int depthValue) {
+        depth = depthValue;
+     }
 }
