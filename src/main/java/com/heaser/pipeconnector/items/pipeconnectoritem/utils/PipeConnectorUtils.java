@@ -1,9 +1,13 @@
 package com.heaser.pipeconnector.items.pipeconnectoritem.utils;
 
 
+import com.heaser.pipeconnector.items.pipeconnectoritem.PipeConnectorItem;
 import com.mojang.logging.LogUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -110,7 +114,13 @@ public class PipeConnectorUtils {
         return hardness != -1;
     }
 
-
+    // -----------------------------------------------------------------------------------------------------------------
+    public static ItemStack holdingPipeConnector(Player player) {
+        if(player.getItemInHand(InteractionHand.MAIN_HAND) != ItemStack.EMPTY && player.getItemInHand(InteractionHand.MAIN_HAND).getItem() instanceof PipeConnectorItem) {
+            return player.getItemInHand(InteractionHand.MAIN_HAND);
+        }
+        return null;
+    }
 
 
 

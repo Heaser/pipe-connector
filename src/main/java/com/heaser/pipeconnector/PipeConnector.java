@@ -1,11 +1,14 @@
 package com.heaser.pipeconnector;
 
+import com.heaser.pipeconnector.items.pipeconnectoritem.PipeConnectorItem;
+import com.heaser.pipeconnector.items.pipeconnectoritem.utils.ClientEvents;
 import com.mojang.logging.LogUtils;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.CreativeModeTabEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
@@ -36,16 +39,11 @@ public class PipeConnector
     public PipeConnector()
     {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
-        // Register the commonSetup method for modloading
         modEventBus.addListener(this::commonSetup);
-
-        // Register the Deferred Register to the mod event bus so blocks get registered
-//        BLOCKS.register(modEventBus);
-        // Register the Deferred Register to the mod event bus so items get registered
-//        ITEMS.register(modEventBus);
 
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
+        MinecraftForge.EVENT_BUS.register(new ClientEvents());
 
         // Register the item to a creative tab
         ModItems.ITEMS.register(modEventBus);
