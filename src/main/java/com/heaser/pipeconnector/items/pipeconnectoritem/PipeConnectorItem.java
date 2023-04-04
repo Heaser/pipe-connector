@@ -49,8 +49,8 @@ public class PipeConnectorItem extends Item {
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand useHand) {
-
-        int depth = PipeConnectorUtils.getDepth();
+        ItemStack stack = player.getItemInHand(useHand);
+        int depth = PipeConnectorUtils.getDepthFromStack(stack);
 
         if (!level.isClientSide() && useHand == InteractionHand.MAIN_HAND && player.isShiftKeyDown()) {
             player.sendSystemMessage(Component.literal("Depth: " + depth).withStyle(ChatFormatting.ITALIC, ChatFormatting.BLUE));
@@ -64,7 +64,8 @@ public class PipeConnectorItem extends Item {
     public InteractionResult useOn(UseOnContext context) {
         if (!context.getLevel().isClientSide) {
 
-            int depth = PipeConnectorUtils.getDepth();
+            ItemStack stack = context.getItemInHand();
+            int depth = PipeConnectorUtils.getDepthFromStack(stack);
 
             BlockPos clickedPosition = context.getClickedPos();
             if(context.getClickedFace() == Direction.UP) {
@@ -104,7 +105,8 @@ public class PipeConnectorItem extends Item {
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> components, TooltipFlag tooltipFlag) {
 
-        int depth = PipeConnectorUtils.getDepth();
+        // Depth will be displayed as depth-1 to the player to reduce confusion
+        int depth = PipeConnectorUtils.getDepthFromStack(stack) - 1;
 
         if (Screen.hasShiftDown()) {
             components.add(Component.literal("Shift + Right-Click to open GUI").withStyle(ChatFormatting.GREEN));
@@ -122,6 +124,15 @@ public class PipeConnectorItem extends Item {
 
     // -----------------------------------------------------------------------------------------------------------------
 
+    @Override
+    public void onCraftedBy(ItemStack stack, Level level, Player player) {
+        super.onCraftedBy(stack, level, player);
+
+        PipeConnectorUtils.setDepthToStack(stack, 2);
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
     public void connectBlocks(Level level, BlockPos start, BlockPos end, int depth) {
 
         BlockPos adjustedStart = PipeConnectorUtils.getNeighborInFacingDirection(start, facingSideStart);
@@ -134,11 +145,5 @@ public class PipeConnectorItem extends Item {
         firstPosition = null;
         secondPosition = null;
     }
-
-
-    // -----------------------------------------------------------------------------------------------------------------
-
-
-
 }
 

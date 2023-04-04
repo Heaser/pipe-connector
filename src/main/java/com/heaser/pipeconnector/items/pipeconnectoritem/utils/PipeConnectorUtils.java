@@ -5,6 +5,7 @@ import com.heaser.pipeconnector.items.pipeconnectoritem.PipeConnectorItem;
 import com.mojang.logging.LogUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -18,8 +19,6 @@ import java.util.Set;
 
 public class PipeConnectorUtils {
 
-
-    private static int depth = 2;
     private static final Logger LOGGER = LogUtils.getLogger();
 
 
@@ -124,15 +123,22 @@ public class PipeConnectorUtils {
         return null;
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
 
-    public static int getDepth() {
-        return depth;
+    public static int getDepthFromStack(ItemStack stack) {
+        if (stack.hasTag()) {
+            return stack.getTag().getInt("Depth");
+        }
+        return 0; // Default depth value if the tag is missing
     }
 
     // -----------------------------------------------------------------------------------------------------------------
 
-    public static void setDepth(int depthValue) {
-        depth = depthValue;
-     }
+    public static void setDepthToStack(ItemStack stack, int depth) {
+        if (!stack.hasTag()) {
+            stack.setTag(new CompoundTag());
+        }
+        stack.getTag().putInt("Depth", depth);
+    }
+
+
 }
