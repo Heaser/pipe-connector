@@ -2,6 +2,8 @@ package com.heaser.pipeconnector.items.pipeconnectoritem.utils;
 
 import com.heaser.pipeconnector.PipeConnector;
 import com.heaser.pipeconnector.items.pipeconnectoritem.PipeConnectorItem;
+import com.heaser.pipeconnector.network.NetworkHandler;
+import com.heaser.pipeconnector.network.UpdateDepthPacket;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
@@ -33,7 +35,7 @@ public class ClientEvents {
 
         int depth = PipeConnectorUtils.getDepthFromStack(pipeConnectorStack);
 
-        PipeConnectorUtils.setDepthToStack(pipeConnectorStack, depth + scroll);
+        PipeConnectorUtils.setDepthToStack(pipeConnectorStack, depth += scroll);
 
         if (depth < 1) {
             PipeConnectorUtils.setDepthToStack(pipeConnectorStack, 99);
@@ -43,6 +45,8 @@ public class ClientEvents {
             PipeConnectorUtils.setDepthToStack(pipeConnectorStack, depth);
         }
         depthText = PipeConnectorUtils.getDepthFromStack(pipeConnectorStack) - 1;
+        // Syncs with server to prevent cases where the
+        NetworkHandler.CHANNEL.sendToServer(new UpdateDepthPacket(PipeConnectorUtils.getDepthFromStack(pipeConnectorStack)));
         player.displayClientMessage(Component.literal("Depth was set to " + depthText).withStyle(ChatFormatting.YELLOW), true );
 
         event.setCanceled(true);

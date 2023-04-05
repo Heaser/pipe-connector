@@ -2,6 +2,7 @@ package com.heaser.pipeconnector;
 
 import com.heaser.pipeconnector.items.pipeconnectoritem.PipeConnectorItem;
 import com.heaser.pipeconnector.items.pipeconnectoritem.utils.ClientEvents;
+import com.heaser.pipeconnector.network.NetworkHandler;
 import com.mojang.logging.LogUtils;
 
 import net.minecraft.client.Minecraft;
@@ -52,9 +53,10 @@ public class PipeConnector
 
     }
 
+
     private void commonSetup(final FMLCommonSetupEvent event)
     {
-        // Some common setup code
+        NetworkHandler.register();
 
     }
 
