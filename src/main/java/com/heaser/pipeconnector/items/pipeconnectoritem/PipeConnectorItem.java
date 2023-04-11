@@ -1,8 +1,9 @@
 package com.heaser.pipeconnector.items.pipeconnectoritem;
 
 import com.heaser.pipeconnector.items.pipeconnectoritem.utils.PipeConnectorUtils;
+import com.heaser.pipeconnector.network.NetworkHandler;
+import com.heaser.pipeconnector.network.UpdateDepthPacket;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -15,19 +16,13 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.nbt.CompoundTag;
 
 
-import net.minecraftforge.eventbus.api.EventPriority;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.slf4j.Logger;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.gui.screens.Screen;
 
 import javax.annotation.Nullable;
-
-import net.minecraftforge.client.event.InputEvent;
-import org.w3c.dom.UserDataHandler;
 
 import java.util.List;
 
@@ -37,6 +32,9 @@ public class PipeConnectorItem extends Item {
     private static final Logger LOGGER = LogUtils.getLogger();
     Direction facingSideEnd;
     Direction facingSideStart;
+    private static int state = 0; // 0: First Point, 1: Second Point, 2: Preview Mode
+
+
 
     public PipeConnectorItem(Properties properties) {
         super(properties);
@@ -129,6 +127,7 @@ public class PipeConnectorItem extends Item {
         super.onCraftedBy(stack, level, player);
 
         PipeConnectorUtils.setDepthToStack(stack, 2);
+        NetworkHandler.CHANNEL.sendToServer(new UpdateDepthPacket(PipeConnectorUtils.getDepthFromStack(stack)));
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -145,5 +144,7 @@ public class PipeConnectorItem extends Item {
         firstPosition = null;
         secondPosition = null;
     }
+
+
 }
 
