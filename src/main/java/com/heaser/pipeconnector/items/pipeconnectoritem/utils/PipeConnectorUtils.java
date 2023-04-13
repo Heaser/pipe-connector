@@ -6,20 +6,21 @@ import com.mojang.logging.LogUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.slf4j.Logger;
 
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class PipeConnectorUtils {
 
@@ -127,6 +128,7 @@ public class PipeConnectorUtils {
         return null;
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
 
     public static int getDepthFromStack(ItemStack stack) {
         if (stack.hasTag()) {
@@ -144,16 +146,61 @@ public class PipeConnectorUtils {
         stack.getTag().putInt("Depth", depth);
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
 
-    public static boolean isAllowedPipe(ItemStack stack) {
-        String modId = "pipez"; // Replace with the mod ID of the mod you're looking for
-        Item itemToCheck =  stack.getItem();
-        ResourceLocation itemResourceLocation = ForgeRegistries.ITEMS.getKey(itemToCheck);
-        if(itemResourceLocation != null) {
-            String itemNamespace = itemResourceLocation.getNamespace();
-            return itemNamespace.equalsIgnoreCase(modId);
+    public static boolean holdingAllowedPipe(TagKey<Item> itemTag, Player player, InteractionHand hand) {
+        if(hand == InteractionHand.OFF_HAND) {
+            return player.getOffhandItem().is(itemTag);
+        } else {
+            return player.getMainHandItem().is(itemTag);
         }
-        return false;
     }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    // Check how many items that were in the players offhand are also available in the players inventory
+    public static int getNumberOfPipesInInventory(Player player) {
+        Item pipe = player.getOffhandItem().getItem();
+        AtomicInteger numberOfPipes = new AtomicInteger();
+        numberOfPipes.set(player.getOffhandItem().getCount());
+        Inventory inventory = player.getInventory();
+
+
+        inventory.items.forEach((itemStack -> {
+            if(itemStack.getItem() == pipe) {
+                numberOfPipes.addAndGet(itemStack.getCount());
+            }
+        }));
+        return numberOfPipes.get();
+
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    // Reduce the number of pipes in the players inventory by one, start with the inventory and only finish with
+    // the offhand if needed
+    public static void reduceNumberOfPipesInInventory(Player player) {
+        Item pipe = player.getOffhandItem().getItem();
+        Inventory inventory = player.getInventory();
+
+        for(int i = 0; i < inventory.items.size(); i++) {
+            if(inventory.items.get(i).getItem() == pipe) {
+                if(inventory.items.get(i).getCount() > 1) {
+                    inventory.items.get(i).shrink(1);
+                    return;
+                } else {
+                    inventory.items.set(i, ItemStack.EMPTY);
+                    return;
+                }
+            }
+        }
+
+        if(player.getOffhandItem().getCount() > 1) {
+            player.getOffhandItem().shrink(1);
+        } else {
+            player.setItemInHand(InteractionHand.OFF_HAND, ItemStack.EMPTY);
+        }
+    }
+
 
 }
