@@ -32,7 +32,6 @@ public class PipeConnectorItem extends Item {
     private static final Logger LOGGER = LogUtils.getLogger();
     Direction facingSideEnd;
     Direction facingSideStart;
-    private static int state = 0; // 0: First Point, 1: Second Point, 2: Preview Mode
 
 
 
@@ -113,16 +112,6 @@ public class PipeConnectorItem extends Item {
             components.add(Component.literal("Hold Shift for more info").withStyle(ChatFormatting.GOLD));
         }
         super.appendHoverText(stack, level, components, tooltipFlag);
-    }
-
-    // -----------------------------------------------------------------------------------------------------------------
-
-    @Override
-    public ItemStack getDefaultInstance() {
-        super.getDefaultInstance();
-        PipeConnectorUtils.setDepthToStack(getDefaultInstance(), 2);
-        NetworkHandler.CHANNEL.sendToServer(new UpdateDepthPacket(PipeConnectorUtils.getDepthFromStack(getDefaultInstance())));
-        return getDefaultInstance();
     }
 
     // -----------------------------------------------------------------------------------------------------------------
