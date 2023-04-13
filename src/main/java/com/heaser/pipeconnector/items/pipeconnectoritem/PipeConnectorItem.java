@@ -61,7 +61,6 @@ public class PipeConnectorItem extends Item {
     @Override
     public InteractionResult useOn(UseOnContext context) {
         if (!context.getLevel().isClientSide) {
-
             ItemStack stack = context.getItemInHand();
             int depth = PipeConnectorUtils.getDepthFromStack(stack);
 
@@ -107,15 +106,11 @@ public class PipeConnectorItem extends Item {
         int depth = PipeConnectorUtils.getDepthFromStack(stack) - 1;
 
         if (Screen.hasShiftDown()) {
-            components.add(Component.literal("Shift + Right-Click to open GUI").withStyle(ChatFormatting.GREEN));
             components.add(Component.literal("Shift + Right-Click on a block will cancel selection").withStyle(ChatFormatting.BLUE));
-
-            components.add(Component.literal("Current Depth: " + depth).withStyle(ChatFormatting.LIGHT_PURPLE));
-
+            components.add(Component.literal("Shift + Scrollwheel to change Pipe depth").withStyle(ChatFormatting.LIGHT_PURPLE));
 
         } else {
             components.add(Component.literal("Hold Shift for more info").withStyle(ChatFormatting.GOLD));
-            components.add(Component.literal("Current Depth: " + depth).withStyle(ChatFormatting.LIGHT_PURPLE));
         }
         super.appendHoverText(stack, level, components, tooltipFlag);
     }
@@ -123,11 +118,11 @@ public class PipeConnectorItem extends Item {
     // -----------------------------------------------------------------------------------------------------------------
 
     @Override
-    public void onCraftedBy(ItemStack stack, Level level, Player player) {
-        super.onCraftedBy(stack, level, player);
-
-        PipeConnectorUtils.setDepthToStack(stack, 2);
-        NetworkHandler.CHANNEL.sendToServer(new UpdateDepthPacket(PipeConnectorUtils.getDepthFromStack(stack)));
+    public ItemStack getDefaultInstance() {
+        super.getDefaultInstance();
+        PipeConnectorUtils.setDepthToStack(getDefaultInstance(), 2);
+        NetworkHandler.CHANNEL.sendToServer(new UpdateDepthPacket(PipeConnectorUtils.getDepthFromStack(getDefaultInstance())));
+        return getDefaultInstance();
     }
 
     // -----------------------------------------------------------------------------------------------------------------
