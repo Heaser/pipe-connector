@@ -13,6 +13,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import org.slf4j.Logger;
@@ -27,12 +28,12 @@ public class PipeConnectorUtils {
     private static final Logger LOGGER = LogUtils.getLogger();
 
 
-    public static void connectPathWithSegments(Level level, BlockPos start, BlockPos end, int depth) {
+    public static void connectPathWithSegments(Level level, BlockPos start, BlockPos end, int depth, Block block) {
 
         Set<BlockPos> blockPosSet = getBlockPosSet(start, end, depth);
 
         LOGGER.info(blockPosSet.toString());
-        blockPosSet.forEach((blockPos -> breakAndSetBlock(level, blockPos)));
+        blockPosSet.forEach((blockPos -> breakAndSetBlock(level, blockPos, block)));
 
     }
 
@@ -105,10 +106,11 @@ public class PipeConnectorUtils {
 
     // -----------------------------------------------------------------------------------------------------------------
 
-    private static void breakAndSetBlock(Level level, BlockPos pos) {
+    private static void breakAndSetBlock(Level level, BlockPos pos, Block block) {
         if (isBreakable(level, pos)) {
+
             level.destroyBlock(pos,true);
-            level.setBlockAndUpdate(pos, Blocks.GLOWSTONE.defaultBlockState());
+            level.setBlockAndUpdate(pos, block.defaultBlockState());
         }
     }
 
@@ -149,7 +151,10 @@ public class PipeConnectorUtils {
     // -----------------------------------------------------------------------------------------------------------------
 
     public static boolean holdingAllowedPipe(TagKey<Item> itemTag, Player player, InteractionHand hand) {
-        if(hand == InteractionHand.OFF_HAND) {
+        // TODO(Heaser): Fix this, it's not working as intended
+        if(hand == InteractionHand.MAIN_HAND) {
+            ItemStack testItem = player.getOffhandItem();
+
             return player.getOffhandItem().is(itemTag);
         } else {
             return player.getMainHandItem().is(itemTag);

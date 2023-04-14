@@ -1,5 +1,6 @@
 package com.heaser.pipeconnector.items.pipeconnectoritem;
 
+import com.heaser.pipeconnector.constants.AllowedPipeTags;
 import com.heaser.pipeconnector.items.pipeconnectoritem.utils.PipeConnectorUtils;
 import com.heaser.pipeconnector.network.NetworkHandler;
 import com.heaser.pipeconnector.network.UpdateDepthPacket;
@@ -18,6 +19,7 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 
 
+import net.minecraft.world.level.block.Blocks;
 import org.slf4j.Logger;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.gui.screens.Screen;
@@ -63,6 +65,8 @@ public class PipeConnectorItem extends Item {
 
     @Override
     public InteractionResult useOn(UseOnContext context) {
+        // TODO(Heaser) Update this to check with item is a Pipe or not for testing
+        boolean isPipe = PipeConnectorUtils.holdingAllowedPipe(AllowedPipeTags.PIPEZ_ENERGY_PIPE, context.getPlayer(), context.getHand());
         if (!context.getLevel().isClientSide) {
             ItemStack stack = context.getItemInHand();
             int depth = PipeConnectorUtils.getDepthFromStack(stack);
@@ -123,26 +127,17 @@ public class PipeConnectorItem extends Item {
 
     // -----------------------------------------------------------------------------------------------------------------
 
-    public void connectBlocks(Level level, BlockPos start, BlockPos end, int depth) {
+    private void connectBlocks(Level level, BlockPos start, BlockPos end, int depth) {
 
         BlockPos adjustedStart = PipeConnectorUtils.getNeighborInFacingDirection(start, facingSideStart);
         BlockPos adjustedEnd = PipeConnectorUtils.getNeighborInFacingDirection(end, facingSideEnd);
 
-        PipeConnectorUtils.connectPathWithSegments(level, adjustedStart, adjustedEnd, depth);
+        PipeConnectorUtils.connectPathWithSegments(level, adjustedStart, adjustedEnd, depth, Blocks.GLOWSTONE );
     }
 
     private void resetBlockPosFirstAndSecondPositions() {
         firstPosition = null;
         secondPosition = null;
     }
-
-    // -----------------------------------------------------------------------------------------------------------------
-    // A function that returns whether a block in a specific BlockPos is an AIR block or not.
-    private boolean isAirBlock(Level level, BlockPos pos) {
-        return level.getBlockState(pos).isAir();
-    }
-
-
-
 }
 

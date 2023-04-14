@@ -7,5 +7,5 @@ import net.minecraft.tags.TagKey;
 
 public class AllowedPipeTags {
 
-    public static final TagKey<Item> PIPEZ_PIPES = ItemTags.create(new ResourceLocation("pipez", "pipes"));
+    public static final TagKey<Item> PIPEZ_ENERGY_PIPE = ItemTags.create(new ResourceLocation("pipez", "energy_pipe"));
 }
