@@ -29,7 +29,7 @@ displayName="Pipe Connector" #mandatory
 # A file name (in the root of the mod JAR) containing a logo for display
 logoFile="examplemod.png" #optional
 # A text field displayed in the mod UI
-credits="Thank you Tom Wolf for pushing me to do things I hate, so that I can play things I love." #optional
+credits="Tom Wolf - for pushing me to do things I hate, so that I can play things I love. \n Claycorp for helping my single cell make sense of all of this" #optional
 # A text field displayed in the mod UI
 authors="Heaser" #optional
 # Display Test controls the display for your mod in the server connection screen

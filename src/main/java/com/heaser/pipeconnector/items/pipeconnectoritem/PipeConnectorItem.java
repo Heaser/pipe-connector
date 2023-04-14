@@ -46,11 +46,15 @@ public class PipeConnectorItem extends Item {
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand useHand) {
-        ItemStack stack = player.getItemInHand(useHand);
-        int depth = PipeConnectorUtils.getDepthFromStack(stack);
 
-        if (!level.isClientSide() && useHand == InteractionHand.MAIN_HAND && player.isShiftKeyDown()) {
-            player.sendSystemMessage(Component.literal("Depth: " + depth).withStyle(ChatFormatting.ITALIC, ChatFormatting.BLUE));
+        BlockPos playerLookingAt = player.blockPosition().relative(player.getDirection());
+        boolean isAir = level.getBlockState(playerLookingAt).isAir();
+        boolean isShiftKeyDown = player.isShiftKeyDown();
+
+        if (!level.isClientSide() &&
+                useHand == InteractionHand.MAIN_HAND && isShiftKeyDown && isAir) {
+            player.sendSystemMessage(Component.literal("Resetting Positions"));
+            resetBlockPosFirstAndSecondPositions();
         }
         return super.use(level, player, useHand);
     }
@@ -62,35 +66,36 @@ public class PipeConnectorItem extends Item {
         if (!context.getLevel().isClientSide) {
             ItemStack stack = context.getItemInHand();
             int depth = PipeConnectorUtils.getDepthFromStack(stack);
+            boolean isShiftKeyDown = context.getPlayer().isShiftKeyDown();
 
             BlockPos clickedPosition = context.getClickedPos();
-            if(context.getClickedFace() == Direction.UP) {
-                context.getPlayer().sendSystemMessage(Component.literal("Connecting Pipe from Top is not allowed"));
+            if(isShiftKeyDown && context.getClickedFace() == Direction.UP) {
+                context.getPlayer().sendSystemMessage(Component.literal("Connecting Pipe from top side is not allowed"));
                 return InteractionResult.FAIL;
 
             }
-            if(context.getPlayer().isShiftKeyDown()) {
-                resetBlockPosFirstAndSecondPositions();
-                return InteractionResult.SUCCESS;
-            }
 
-            if (firstPosition == null) {
+            if (firstPosition == null && isShiftKeyDown) {
                 firstPosition = clickedPosition;
-                LOGGER.info("firstPosition found: {}", firstPosition);
+                context.getPlayer().sendSystemMessage(Component.literal("1st position chosen at: " + firstPosition));
+                LOGGER.debug("firstPosition found: {}", firstPosition);
                 facingSideStart = context.getClickedFace();
-            } else if (secondPosition == null) {
+            } else if (secondPosition == null && isShiftKeyDown) {
                 if(clickedPosition.equals(firstPosition)) {
                     resetBlockPosFirstAndSecondPositions();
-                    context.getPlayer().sendSystemMessage(Component.literal("Reset Postions"));
+                    context.getPlayer().sendSystemMessage(Component.literal("Resetting Positions"));
                     return InteractionResult.SUCCESS;
                 }
+
                 secondPosition = clickedPosition;
                 facingSideEnd = context.getClickedFace();
-                LOGGER.info("secondPosition found: {}", secondPosition);
+                context.getPlayer().sendSystemMessage(Component.literal("2nd position chosen at: " + secondPosition));
+                LOGGER.debug("secondPosition found: {}", secondPosition);
                 if (secondPosition != null && firstPosition != null) {
                     connectBlocks(context.getLevel(), firstPosition, secondPosition, depth);
                     resetBlockPosFirstAndSecondPositions();
                 }
+
             }
         }
         return InteractionResult.SUCCESS;
@@ -105,7 +110,9 @@ public class PipeConnectorItem extends Item {
         int depth = PipeConnectorUtils.getDepthFromStack(stack) - 1;
 
         if (Screen.hasShiftDown()) {
-            components.add(Component.literal("Shift + Right-Click on a block will cancel selection").withStyle(ChatFormatting.BLUE));
+
+            components.add(Component.literal("Shift + Right-Click on Blocks will set positions").withStyle(ChatFormatting.DARK_AQUA));
+            components.add(Component.literal("Shift + Right-Click on Air will cancel selection").withStyle(ChatFormatting.BLUE));
             components.add(Component.literal("Shift + Scrollwheel to change Pipe depth").withStyle(ChatFormatting.LIGHT_PURPLE));
 
         } else {
@@ -128,6 +135,13 @@ public class PipeConnectorItem extends Item {
         firstPosition = null;
         secondPosition = null;
     }
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // A function that returns whether a block in a specific BlockPos is an AIR block or not.
+    private boolean isAirBlock(Level level, BlockPos pos) {
+        return level.getBlockState(pos).isAir();
+    }
+
 
 
 }
