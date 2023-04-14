@@ -150,16 +150,11 @@ public class PipeConnectorUtils {
 
     // -----------------------------------------------------------------------------------------------------------------
 
-    public static boolean holdingAllowedPipe(TagKey<Item> itemTag, Player player, InteractionHand hand) {
-        // TODO(Heaser): Fix this, it's not working as intended
-        if(hand == InteractionHand.MAIN_HAND) {
-            ItemStack testItem = player.getOffhandItem();
-
-            return player.getOffhandItem().is(itemTag);
-        } else {
-            return player.getMainHandItem().is(itemTag);
-        }
+    public static boolean holdingAllowedPipe(TagKey<Item> itemTag, Player player, InteractionHand interactionHand)
+    {
+        return player.getOffhandItem().is(itemTag);
     }
+
 
     // -----------------------------------------------------------------------------------------------------------------
 
@@ -199,13 +194,11 @@ public class PipeConnectorUtils {
                 }
             }
         }
-
+        // Reduce the number of pipes in the players offhand by one
         if(player.getOffhandItem().getCount() > 1) {
             player.getOffhandItem().shrink(1);
         } else {
             player.setItemInHand(InteractionHand.OFF_HAND, ItemStack.EMPTY);
         }
     }
-
-
 }

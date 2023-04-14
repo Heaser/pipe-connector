@@ -1,9 +1,7 @@
 package com.heaser.pipeconnector.items.pipeconnectoritem;
 
-import com.heaser.pipeconnector.constants.AllowedPipeTags;
+import com.heaser.pipeconnector.constants.TagKeys;
 import com.heaser.pipeconnector.items.pipeconnectoritem.utils.PipeConnectorUtils;
-import com.heaser.pipeconnector.network.NetworkHandler;
-import com.heaser.pipeconnector.network.UpdateDepthPacket;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -66,7 +64,7 @@ public class PipeConnectorItem extends Item {
     @Override
     public InteractionResult useOn(UseOnContext context) {
         // TODO(Heaser) Update this to check with item is a Pipe or not for testing
-        boolean isPipe = PipeConnectorUtils.holdingAllowedPipe(AllowedPipeTags.PIPEZ_ENERGY_PIPE, context.getPlayer(), context.getHand());
+        boolean isPipe = PipeConnectorUtils.holdingAllowedPipe(TagKeys.PIPEZ_ENERGY_PIPE, context.getPlayer(), context.getHand());
         if (!context.getLevel().isClientSide) {
             ItemStack stack = context.getItemInHand();
             int depth = PipeConnectorUtils.getDepthFromStack(stack);
