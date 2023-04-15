@@ -47,7 +47,7 @@ public class ClientEvents {
         depthText = PipeConnectorUtils.getDepthFromStack(pipeConnectorStack) - 1;
         // Syncs with server to prevent cases where the
         NetworkHandler.CHANNEL.sendToServer(new UpdateDepthPacket(PipeConnectorUtils.getDepthFromStack(pipeConnectorStack)));
-        player.displayClientMessage(Component.translatable("newDepthMessage" + depthText).withStyle(ChatFormatting.YELLOW), true );
+        player.displayClientMessage(Component.translatable("newDepthMessage",depthText).withStyle(ChatFormatting.YELLOW), true );
 
         event.setCanceled(true);
     }

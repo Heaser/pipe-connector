@@ -4,9 +4,12 @@ package com.heaser.pipeconnector.items.pipeconnectoritem.utils;
 import com.heaser.pipeconnector.constants.TagKeys;
 import com.heaser.pipeconnector.items.pipeconnectoritem.PipeConnectorItem;
 import com.mojang.logging.LogUtils;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
@@ -30,13 +33,26 @@ public class PipeConnectorUtils {
     private static final Logger LOGGER = LogUtils.getLogger();
 
 
-    public static void connectPathWithSegments(Level level, BlockPos start, BlockPos end, int depth, Block block) {
+    public static boolean connectPathWithSegments(Level level, BlockPos start, BlockPos end, int depth, Block block) {
 
         Set<BlockPos> blockPosSet = getBlockPosSet(start, end, depth);
 
-        LOGGER.info(blockPosSet.toString());
-        blockPosSet.forEach((blockPos -> breakAndSetBlock(level, blockPos, block)));
+        LOGGER.debug(blockPosSet.toString());
+        Player player = Minecraft.getInstance().player;
 
+        int numOfPipes = getNumberOfPipesInInventory(player);
+        if(numOfPipes < blockPosSet.size()) {
+            int missingPipes = blockPosSet.size() - numOfPipes;
+            LOGGER.debug("Not enough pipes in inventory, missing " + missingPipes + " pipes.");
+            player.displayClientMessage(Component.translatable("notEnoughPipesMessage", missingPipes).withStyle(ChatFormatting.BOLD, ChatFormatting.YELLOW), true);
+            return false;
+        }
+
+        blockPosSet.forEach((blockPos -> {
+            reduceNumberOfPipesInInventory(player);
+            breakAndSetBlock(level, blockPos, block);
+        }));
+        return true;
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -48,7 +64,7 @@ public class PipeConnectorUtils {
     // -----------------------------------------------------------------------------------------------------------------
 
     private static Set<BlockPos> getBlockPosSet(BlockPos start, BlockPos end, int depth) {
-          Set<BlockPos> blockPosList = new HashSet<>();
+        Set<BlockPos> blockPosList = new HashSet<>();
 
 
         int deltaY = (start.getY() > end.getY()) ? Math.abs((start.getY() - end.getY())) : Math.abs(end.getY() - start.getY());
@@ -174,7 +190,6 @@ public class PipeConnectorUtils {
             }
         }));
         return numberOfPipes.get();
-
     }
 
     // -----------------------------------------------------------------------------------------------------------------
