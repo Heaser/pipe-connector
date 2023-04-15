@@ -1,11 +1,14 @@
 package com.heaser.pipeconnector.items.pipeconnectoritem.utils;
 
 
+import com.heaser.pipeconnector.constants.TagKeys;
 import com.heaser.pipeconnector.items.pipeconnectoritem.PipeConnectorItem;
 import com.mojang.logging.LogUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Inventory;
@@ -14,7 +17,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import org.slf4j.Logger;
 
@@ -150,9 +152,9 @@ public class PipeConnectorUtils {
 
     // -----------------------------------------------------------------------------------------------------------------
 
-    public static boolean holdingAllowedPipe(TagKey<Item> itemTag, Player player, InteractionHand interactionHand)
+    public static boolean holdingAllowedPipe(TagKey<Item> tagKey, Player player)
     {
-        return player.getOffhandItem().is(itemTag);
+        return player.getOffhandItem().is(tagKey);
     }
 
 

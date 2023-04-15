@@ -1,4 +1,15 @@
 {
 
-  "item.pipe_connector.pipe_connector": "Pipe Connector"
+  "item.pipe_connector.pipe_connector": "Pipe Connector",
+  "holdValidItemMessage": "You must hold a valid pipe item in your off-hand",
+  "UpSideNotAllowedMessage": "You can't connect a pipe to the top of a block",
+  "firstPositionSet": "1st position chosen at: ",
+  "secondPositionSet":"2nd position chosen at: ",
+  "resettingPositions": "Resetting positions",
+  "usageExplanation":"Shift + Right-Click on Blocks will set positions",
+  "CancelSelectionExplanation":"Shift + Right-Click on Air will cancel selection",
+  "changeDepthExplanation":"Shift + Scroll wheel to change Pipe depth",
+  "shiftForMoreInfo": "Hold Shift for more info",
+  "newDepthMessage": "Depth was set to "
+
 }

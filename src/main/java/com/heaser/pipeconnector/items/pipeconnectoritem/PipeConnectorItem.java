@@ -53,7 +53,7 @@ public class PipeConnectorItem extends Item {
 
         if (!level.isClientSide() &&
                 useHand == InteractionHand.MAIN_HAND && isShiftKeyDown && isAir) {
-            player.sendSystemMessage(Component.literal("Resetting Positions"));
+            player.sendSystemMessage(Component.translatable("resettingPositions"));
             resetBlockPosFirstAndSecondPositions();
         }
         return super.use(level, player, useHand);
@@ -63,35 +63,40 @@ public class PipeConnectorItem extends Item {
 
     @Override
     public InteractionResult useOn(UseOnContext context) {
-        // TODO(Heaser) Update this to check with item is a Pipe or not for testing
-        boolean isPipe = PipeConnectorUtils.holdingAllowedPipe(TagKeys.PIPEZ_ENERGY_PIPE, context.getPlayer(), context.getHand());
+
         if (!context.getLevel().isClientSide) {
+            boolean isPipe = PipeConnectorUtils.holdingAllowedPipe(TagKeys.PLACEABLE_ITEMS, context.getPlayer());
             ItemStack stack = context.getItemInHand();
             int depth = PipeConnectorUtils.getDepthFromStack(stack);
             boolean isShiftKeyDown = context.getPlayer().isShiftKeyDown();
 
             BlockPos clickedPosition = context.getClickedPos();
+            if(!isPipe) {
+                context.getPlayer().sendSystemMessage(Component.translatable("holdValidItemMessage"));
+                return InteractionResult.FAIL;
+            }
+
             if(isShiftKeyDown && context.getClickedFace() == Direction.UP) {
-                context.getPlayer().sendSystemMessage(Component.literal("Connecting Pipe from top side is not allowed"));
+                context.getPlayer().sendSystemMessage(Component.translatable("UpSideNotAllowedMessage"));
                 return InteractionResult.FAIL;
 
             }
 
             if (firstPosition == null && isShiftKeyDown) {
                 firstPosition = clickedPosition;
-                context.getPlayer().sendSystemMessage(Component.literal("1st position chosen at: " + firstPosition));
+                context.getPlayer().sendSystemMessage(Component.translatable("firstPositionSet" + firstPosition));
                 LOGGER.debug("firstPosition found: {}", firstPosition);
                 facingSideStart = context.getClickedFace();
             } else if (secondPosition == null && isShiftKeyDown) {
                 if(clickedPosition.equals(firstPosition)) {
                     resetBlockPosFirstAndSecondPositions();
-                    context.getPlayer().sendSystemMessage(Component.literal("Resetting Positions"));
+                    context.getPlayer().sendSystemMessage(Component.translatable("resettingPositions"));
                     return InteractionResult.SUCCESS;
                 }
 
                 secondPosition = clickedPosition;
                 facingSideEnd = context.getClickedFace();
-                context.getPlayer().sendSystemMessage(Component.literal("2nd position chosen at: " + secondPosition));
+                context.getPlayer().sendSystemMessage(Component.translatable("secondPositionSet" + secondPosition));
                 LOGGER.debug("secondPosition found: {}", secondPosition);
                 if (secondPosition != null && firstPosition != null) {
                     connectBlocks(context.getLevel(), firstPosition, secondPosition, depth);
@@ -113,12 +118,12 @@ public class PipeConnectorItem extends Item {
 
         if (Screen.hasShiftDown()) {
 
-            components.add(Component.literal("Shift + Right-Click on Blocks will set positions").withStyle(ChatFormatting.DARK_AQUA));
-            components.add(Component.literal("Shift + Right-Click on Air will cancel selection").withStyle(ChatFormatting.BLUE));
-            components.add(Component.literal("Shift + Scrollwheel to change Pipe depth").withStyle(ChatFormatting.LIGHT_PURPLE));
+            components.add(Component.translatable("usageExplanation").withStyle(ChatFormatting.DARK_AQUA));
+            components.add(Component.translatable("CancelSelectionExplanation").withStyle(ChatFormatting.BLUE));
+            components.add(Component.translatable("changeDepthExplanation").withStyle(ChatFormatting.LIGHT_PURPLE));
 
         } else {
-            components.add(Component.literal("Hold Shift for more info").withStyle(ChatFormatting.GOLD));
+            components.add(Component.translatable("shiftForMoreInfo").withStyle(ChatFormatting.GOLD));
         }
         super.appendHoverText(stack, level, components, tooltipFlag);
     }
