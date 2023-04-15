@@ -71,19 +71,19 @@ public class PipeConnectorItem extends Item {
 
             BlockPos clickedPosition = context.getClickedPos();
             if (isShiftKeyDown && !isPipe) {
-                context.getPlayer().displayClientMessage(Component.translatable("holdValidItemMessage").withStyle(ChatFormatting.GOLD), true);
+                context.getPlayer().displayClientMessage(Component.translatable("item.pipe_connector.message.holdValidItem").withStyle(ChatFormatting.GOLD), true);
                 return InteractionResult.FAIL;
             }
 
             if (isShiftKeyDown && context.getClickedFace() == Direction.UP) {
-                context.getPlayer().displayClientMessage(Component.translatable("UpSideNotAllowedMessage").withStyle(ChatFormatting.BOLD, ChatFormatting.GREEN), true);
+                context.getPlayer().displayClientMessage(Component.translatable("item.pipe_connector.message.UpSideNotAllowed").withStyle(ChatFormatting.BOLD, ChatFormatting.GREEN), true);
                 return InteractionResult.FAIL;
 
             }
 
             if (firstPosition == null && isShiftKeyDown) {
                 firstPosition = clickedPosition;
-//                context.getPlayer().displayClientMessage(Component.translatable("firstPositionSet", firstPosition.toShortString()), true);
+//                context.getPlayer().displayClientMessage(Component.translatable("item.pipe_connector.message.firstPositionSet", firstPosition.toShortString()), true);
                 LOGGER.debug("firstPosition found: {}", firstPosition);
                 facingSideStart = context.getClickedFace();
             } else if (secondPosition == null && isShiftKeyDown) {
@@ -95,7 +95,7 @@ public class PipeConnectorItem extends Item {
                 secondPosition = clickedPosition;
                 facingSideEnd = context.getClickedFace();
                 LOGGER.debug("secondPosition found: {}", secondPosition);
-//                context.getPlayer().displayClientMessage(Component.translatable("secondPositionSet", secondPosition.toShortString()), true);
+//                context.getPlayer().displayClientMessage(Component.translatable("item.pipe_connector.message.secondPositionSet", secondPosition.toShortString()), true);
                 if (secondPosition != null && firstPosition != null) {
                     boolean connectedPipesSuccessfully = connectBlocks(context.getLevel(), firstPosition, secondPosition, depth);
                     resetBlockPosFirstAndSecondPositions(connectedPipesSuccessfully);
@@ -115,12 +115,12 @@ public class PipeConnectorItem extends Item {
 
         if (Screen.hasShiftDown()) {
 
-            components.add(Component.translatable("usageExplanation").withStyle(ChatFormatting.DARK_AQUA));
-            components.add(Component.translatable("CancelSelectionExplanation").withStyle(ChatFormatting.BLUE));
-            components.add(Component.translatable("changeDepthExplanation").withStyle(ChatFormatting.LIGHT_PURPLE));
+            components.add(Component.translatable("item.pipe_connector.tooltip.usageExplanation").withStyle(ChatFormatting.DARK_AQUA));
+            components.add(Component.translatable("item.pipe_connector.tooltip.CancelSelectionExplanation").withStyle(ChatFormatting.BLUE));
+            components.add(Component.translatable("item.pipe_connector.tooltip.changeDepthExplanation").withStyle(ChatFormatting.LIGHT_PURPLE));
 
         } else {
-            components.add(Component.translatable("shiftForMoreInfo").withStyle(ChatFormatting.GOLD));
+            components.add(Component.translatable("item.pipe_connector.tooltip.shiftForMoreInfo").withStyle(ChatFormatting.GOLD));
         }
         super.appendHoverText(stack, level, components, tooltipFlag);
     }
@@ -146,7 +146,7 @@ public class PipeConnectorItem extends Item {
         firstPosition = null;
         secondPosition = null;
         if(shouldDisplayMessage) {
-            player.displayClientMessage(Component.translatable("resettingPositions"), true);
+            player.displayClientMessage(Component.translatable("item.pipe_connector.message.resettingPositions"), true);
         }
     }
 }

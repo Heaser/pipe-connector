@@ -44,7 +44,7 @@ public class PipeConnectorUtils {
         if(numOfPipes < blockPosSet.size()) {
             int missingPipes = blockPosSet.size() - numOfPipes;
             LOGGER.debug("Not enough pipes in inventory, missing " + missingPipes + " pipes.");
-            player.displayClientMessage(Component.translatable("notEnoughPipesMessage", missingPipes).withStyle(ChatFormatting.BOLD, ChatFormatting.YELLOW), true);
+            player.displayClientMessage(Component.translatable("item.pipe_connector.message.notEnoughPipes", missingPipes).withStyle(ChatFormatting.BOLD, ChatFormatting.YELLOW), true);
             return false;
         }
 

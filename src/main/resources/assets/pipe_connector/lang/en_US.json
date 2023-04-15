@@ -1,15 +1,15 @@
 {
 
   "item.pipe_connector.pipe_connector": "Pipe Connector",
-  "holdValidItemMessage": "You must hold a valid pipe item in your off-hand",
-  "UpSideNotAllowedMessage": "You can't connect a pipe to the top of a block",
-  "firstPositionSet": "1st position chosen at: %s",
-  "secondPositionSet":"2nd position chosen at: %s",
-  "resettingPositions": "Resetting positions",
-  "usageExplanation":"Shift + Right-Click on Blocks will set positions",
-  "CancelSelectionExplanation":"Shift + Right-Click on Air will cancel selection",
-  "changeDepthExplanation":"Shift + Scroll wheel to change Pipe depth",
-  "shiftForMoreInfo": "Hold Shift for more info",
-  "newDepthMessage": "Depth was set to %s",
-  "notEnoughPipesMessage": "Not enough pipes in inventory, missing %s pipes"
+  "item.pipe_connector.message.holdValidItem": "You must hold a valid pipe item in your off-hand",
+  "item.pipe_connector.message.UpSideNotAllowed": "You can't connect a pipe to the top of a block",
+  "item.pipe_connector.message.firstPositionSet": "1st position chosen at: %s",
+  "item.pipe_connector.message.secondPositionSet":"2nd position chosen at: %s",
+  "item.pipe_connector.message.resettingPositions": "Resetting positions",
+  "item.pipe_connector.tooltip.usageExplanation":"Shift + Right-Click on Blocks will set positions",
+  "item.pipe_connector.tooltip.CancelSelectionExplanation":"Shift + Right-Click on Air will cancel selection",
+  "item.pipe_connector.tooltip.changeDepthExplanation":"Shift + Scroll wheel to change Pipe depth",
+  "item.pipe_connector.tooltip.shiftForMoreInfo": "Hold Shift for more info",
+  "item.pipe_connector.message.newDepth": "Depth was set to %s",
+  "item.pipe_connector.message.notEnoughPipes": "Not enough pipes in inventory, missing %s pipes"
 }

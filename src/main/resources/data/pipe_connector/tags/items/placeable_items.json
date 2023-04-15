@@ -1,9 +1,24 @@
 {
   "values": [
-    "pipez:energy_pipe",
-    "pipez:fluid_pipe",
-    "pipez:item_pipe",
-    "pipez:gas_pipe",
-    "pipez:universal_pipe"
+    {
+      "id": "pipez:energy_pipe",
+      "required": false
+    },
+    {
+      "id": "pipez:fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "pipez:item_pipe",
+      "required": false
+    },
+    {
+      "id": "pipez:gas_pipe",
+      "required": false
+    },
+    {
+      "id": "pipez:universal_pipe",
+      "required": false
+    }
   ]
 }
