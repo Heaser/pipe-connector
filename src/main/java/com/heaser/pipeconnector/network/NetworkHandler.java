@@ -5,7 +5,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.network.simple.SimpleChannel;
 import net.minecraftforge.network.NetworkRegistry;
 
-
 public class NetworkHandler {
     private static final String PROTOCOL_VERSION = "1";
     public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
@@ -14,7 +13,14 @@ public class NetworkHandler {
             PROTOCOL_VERSION::equals,
             PROTOCOL_VERSION::equals
     );
+
     public static void register() {
-        CHANNEL.registerMessage(0, UpdateDepthPacket.class, UpdateDepthPacket::encode, UpdateDepthPacket::decode, UpdateDepthPacket::handle);
+        int packetId = 0;
+
+        // Your existing packet registration
+        CHANNEL.registerMessage(packetId++, UpdateDepthPacket.class, UpdateDepthPacket::encode, UpdateDepthPacket::decode, UpdateDepthPacket::handle);
+
+        // Register the new packet
+        CHANNEL.registerMessage(packetId++, PipeConnectorHighlightPacket.class, PipeConnectorHighlightPacket::encode, PipeConnectorHighlightPacket::decode, PipeConnectorHighlightPacket::handle);
     }
 }

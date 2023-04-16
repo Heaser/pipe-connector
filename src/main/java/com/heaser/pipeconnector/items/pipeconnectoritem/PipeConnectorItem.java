@@ -1,12 +1,17 @@
 package com.heaser.pipeconnector.items.pipeconnectoritem;
 
 import com.heaser.pipeconnector.constants.TagKeys;
+import com.heaser.pipeconnector.items.pipeconnectoritem.utils.ParticleHelper;
 import com.heaser.pipeconnector.items.pipeconnectoritem.utils.PipeConnectorUtils;
+import com.heaser.pipeconnector.network.NetworkHandler;
+import com.heaser.pipeconnector.network.PipeConnectorHighlightPacket;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -20,6 +25,9 @@ import net.minecraft.world.level.Level;
 
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.network.PacketDistributor;
+import org.joml.Vector3f;
 import org.slf4j.Logger;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.gui.screens.Screen;
@@ -27,6 +35,8 @@ import net.minecraft.client.gui.screens.Screen;
 import javax.annotation.Nullable;
 
 import java.util.List;
+
+import static com.heaser.pipeconnector.items.pipeconnectoritem.utils.ParticleHelper.spawnDirectionHighlightParticles;
 
 public class PipeConnectorItem extends Item {
     private BlockPos firstPosition;
@@ -46,14 +56,14 @@ public class PipeConnectorItem extends Item {
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand useHand) {
+        if (!level.isClientSide) {
+            BlockPos playerLookingAt = player.blockPosition().relative(player.getDirection());
+            boolean isAir = level.getBlockState(playerLookingAt).isAir();
+            boolean isShiftKeyDown = player.isShiftKeyDown();
 
-        BlockPos playerLookingAt = player.blockPosition().relative(player.getDirection());
-        boolean isAir = level.getBlockState(playerLookingAt).isAir();
-        boolean isShiftKeyDown = player.isShiftKeyDown();
-
-        if (!level.isClientSide() &&
-                useHand == InteractionHand.MAIN_HAND && isShiftKeyDown && isAir) {
-            resetBlockPosFirstAndSecondPositions(true);
+            if (useHand == InteractionHand.MAIN_HAND && isShiftKeyDown && isAir) {
+                resetBlockPosFirstAndSecondPositions(true);
+            }
         }
         return super.use(level, player, useHand);
     }
@@ -78,24 +88,28 @@ public class PipeConnectorItem extends Item {
             if (isShiftKeyDown && context.getClickedFace() == Direction.UP) {
                 context.getPlayer().displayClientMessage(Component.translatable("item.pipe_connector.message.UpSideNotAllowed").withStyle(ChatFormatting.BOLD, ChatFormatting.GREEN), true);
                 return InteractionResult.FAIL;
-
             }
 
             if (firstPosition == null && isShiftKeyDown) {
                 firstPosition = clickedPosition;
-//                context.getPlayer().displayClientMessage(Component.translatable("item.pipe_connector.message.firstPositionSet", firstPosition.toShortString()), true);
-                LOGGER.debug("firstPosition found: {}", firstPosition);
+
                 facingSideStart = context.getClickedFace();
+                PipeConnectorHighlightPacket packet = new PipeConnectorHighlightPacket(firstPosition, facingSideStart);
+                NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) context.getPlayer()), packet);
+
+                LOGGER.debug("firstPosition found: {}", firstPosition);
             } else if (secondPosition == null && isShiftKeyDown) {
                 if (clickedPosition.equals(firstPosition)) {
                     resetBlockPosFirstAndSecondPositions(true);
                     return InteractionResult.SUCCESS;
                 }
-
                 secondPosition = clickedPosition;
                 facingSideEnd = context.getClickedFace();
+
+                PipeConnectorHighlightPacket packet = new PipeConnectorHighlightPacket(secondPosition, facingSideEnd);
+                NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) context.getPlayer()), packet);
+
                 LOGGER.debug("secondPosition found: {}", secondPosition);
-//                context.getPlayer().displayClientMessage(Component.translatable("item.pipe_connector.message.secondPositionSet", secondPosition.toShortString()), true);
                 if (secondPosition != null && firstPosition != null) {
                     boolean connectedPipesSuccessfully = connectBlocks(context.getLevel(), firstPosition, secondPosition, depth);
                     resetBlockPosFirstAndSecondPositions(connectedPipesSuccessfully);
@@ -145,7 +159,7 @@ public class PipeConnectorItem extends Item {
         Player player = Minecraft.getInstance().player;
         firstPosition = null;
         secondPosition = null;
-        if(shouldDisplayMessage) {
+        if (shouldDisplayMessage) {
             player.displayClientMessage(Component.translatable("item.pipe_connector.message.resettingPositions"), true);
         }
     }

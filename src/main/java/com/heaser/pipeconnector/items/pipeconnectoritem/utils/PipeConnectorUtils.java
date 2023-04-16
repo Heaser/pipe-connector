@@ -40,16 +40,22 @@ public class PipeConnectorUtils {
         LOGGER.debug(blockPosSet.toString());
         Player player = Minecraft.getInstance().player;
 
-        int numOfPipes = getNumberOfPipesInInventory(player);
-        if(numOfPipes < blockPosSet.size()) {
-            int missingPipes = blockPosSet.size() - numOfPipes;
-            LOGGER.debug("Not enough pipes in inventory, missing " + missingPipes + " pipes.");
-            player.displayClientMessage(Component.translatable("item.pipe_connector.message.notEnoughPipes", missingPipes).withStyle(ChatFormatting.BOLD, ChatFormatting.YELLOW), true);
-            return false;
+        assert player != null;
+        boolean isCreativeMode = player.isCreative();
+        // Disable pipe check and reduction in creative mode.
+        if(!isCreativeMode) {
+            int numOfPipes = getNumberOfPipesInInventory(player);
+            if (numOfPipes < blockPosSet.size()) {
+                int missingPipes = blockPosSet.size() - numOfPipes;
+                LOGGER.debug("Not enough pipes in inventory, missing " + missingPipes + " pipes.");
+                player.displayClientMessage(Component.translatable("item.pipe_connector.message.notEnoughPipes", missingPipes).withStyle(ChatFormatting.BOLD, ChatFormatting.YELLOW), true);
+                return false;
+            }
         }
-
         blockPosSet.forEach((blockPos -> {
-            reduceNumberOfPipesInInventory(player);
+            if(!isCreativeMode) {
+                reduceNumberOfPipesInInventory(player);
+            }
             breakAndSetBlock(level, blockPos, block);
         }));
         return true;
