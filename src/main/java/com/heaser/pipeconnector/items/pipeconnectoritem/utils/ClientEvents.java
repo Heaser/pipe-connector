@@ -37,10 +37,10 @@ public class ClientEvents {
 
         PipeConnectorUtils.setDepthToStack(pipeConnectorStack, depth += scroll);
 
-        if (depth < 1) {
+        if (depth < 2) {
             PipeConnectorUtils.setDepthToStack(pipeConnectorStack, 99);
         } else if (depth > 99) {
-            PipeConnectorUtils.setDepthToStack(pipeConnectorStack, 1);
+            PipeConnectorUtils.setDepthToStack(pipeConnectorStack, 2);
         } else {
             PipeConnectorUtils.setDepthToStack(pipeConnectorStack, depth);
         }

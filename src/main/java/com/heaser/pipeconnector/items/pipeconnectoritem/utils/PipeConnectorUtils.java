@@ -4,10 +4,12 @@ package com.heaser.pipeconnector.items.pipeconnectoritem.utils;
 import com.heaser.pipeconnector.constants.TagKeys;
 import com.heaser.pipeconnector.items.pipeconnectoritem.PipeConnectorItem;
 import com.mojang.logging.LogUtils;
+import com.mojang.serialization.DataResult;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
@@ -42,8 +44,10 @@ public class PipeConnectorUtils {
 
         assert player != null;
         boolean isCreativeMode = player.isCreative();
+        int pipeLimit = 640;
+
         // Disable pipe check and reduction in creative mode.
-        if(!isCreativeMode) {
+        if (!isCreativeMode) {
             int numOfPipes = getNumberOfPipesInInventory(player);
             if (numOfPipes < blockPosSet.size()) {
                 int missingPipes = blockPosSet.size() - numOfPipes;
@@ -51,9 +55,14 @@ public class PipeConnectorUtils {
                 player.displayClientMessage(Component.translatable("item.pipe_connector.message.notEnoughPipes", missingPipes).withStyle(ChatFormatting.BOLD, ChatFormatting.YELLOW), true);
                 return false;
             }
+            if (pipeLimit < blockPosSet.size()) {
+                LOGGER.debug("Unable to place more than " + pipeLimit + " at once");
+                player.displayClientMessage(Component.translatable("item.pipe_connector.message.reachedPipeLimit", pipeLimit).withStyle(ChatFormatting.BOLD, ChatFormatting.YELLOW), true);
+                return false;
+            }
         }
         blockPosSet.forEach((blockPos -> {
-            if(!isCreativeMode) {
+            if (!isCreativeMode) {
                 reduceNumberOfPipesInInventory(player);
             }
             breakAndSetBlock(level, blockPos, block);
@@ -76,13 +85,13 @@ public class PipeConnectorUtils {
         int deltaY = (start.getY() > end.getY()) ? Math.abs((start.getY() - end.getY())) : Math.abs(end.getY() - start.getY());
         int startDepth = depth, endDepth = depth;
 
-        if(start.getY() > end.getY()) {
+        if (start.getY() > end.getY()) {
             endDepth -= deltaY;
         } else {
             startDepth -= deltaY;
         }
 
-        for(int i = 0; i < startDepth; i++) {
+        for (int i = 0; i < startDepth; i++) {
             blockPosList.add(start);
             start = start.below();
         }
@@ -132,8 +141,12 @@ public class PipeConnectorUtils {
 
     private static void breakAndSetBlock(Level level, BlockPos pos, Block block) {
         if (isBreakable(level, pos)) {
-
-            level.destroyBlock(pos,true);
+            BlockState blockAtPos = level.getBlockState(pos);
+            // TODO: Add logic for voiding specific blocks once isVoidableBlock works
+            if(PipeConnectorUtils.isVoidableBlock(blockAtPos)) {
+                    LOGGER.info("Voiding block at " + pos.toString());
+            }
+            level.destroyBlock(pos, true);
             level.setBlockAndUpdate(pos, block.defaultBlockState());
         }
     }
@@ -148,7 +161,7 @@ public class PipeConnectorUtils {
 
     // -----------------------------------------------------------------------------------------------------------------
     public static ItemStack holdingPipeConnector(Player player) {
-        if(player.getItemInHand(InteractionHand.MAIN_HAND) != ItemStack.EMPTY && player.getItemInHand(InteractionHand.MAIN_HAND).getItem() instanceof PipeConnectorItem) {
+        if (player.getItemInHand(InteractionHand.MAIN_HAND) != ItemStack.EMPTY && player.getItemInHand(InteractionHand.MAIN_HAND).getItem() instanceof PipeConnectorItem) {
             return player.getItemInHand(InteractionHand.MAIN_HAND);
         }
         return null;
@@ -174,9 +187,18 @@ public class PipeConnectorUtils {
 
     // -----------------------------------------------------------------------------------------------------------------
 
-    public static boolean holdingAllowedPipe(TagKey<Item> tagKey, Player player)
-    {
+    public static boolean holdingAllowedPipe(TagKey<Item> tagKey, Player player) {
         return player.getOffhandItem().is(tagKey);
+    }
+
+
+    // TODO(Heaser) - This is not working as intended, it always returns false, Pretty sure I've set the tags correctly, but who knows
+    public static boolean isVoidableBlock(BlockState blockState) {
+
+        boolean isVoidable = blockState.is(TagKeys.VOIDABLE_BLOCKS);
+        LOGGER.info("isVoidable: " + isVoidable);
+
+        return isVoidable;
     }
 
 
@@ -191,7 +213,7 @@ public class PipeConnectorUtils {
 
 
         inventory.items.forEach((itemStack -> {
-            if(itemStack.getItem() == pipe) {
+            if (itemStack.getItem() == pipe) {
                 numberOfPipes.addAndGet(itemStack.getCount());
             }
         }));
@@ -206,9 +228,9 @@ public class PipeConnectorUtils {
         Item pipe = player.getOffhandItem().getItem();
         Inventory inventory = player.getInventory();
 
-        for(int i = 0; i < inventory.items.size(); i++) {
-            if(inventory.items.get(i).getItem() == pipe) {
-                if(inventory.items.get(i).getCount() > 1) {
+        for (int i = 0; i < inventory.items.size(); i++) {
+            if (inventory.items.get(i).getItem() == pipe) {
+                if (inventory.items.get(i).getCount() > 1) {
                     inventory.items.get(i).shrink(1);
                     return;
                 } else {
@@ -218,7 +240,7 @@ public class PipeConnectorUtils {
             }
         }
         // Reduce the number of pipes in the players offhand by one
-        if(player.getOffhandItem().getCount() > 1) {
+        if (player.getOffhandItem().getCount() > 1) {
             player.getOffhandItem().shrink(1);
         } else {
             player.setItemInHand(InteractionHand.OFF_HAND, ItemStack.EMPTY);

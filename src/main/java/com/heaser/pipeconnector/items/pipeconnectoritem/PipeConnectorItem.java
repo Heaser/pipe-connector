@@ -5,6 +5,7 @@ import com.heaser.pipeconnector.items.pipeconnectoritem.utils.ParticleHelper;
 import com.heaser.pipeconnector.items.pipeconnectoritem.utils.PipeConnectorUtils;
 import com.heaser.pipeconnector.network.NetworkHandler;
 import com.heaser.pipeconnector.network.PipeConnectorHighlightPacket;
+import com.heaser.pipeconnector.network.UpdateDepthPacket;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
@@ -52,7 +53,6 @@ public class PipeConnectorItem extends Item {
 
 
     // -----------------------------------------------------------------------------------------------------------------
-
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand useHand) {
@@ -163,5 +163,8 @@ public class PipeConnectorItem extends Item {
             player.displayClientMessage(Component.translatable("item.pipe_connector.message.resettingPositions"), true);
         }
     }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
 }
 
