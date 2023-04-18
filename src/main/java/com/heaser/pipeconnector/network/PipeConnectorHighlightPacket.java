@@ -10,8 +10,8 @@ import net.minecraftforge.network.NetworkEvent;
 import java.util.function.Supplier;
 
 public class PipeConnectorHighlightPacket {
-    private BlockPos position;
-    private Direction facingSidePosition;
+    private final BlockPos position;
+    private final Direction facingSidePosition;
 
     public PipeConnectorHighlightPacket(BlockPos firstPosition, Direction facingSideStart) {
         this.position = firstPosition;
