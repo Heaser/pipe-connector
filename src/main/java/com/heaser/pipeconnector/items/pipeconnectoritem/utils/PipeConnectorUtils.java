@@ -142,11 +142,10 @@ public class PipeConnectorUtils {
     private static void breakAndSetBlock(Level level, BlockPos pos, Block block) {
         if (isBreakable(level, pos)) {
             BlockState blockAtPos = level.getBlockState(pos);
-            // TODO: Add logic for voiding specific blocks once isVoidableBlock works
-            if(PipeConnectorUtils.isVoidableBlock(blockAtPos)) {
-                    LOGGER.info("Voiding block at " + pos.toString());
+
+            if(!PipeConnectorUtils.isVoidableBlock(blockAtPos)) {
+                level.destroyBlock(pos, true);
             }
-            level.destroyBlock(pos, true);
             level.setBlockAndUpdate(pos, block.defaultBlockState());
         }
     }
@@ -191,14 +190,10 @@ public class PipeConnectorUtils {
         return player.getOffhandItem().is(tagKey);
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
 
-    // TODO(Heaser) - This is not working as intended, it always returns false, Pretty sure I've set the tags correctly, but who knows
-    public static boolean isVoidableBlock(BlockState blockState) {
-
-        boolean isVoidable = blockState.is(TagKeys.VOIDABLE_BLOCKS);
-        LOGGER.info("isVoidable: " + isVoidable);
-
-        return isVoidable;
+    private static boolean isVoidableBlock(BlockState blockState) {
+        return blockState.is(TagKeys.VOIDABLE_BLOCKS);
     }
 
 
