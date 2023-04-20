@@ -13,6 +13,11 @@ public class PipeConnectorHighlightPacket {
     private final BlockPos position;
     private final Direction facingSidePosition;
 
+    public PipeConnectorHighlightPacket(BlockPos firstPosition) {
+        this.position = firstPosition;
+        this.facingSidePosition = null;
+    }
+
     public PipeConnectorHighlightPacket(BlockPos firstPosition, Direction facingSideStart) {
         this.position = firstPosition;
         this.facingSidePosition = facingSideStart;
@@ -32,13 +37,15 @@ public class PipeConnectorHighlightPacket {
     public static void handle(PipeConnectorHighlightPacket packet, Supplier<NetworkEvent.Context> contextSupplier) {
         NetworkEvent.Context context = contextSupplier.get();
         context.enqueueWork(() -> {
-            // Your client-side code to spawn particles
+            // client-side code to spawn particles
             Minecraft mc = Minecraft.getInstance();
             BlockPos pos = packet.getPosition().relative(packet.getFacingSidePosition());
-            ParticleHelper.spawnDirectionHighlightParticles(mc.level, pos, 0.0f, 0.0f, 1.0f, 1.0f);
+            ParticleHelper.spawnDirectionHighlightParticles(mc.level, pos, (float)Math.random(), (float)Math.random(), (float)Math.random(), 1.0f);
         });
         context.setPacketHandled(true);
     }
+
+
 
     private BlockPos getPosition() {
         return position;

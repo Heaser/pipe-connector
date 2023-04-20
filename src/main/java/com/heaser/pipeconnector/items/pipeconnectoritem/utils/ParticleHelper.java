@@ -14,9 +14,9 @@ public class ParticleHelper {
         Vector3f color = new Vector3f(red, green, blue);
 
         for (int i = 0; i < 100; i++) {
-            double offsetX = (Math.random() - 0.5) * 0.2;
-            double offsetY = (Math.random() - 0.5) * 0.2;
-            double offsetZ = (Math.random() - 0.5) * 0.2;
+            double offsetX = (Math.random() - 0.1) * 0.2;
+            double offsetY = (Math.random() - 0.1) * 0.2;
+            double offsetZ = (Math.random() - 0.1) * 0.2;
 
             // r g b a
             level.addParticle(new DustParticleOptions(color, alpha),

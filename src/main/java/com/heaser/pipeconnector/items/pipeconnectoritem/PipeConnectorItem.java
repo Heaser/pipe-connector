@@ -1,16 +1,15 @@
 package com.heaser.pipeconnector.items.pipeconnectoritem;
 
 import com.heaser.pipeconnector.constants.TagKeys;
-import com.heaser.pipeconnector.items.pipeconnectoritem.utils.ParticleHelper;
 import com.heaser.pipeconnector.items.pipeconnectoritem.utils.PipeConnectorUtils;
 import com.heaser.pipeconnector.network.NetworkHandler;
 import com.heaser.pipeconnector.network.PipeConnectorHighlightPacket;
-import com.heaser.pipeconnector.network.UpdateDepthPacket;
+import com.mojang.logging.LogUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -22,22 +21,12 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
-
-
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.network.PacketDistributor;
-import org.joml.Vector3f;
 import org.slf4j.Logger;
-import com.mojang.logging.LogUtils;
-import net.minecraft.client.gui.screens.Screen;
 
 import javax.annotation.Nullable;
-
 import java.util.List;
-
-import static com.heaser.pipeconnector.items.pipeconnectoritem.utils.ParticleHelper.spawnDirectionHighlightParticles;
 
 public class PipeConnectorItem extends Item {
     private BlockPos firstPosition;
@@ -111,7 +100,7 @@ public class PipeConnectorItem extends Item {
 
                 LOGGER.debug("secondPosition found: {}", secondPosition);
                 if (secondPosition != null && firstPosition != null) {
-                    boolean connectedPipesSuccessfully = connectBlocks(context.getLevel(), firstPosition, secondPosition, depth);
+                    boolean connectedPipesSuccessfully = connectBlocks(context.getLevel(), firstPosition, secondPosition, depth,  (ServerPlayer) context.getPlayer());
                     resetBlockPosFirstAndSecondPositions(connectedPipesSuccessfully);
                 }
             }
@@ -141,7 +130,7 @@ public class PipeConnectorItem extends Item {
 
     // -----------------------------------------------------------------------------------------------------------------
 
-    private boolean connectBlocks(Level level, BlockPos start, BlockPos end, int depth) {
+    private boolean connectBlocks(Level level, BlockPos start, BlockPos end, int depth, ServerPlayer serverPlayer) {
 
         Player player = Minecraft.getInstance().player;
 
@@ -151,7 +140,7 @@ public class PipeConnectorItem extends Item {
         Item pipe = player.getOffhandItem().getItem();
         Block pipeBlock = Block.byItem(pipe);
 
-        boolean success = PipeConnectorUtils.connectPathWithSegments(level, adjustedStart, adjustedEnd, depth, pipeBlock);
+        boolean success = PipeConnectorUtils.connectPathWithSegments(level, adjustedStart, adjustedEnd, depth, pipeBlock, serverPlayer);
         return success;
     }
 

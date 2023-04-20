@@ -3,6 +3,8 @@ package com.heaser.pipeconnector.items.pipeconnectoritem.utils;
 
 import com.heaser.pipeconnector.constants.TagKeys;
 import com.heaser.pipeconnector.items.pipeconnectoritem.PipeConnectorItem;
+import com.heaser.pipeconnector.network.NetworkHandler;
+import com.heaser.pipeconnector.network.PipeConnectorHighlightPacket;
 import com.mojang.logging.LogUtils;
 import com.mojang.serialization.DataResult;
 import net.minecraft.ChatFormatting;
@@ -14,7 +16,10 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.TagKey;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -23,6 +28,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.network.PacketDistributor;
 import org.slf4j.Logger;
 
 
@@ -35,7 +41,7 @@ public class PipeConnectorUtils {
     private static final Logger LOGGER = LogUtils.getLogger();
 
 
-    public static boolean connectPathWithSegments(Level level, BlockPos start, BlockPos end, int depth, Block block) {
+    public static boolean connectPathWithSegments(Level level, BlockPos start, BlockPos end, int depth, Block block, ServerPlayer serverPlayer) {
 
         Set<BlockPos> blockPosSet = getBlockPosSet(start, end, depth);
 
@@ -64,7 +70,11 @@ public class PipeConnectorUtils {
         blockPosSet.forEach((blockPos -> {
             if (!isCreativeMode) {
                 reduceNumberOfPipesInInventory(player);
+
             }
+
+            PipeConnectorHighlightPacket packet = new PipeConnectorHighlightPacket(blockPos, Direction.getRandom(RandomSource.create()));
+            NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) serverPlayer), packet);
             breakAndSetBlock(level, blockPos, block);
         }));
         return true;
