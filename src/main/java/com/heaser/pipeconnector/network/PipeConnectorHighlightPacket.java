@@ -25,12 +25,18 @@ public class PipeConnectorHighlightPacket {
 
     public static void encode(PipeConnectorHighlightPacket packet, FriendlyByteBuf buffer) {
         buffer.writeBlockPos(packet.position);
-        buffer.writeEnum(packet.facingSidePosition);
+        buffer.writeBoolean(packet.facingSidePosition != null);
+        if (packet.facingSidePosition != null) {
+            buffer.writeEnum(packet.facingSidePosition);
+        }
     }
 
     public static PipeConnectorHighlightPacket decode(FriendlyByteBuf buffer) {
         BlockPos position = buffer.readBlockPos();
-        Direction facingSidePosition = buffer.readEnum(Direction.class);
+        Direction facingSidePosition = null;
+        if (buffer.readBoolean()) {
+            facingSidePosition = buffer.readEnum(Direction.class);
+        }
         return new PipeConnectorHighlightPacket(position, facingSidePosition);
     }
 
@@ -39,13 +45,11 @@ public class PipeConnectorHighlightPacket {
         context.enqueueWork(() -> {
             // client-side code to spawn particles
             Minecraft mc = Minecraft.getInstance();
-            BlockPos pos = packet.getPosition().relative(packet.getFacingSidePosition());
+            BlockPos pos = packet.getFacingSidePosition() == null ? packet.getPosition() : packet.getPosition().relative(packet.getFacingSidePosition());
             ParticleHelper.spawnDirectionHighlightParticles(mc.level, pos, (float)Math.random(), (float)Math.random(), (float)Math.random(), 1.0f);
         });
         context.setPacketHandled(true);
     }
-
-
 
     private BlockPos getPosition() {
         return position;

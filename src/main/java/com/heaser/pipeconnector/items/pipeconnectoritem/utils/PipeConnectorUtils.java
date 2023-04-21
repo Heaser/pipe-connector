@@ -73,7 +73,7 @@ public class PipeConnectorUtils {
 
             }
 
-            PipeConnectorHighlightPacket packet = new PipeConnectorHighlightPacket(blockPos, Direction.getRandom(RandomSource.create()));
+            PipeConnectorHighlightPacket packet = new PipeConnectorHighlightPacket(blockPos);
             NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) serverPlayer), packet);
             breakAndSetBlock(level, blockPos, block);
         }));
