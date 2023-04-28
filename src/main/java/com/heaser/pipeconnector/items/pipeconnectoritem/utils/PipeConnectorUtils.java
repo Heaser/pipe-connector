@@ -6,20 +6,15 @@ import com.heaser.pipeconnector.items.pipeconnectoritem.PipeConnectorItem;
 import com.heaser.pipeconnector.network.NetworkHandler;
 import com.heaser.pipeconnector.network.PipeConnectorHighlightPacket;
 import com.mojang.logging.LogUtils;
-import com.mojang.serialization.DataResult;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.TagKey;
-import net.minecraft.util.RandomSource;
+import net.minecraft.util.Tuple;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -34,19 +29,21 @@ import org.slf4j.Logger;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class PipeConnectorUtils {
 
     private static final Logger LOGGER = LogUtils.getLogger();
 
-
     public static boolean connectPathWithSegments(Level level, BlockPos start, BlockPos end, int depth, Block block, ServerPlayer serverPlayer) {
+        Player player = Minecraft.getInstance().player;
+
+        Tuple validPathValueAndBlock = isValidPipePath(level, start, end, depth);
+        boolean isValidPath = (boolean) validPathValueAndBlock.getA();
+        String InvalidBlockName = (String) validPathValueAndBlock.getB();
 
         Set<BlockPos> blockPosSet = getBlockPosSet(start, end, depth);
 
         LOGGER.debug(blockPosSet.toString());
-        Player player = Minecraft.getInstance().player;
 
         assert player != null;
         boolean isCreativeMode = player.isCreative();
@@ -67,18 +64,22 @@ public class PipeConnectorUtils {
                 return false;
             }
         }
-        blockPosSet.forEach((blockPos -> {
-            if (!isCreativeMode) {
-                reduceNumberOfPipesInInventory(player);
+        if (isValidPath) {
+            blockPosSet.forEach((blockPos -> {
+                if (!isCreativeMode) {
+                    reduceNumberOfPipesInInventory(player);
+                }
 
-            }
-
-            PipeConnectorHighlightPacket packet = new PipeConnectorHighlightPacket(blockPos);
-            NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) serverPlayer), packet);
-            breakAndSetBlock(level, blockPos, block);
-        }));
-        return true;
+                PipeConnectorHighlightPacket packet = new PipeConnectorHighlightPacket(blockPos);
+                NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) serverPlayer), packet);
+                breakAndSetBlock(level, blockPos, block);
+            }));
+            return true;
+        }
+        player.displayClientMessage(Component.translatable("item.pipe_connector.message.unbreakableBlockReached", InvalidBlockName).withStyle(ChatFormatting.BOLD, ChatFormatting.YELLOW), true);
+        return false;
     }
+
 
     // -----------------------------------------------------------------------------------------------------------------
 
@@ -87,6 +88,21 @@ public class PipeConnectorUtils {
     }
 
     // -----------------------------------------------------------------------------------------------------------------
+
+
+    // -----------------------------------------------------------------------------------------------------------------
+    public static Tuple<Boolean, String> isValidPipePath(Level level, BlockPos start, BlockPos end, int depth) {
+        boolean isValid = true;
+        String invalidBlockName = "";
+        Set<BlockPos> blockPosSet = getBlockPosSet(start, end, depth);
+        for (BlockPos blockPos : blockPosSet) {
+            if (!isBreakable(level, blockPos)) {
+                isValid = false;
+                invalidBlockName = level.getBlockState(blockPos).getBlock().getName().toString();
+            }
+        }
+        return new Tuple<>(isValid, invalidBlockName);
+    }
 
     private static Set<BlockPos> getBlockPosSet(BlockPos start, BlockPos end, int depth) {
         Set<BlockPos> blockPosList = new HashSet<>();
@@ -150,17 +166,24 @@ public class PipeConnectorUtils {
     // -----------------------------------------------------------------------------------------------------------------
 
     private static void breakAndSetBlock(Level level, BlockPos pos, Block block) {
-        if (isBreakable(level, pos)) {
-            BlockState blockAtPos = level.getBlockState(pos);
+        BlockState blockAtPos = level.getBlockState(pos);
 
-            if(!PipeConnectorUtils.isVoidableBlock(blockAtPos)) {
-                level.destroyBlock(pos, true);
-            }
-            level.setBlockAndUpdate(pos, block.defaultBlockState());
+        if (!PipeConnectorUtils.isVoidableBlock(blockAtPos)) {
+            level.destroyBlock(pos, true);
         }
+        level.setBlockAndUpdate(pos, block.defaultBlockState());
     }
 
     // -----------------------------------------------------------------------------------------------------------------
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // Prevent pipe connector from placing blocks in if an unbreakable block was reached
+    private static boolean reachedUnbreakableBlock(Level level, BlockPos pos) {
+        if (!isBreakable(level, pos)) {
+            return true;
+        }
+        return false;
+    }
 
     private static boolean isBreakable(Level level, BlockPos pos) {
         BlockState blockPos = level.getBlockState(pos);
@@ -212,21 +235,26 @@ public class PipeConnectorUtils {
     // Check how many items that were in the players offhand are also available in the players inventory
     public static int getNumberOfPipesInInventory(Player player) {
         Item pipe = player.getOffhandItem().getItem();
-        AtomicInteger numberOfPipes = new AtomicInteger();
-        numberOfPipes.set(player.getOffhandItem().getCount());
+        int numberOfPipes;
+        numberOfPipes = player.getOffhandItem().getCount();
         Inventory inventory = player.getInventory();
 
 
-        inventory.items.forEach((itemStack -> {
+        for (ItemStack itemStack : inventory.items) {
             if (itemStack.getItem() == pipe) {
-                numberOfPipes.addAndGet(itemStack.getCount());
+                numberOfPipes += itemStack.getCount();
             }
-        }));
-        return numberOfPipes.get();
+        }
+
+//        inventory.items.forEach((itemStack -> {
+//            if (itemStack.getItem() == pipe) {
+//                numberOfPipes = itemStack.getCount();
+//            }
+//        }));
+        return numberOfPipes;
     }
 
     // -----------------------------------------------------------------------------------------------------------------
-
     // Reduce the number of pipes in the players inventory by one, start with the inventory and only finish with
     // the offhand if needed
     public static void reduceNumberOfPipesInInventory(Player player) {

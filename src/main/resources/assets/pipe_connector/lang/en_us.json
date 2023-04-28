@@ -12,5 +12,6 @@
   "item.pipe_connector.tooltip.shiftForMoreInfo": "Hold Shift for more info",
   "item.pipe_connector.message.newDepth": "Depth was set to %s",
   "item.pipe_connector.message.notEnoughPipes": "Not enough pipes in inventory, missing %s pipes",
-  "item.pipe_connector.message.reachedPipeLimit": "Unable to place more than %s pipes at once"
+  "item.pipe_connector.message.reachedPipeLimit": "Unable to place more than %s pipes at once",
+  "item.pipe_connector.message.unbreakableBlockReached": "Pipes cannot replace %s blocks"
 }
