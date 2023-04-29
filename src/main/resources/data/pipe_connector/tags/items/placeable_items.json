@@ -19,6 +19,10 @@
     {
       "id": "pipez:universal_pipe",
       "required": false
+    },
+    {
+      "id": "sfm:cable",
+      "required": false
     }
   ]
 }

@@ -83,8 +83,8 @@ repositories {
 
 dependencies {
     minecraft "net.minecraftforge:forge:${mod_minecraft_version}-${forge_version}"
-
     runtimeOnly fg.deobf("curse.maven:pipezs-${pipez_mod_id}:${pipez_mod_file_id}")
+   // runtimeOnly fg.deobf("curse.maven:super-factory-manager-${sfm_mod_id}:${sfm_mod_file_id}")
 }
 
 // Example for how to get properties into the manifest for reading at runtime.
