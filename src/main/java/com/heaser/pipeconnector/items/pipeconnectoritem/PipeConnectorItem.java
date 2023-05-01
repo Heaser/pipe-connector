@@ -4,6 +4,7 @@ import com.heaser.pipeconnector.constants.TagKeys;
 import com.heaser.pipeconnector.items.pipeconnectoritem.utils.PipeConnectorUtils;
 import com.heaser.pipeconnector.network.NetworkHandler;
 import com.heaser.pipeconnector.network.PipeConnectorHighlightPacket;
+import com.heaser.pipeconnector.network.UpdateDepthPacket;
 import com.mojang.logging.LogUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -40,7 +41,6 @@ public class PipeConnectorItem extends Item {
         super(properties);
     }
 
-
     // -----------------------------------------------------------------------------------------------------------------
 
     @Override
@@ -67,6 +67,11 @@ public class PipeConnectorItem extends Item {
             ItemStack stack = context.getItemInHand();
             int depth = PipeConnectorUtils.getDepthFromStack(stack);
             boolean isShiftKeyDown = context.getPlayer().isShiftKeyDown();
+
+            if(depth == 0) {
+                PipeConnectorUtils.setDepthToStack(stack, 1);
+                NetworkHandler.CHANNEL.sendToServer(new UpdateDepthPacket(PipeConnectorUtils.getDepthFromStack(stack)));
+            }
 
             BlockPos clickedPosition = context.getClickedPos();
             if (isShiftKeyDown && !isPipe) {
@@ -100,7 +105,7 @@ public class PipeConnectorItem extends Item {
 
                 LOGGER.debug("secondPosition found: {}", secondPosition);
                 if (secondPosition != null && firstPosition != null) {
-                    boolean connectedPipesSuccessfully = connectBlocks(context.getLevel(), firstPosition, secondPosition, depth,  (ServerPlayer) context.getPlayer());
+                    boolean connectedPipesSuccessfully = connectBlocks(context.getLevel(), firstPosition, secondPosition, depth, (ServerPlayer) context.getPlayer());
                     resetBlockPosFirstAndSecondPositions(connectedPipesSuccessfully);
                 }
             }
