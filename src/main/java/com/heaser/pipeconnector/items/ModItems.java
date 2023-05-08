@@ -2,9 +2,9 @@ package com.heaser.pipeconnector.items;
 
 import com.heaser.pipeconnector.PipeConnector;
 import com.heaser.pipeconnector.items.pipeconnectoritem.PipeConnectorItem;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.CreativeModeTabs;
-import net.minecraftforge.event.CreativeModeTabEvent;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
@@ -18,12 +18,9 @@ public class ModItems {
 			PipeConnector.MODID);
 
 	public static final RegistryObject<Item> PIPE_CONNECTOR = ITEMS.register("pipe_connector",
-			() -> new PipeConnectorItem(new Item.Properties().stacksTo(1).requiredFeatures()));
+			() -> new PipeConnectorItem(new Item.Properties().stacksTo(1).tab(CreativeModeTab.TAB_MISC)));
 
-	@SubscribeEvent
-	public void buildContents(CreativeModeTabEvent.BuildContents event) {
-		if (event.getTab() == CreativeModeTabs.TOOLS_AND_UTILITIES) {
-			event.accept(PIPE_CONNECTOR);
-		}
+	public static IEventBus register(IEventBus eventBus) {
+		return eventBus;
 	}
 }

@@ -17,10 +17,11 @@ public class NetworkHandler {
     public static void register() {
         int packetId = 0;
 
-        // Your existing packet registration
+        // Syncs the depth of the pipe connector with the server
         CHANNEL.registerMessage(packetId++, UpdateDepthPacket.class, UpdateDepthPacket::encode, UpdateDepthPacket::decode, UpdateDepthPacket::handle);
-
-        // Register the new packet
+        // Syncs the highlight of the pipe connector with the server
         CHANNEL.registerMessage(packetId++, PipeConnectorHighlightPacket.class, PipeConnectorHighlightPacket::encode, PipeConnectorHighlightPacket::decode, PipeConnectorHighlightPacket::handle);
+        // Syncs pipe number with Server
+        CHANNEL.registerMessage(packetId++, PipeUpdatePacket.class, PipeUpdatePacket::encode, PipeUpdatePacket::decode, PipeUpdatePacket::handle);
     }
 }

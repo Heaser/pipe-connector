@@ -5,6 +5,7 @@ import com.heaser.pipeconnector.constants.TagKeys;
 import com.heaser.pipeconnector.items.pipeconnectoritem.PipeConnectorItem;
 import com.heaser.pipeconnector.network.NetworkHandler;
 import com.heaser.pipeconnector.network.PipeConnectorHighlightPacket;
+import com.heaser.pipeconnector.network.PipeUpdatePacket;
 import com.mojang.logging.LogUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -68,6 +69,7 @@ public class PipeConnectorUtils {
             blockPosSet.forEach((blockPos -> {
                 if (!isCreativeMode) {
                     reduceNumberOfPipesInInventory(player);
+                    NetworkHandler.CHANNEL.sendToServer(new PipeUpdatePacket());
                 }
 
                 PipeConnectorHighlightPacket packet = new PipeConnectorHighlightPacket(blockPos);
@@ -246,11 +248,6 @@ public class PipeConnectorUtils {
             }
         }
 
-//        inventory.items.forEach((itemStack -> {
-//            if (itemStack.getItem() == pipe) {
-//                numberOfPipes = itemStack.getCount();
-//            }
-//        }));
         return numberOfPipes;
     }
 

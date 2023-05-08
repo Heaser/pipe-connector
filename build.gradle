@@ -84,6 +84,8 @@ repositories {
 dependencies {
     minecraft "net.minecraftforge:forge:${mod_minecraft_version}-${forge_version}"
     runtimeOnly fg.deobf("curse.maven:pipez-${pipez_mod_id}:${pipez_mod_file_id}")
+    runtimeOnly fg.deobf("curse.maven:refined-storage-${refinedstorage_mod_id}:${refinedstorage_mod_file_id}")
+    runtimeOnly fg.deobf("curse.maven:mekanism-${mekanism_mod_id}:${mekanism_mod_file_id}")
    // runtimeOnly fg.deobf("curse.maven:super-factory-manager-${sfm_mod_id}:${sfm_mod_file_id}")
 }
 
