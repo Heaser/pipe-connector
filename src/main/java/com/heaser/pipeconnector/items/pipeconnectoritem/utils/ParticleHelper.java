@@ -1,30 +1,30 @@
 package com.heaser.pipeconnector.items.pipeconnectoritem.utils;
 
-import com.mojang.math.Vector3d;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.world.level.Level;
+import net.minecraft.server.level.ServerLevel;
 
 
 public class ParticleHelper {
-    public static void spawnDirectionHighlightParticles(Level level, BlockPos pos, float red, float green, float blue, float alpha) {
-        double x = pos.getX() + 0.5;
-        double y = pos.getY() + 0.5;
-        double z = pos.getZ() + 0.5;
 
-        // Keeping this instead I'll want to use more complex particles
-        Vector3d color = new Vector3d(red, green, blue);
+    //TODO: Make separate methods for each particle you want to spawn though this class really isn't required with the current use.
+    // It could easily be part of PipeConnectorItem instead. I'll leave it for now though as there's lots of info here.
+    // Don't try to make a mega cover all method either as the particle spawner already handles that. Just use it.
 
-        for (int i = 0; i < 10; i++) {
-            double offsetX = (Math.random() - 0.1) * 0.2;
-            double offsetY = (Math.random() - 0.1) * 0.2;
-            double offsetZ = (Math.random() - 0.1) * 0.2;
+    public static void serverSpawnMarkerParticle(ServerLevel level, BlockPos pos) {
+        //TODO: We factored out the random noise, thus these variables aren't needed anymore.
 
+        //TODO: Using the same source of random makes random more random.
+        //TODO: Server spawned particles can handle a quality, don't need to loop over to repeat and get extra noise. It's already done for us.
 
-            level.addParticle(ParticleTypes.GLOW, x + offsetX, y + offsetY, z + offsetZ,
-                    0, 0.01, 0);
-
-
-        }
+        //TODO: If you wish for only a specific player to see the particles level.sendParticles also has another signature where you can define the player
+        // that will see it.
+        // I hate when Mojang changes var orders throughout methods... particles are annoying enough as is with all the options don't change the order dammit
+        // (unused)Player, ParticleType, x, y, z, count, xDist, yDist, zDist, speed
+        level.sendParticles(ParticleTypes.GLOW,
+                pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
+                10,
+                0, 0.01, 0,
+                0);
     }
 }

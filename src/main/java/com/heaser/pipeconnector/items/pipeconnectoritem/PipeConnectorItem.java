@@ -1,18 +1,15 @@
 package com.heaser.pipeconnector.items.pipeconnectoritem;
 
 import com.heaser.pipeconnector.constants.TagKeys;
+import com.heaser.pipeconnector.items.pipeconnectoritem.utils.ParticleHelper;
 import com.heaser.pipeconnector.items.pipeconnectoritem.utils.PipeConnectorUtils;
-import com.heaser.pipeconnector.network.NetworkHandler;
-import com.heaser.pipeconnector.network.PipeConnectorHighlightPacket;
-import com.heaser.pipeconnector.network.UpdateDepthPacket;
 import com.mojang.logging.LogUtils;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -23,18 +20,20 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraftforge.network.PacketDistributor;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
 import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 
 public class PipeConnectorItem extends Item {
-    private BlockPos firstPosition;
-    private BlockPos secondPosition;
+    Direction endFace;
+    Direction startFace;
     private static final Logger LOGGER = LogUtils.getLogger();
-    Direction facingSideEnd;
-    Direction facingSideStart;
+    // TODO: Rename pos and face variables for consistency's sake.
+    private BlockPos startPos;
+    private BlockPos endPos;
 
 
     public PipeConnectorItem(Properties properties) {
@@ -42,7 +41,8 @@ public class PipeConnectorItem extends Item {
     }
 
     // -----------------------------------------------------------------------------------------------------------------
-
+    @ParametersAreNonnullByDefault
+    @NotNull
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand useHand) {
         if (!level.isClientSide) {
@@ -51,7 +51,7 @@ public class PipeConnectorItem extends Item {
             boolean isShiftKeyDown = player.isShiftKeyDown();
 
             if (useHand == InteractionHand.MAIN_HAND && isShiftKeyDown && isAir) {
-                resetBlockPosFirstAndSecondPositions(true);
+                resetBlockPositions(true, player);
             }
         }
         return super.use(level, player, useHand);
@@ -60,53 +60,67 @@ public class PipeConnectorItem extends Item {
     // -----------------------------------------------------------------------------------------------------------------
 
     @Override
-    public InteractionResult useOn(UseOnContext context) {
+    public @NotNull InteractionResult useOn(UseOnContext context) {
 
-        if (!context.getLevel().isClientSide) {
-            boolean isPipe = PipeConnectorUtils.holdingAllowedPipe(TagKeys.PLACEABLE_ITEMS, context.getPlayer());
-            ItemStack stack = context.getItemInHand();
-            int depth = PipeConnectorUtils.getDepthFromStack(stack);
-            boolean isShiftKeyDown = context.getPlayer().isShiftKeyDown();
+        //TODO: Grab the player to use later. This is far better to do than constantly grabbing the player as data may change.
+        Player usingPlayer = context.getPlayer();
 
-            if(depth == 0) {
-                PipeConnectorUtils.setDepthToStack(stack, 1);
-                NetworkHandler.CHANNEL.sendToServer(new UpdateDepthPacket(PipeConnectorUtils.getDepthFromStack(stack)));
+        //TODO: Can't have a null player and player is nullable, should check it for null otherwise it will crash.
+        if (!context.getLevel().isClientSide && usingPlayer != null) {
+            //TODO: Don't really need a method that gets offhand specifically as it's already simple. Plus it's single use.
+            // Would be better to use `isValidPipe(ItemStack)` if you want a method as it's more recyclable.
+            boolean holdingAllowedPipe = usingPlayer.getOffhandItem().is(TagKeys.PLACEABLE_ITEMS);
+            ItemStack interactedItem = context.getItemInHand();
+            int depth = PipeConnectorUtils.getDepthFromStack(interactedItem);
+            boolean isShiftKeyDown = usingPlayer.isShiftKeyDown();
+            Level level = context.getLevel();
+
+            if (depth == 0) {
+                PipeConnectorUtils.setDepthToStack(interactedItem, 1);
+                //TODO: You can't send a packet to the server from the server....
+                // We are already in the item class so you can update it as needed.
             }
 
             BlockPos clickedPosition = context.getClickedPos();
-            if (isShiftKeyDown && !isPipe) {
-                context.getPlayer().displayClientMessage(Component.translatable("item.pipe_connector.message.holdValidItem").withStyle(ChatFormatting.GOLD), true);
+            if (isShiftKeyDown && !holdingAllowedPipe) {
+                usingPlayer.displayClientMessage(Component.translatable("item.pipe_connector.message.holdValidItem").withStyle(ChatFormatting.GOLD), true);
                 return InteractionResult.FAIL;
             }
 
             if (isShiftKeyDown && context.getClickedFace() == Direction.UP) {
-                context.getPlayer().displayClientMessage(Component.translatable("item.pipe_connector.message.UpSideNotAllowed").withStyle(ChatFormatting.BOLD, ChatFormatting.GREEN), true);
+                usingPlayer.displayClientMessage(Component.translatable("item.pipe_connector.message.UpSideNotAllowed").withStyle(ChatFormatting.BOLD, ChatFormatting.GREEN), true);
                 return InteractionResult.FAIL;
             }
 
-            if (firstPosition == null && isShiftKeyDown) {
-                firstPosition = clickedPosition;
+            //TODO: Depending on context readability in an IF with many conditions can be problematic. It can be easier to
+            // read and understand if common between internal elements are checked first. Thus I prefer to do it this way
+            // rather than check each time if a condition is met, though that may be required in some cases so it's entirely situational.
+            if (isShiftKeyDown) {
+                if (startPos == null) {
+                    startPos = clickedPosition;
+                    startFace = context.getClickedFace();
+                    ParticleHelper.serverSpawnMarkerParticle((ServerLevel) level, startPos.relative(startFace));
+                    //TODO: Leftover debugs are annoying for server ops. Stuff them behind configs, comment out or delete.
+                    //LOGGER.debug("firstPosition found: {}", firstPosition);
 
-                facingSideStart = context.getClickedFace();
-                PipeConnectorHighlightPacket packet = new PipeConnectorHighlightPacket(firstPosition, facingSideStart);
-                NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) context.getPlayer()), packet);
+                    //TODO: this logic is flawed. It's impossible for the second position to never not be null, even if it's not it
+                    // can't be set prior to the first. Don't need a null check for it.
+                } else {
+                    if (clickedPosition.equals(startPos)) {
+                        resetBlockPositions(true, usingPlayer);
+                        return InteractionResult.SUCCESS;
+                    }
+                    endPos = clickedPosition;
+                    endFace = context.getClickedFace();
+                    ParticleHelper.serverSpawnMarkerParticle((ServerLevel) level, endPos.relative(endFace));
 
-                LOGGER.debug("firstPosition found: {}", firstPosition);
-            } else if (secondPosition == null && isShiftKeyDown) {
-                if (clickedPosition.equals(firstPosition)) {
-                    resetBlockPosFirstAndSecondPositions(true);
-                    return InteractionResult.SUCCESS;
-                }
-                secondPosition = clickedPosition;
-                facingSideEnd = context.getClickedFace();
+                    //LOGGER.debug("secondPosition found: {}", secondPosition);
 
-                PipeConnectorHighlightPacket packet = new PipeConnectorHighlightPacket(secondPosition, facingSideEnd);
-                NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) context.getPlayer()), packet);
-
-                LOGGER.debug("secondPosition found: {}", secondPosition);
-                if (secondPosition != null && firstPosition != null) {
-                    boolean connectedPipesSuccessfully = connectBlocks(context.getLevel(), firstPosition, secondPosition, depth, (ServerPlayer) context.getPlayer());
-                    resetBlockPosFirstAndSecondPositions(connectedPipesSuccessfully);
+                    //TODO: It's not possible to get here if the first value is null, and we just set the second pos that
+                    // isn't possible to be null so we don't need to check for null.
+                    //TODO: this is already wrapped in a clientside check, it's always the server player.
+                    //TODO: Inline, variable is pointless to assign then use in another method.
+                    resetBlockPositions(connectBlocks(usingPlayer, startPos, endPos, depth), usingPlayer);
                 }
             }
         }
@@ -115,11 +129,12 @@ public class PipeConnectorItem extends Item {
 
     // -----------------------------------------------------------------------------------------------------------------
 
+    @ParametersAreNonnullByDefault
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> components, TooltipFlag tooltipFlag) {
 
         // Depth will be displayed as depth-1 to the player to reduce confusion
-        int depth = PipeConnectorUtils.getDepthFromStack(stack) - 1;
+        //int depth = PipeConnectorUtils.getDepthFromStack(stack) - 1;
 
         if (Screen.hasShiftDown()) {
 
@@ -135,24 +150,18 @@ public class PipeConnectorItem extends Item {
 
     // -----------------------------------------------------------------------------------------------------------------
 
-    private boolean connectBlocks(Level level, BlockPos start, BlockPos end, int depth, ServerPlayer serverPlayer) {
+    private boolean connectBlocks(Player player, BlockPos startPos, BlockPos endPos, int depth) {
+        //TODO: Don't really need these variables, they add nothing of value.
 
-        Player player = Minecraft.getInstance().player;
-
-        BlockPos adjustedStart = PipeConnectorUtils.getNeighborInFacingDirection(start, facingSideStart);
-        BlockPos adjustedEnd = PipeConnectorUtils.getNeighborInFacingDirection(end, facingSideEnd);
-
-        Item pipe = player.getOffhandItem().getItem();
-        Block pipeBlock = Block.byItem(pipe);
-
-        boolean success = PipeConnectorUtils.connectPathWithSegments(level, adjustedStart, adjustedEnd, depth, pipeBlock, serverPlayer);
-        return success;
+        //TODO: Don't need to make a variable to just return it, inline time.
+        return PipeConnectorUtils.connectPathWithSegments(player,
+                startPos.relative(startFace), endPos.relative(endFace), depth, Block.byItem(player.getOffhandItem().getItem()));
     }
 
-    private void resetBlockPosFirstAndSecondPositions(boolean shouldDisplayMessage) {
-        Player player = Minecraft.getInstance().player;
-        firstPosition = null;
-        secondPosition = null;
+    //TODO: Renamed cause it was long and complex, plus there's no other reset methods. Also just pass the player in from the source.
+    private void resetBlockPositions(boolean shouldDisplayMessage, Player player) {
+        startPos = null;
+        endPos = null;
         if (shouldDisplayMessage) {
             player.displayClientMessage(Component.translatable("item.pipe_connector.message.resettingPositions"), true);
         }

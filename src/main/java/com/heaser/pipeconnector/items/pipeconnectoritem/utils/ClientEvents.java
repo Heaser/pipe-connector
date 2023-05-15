@@ -4,7 +4,6 @@ import com.heaser.pipeconnector.network.NetworkHandler;
 import com.heaser.pipeconnector.network.UpdateDepthPacket;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -12,11 +11,7 @@ import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
-
-
-
 public class ClientEvents {
-    private int depthText;
     public ClientEvents() {
 
     }
@@ -44,10 +39,10 @@ public class ClientEvents {
         } else {
             PipeConnectorUtils.setDepthToStack(pipeConnectorStack, depth);
         }
-        depthText = PipeConnectorUtils.getDepthFromStack(pipeConnectorStack) - 1;
+        int depthText = PipeConnectorUtils.getDepthFromStack(pipeConnectorStack) - 1;
         // Syncs with server to prevent cases where the
         NetworkHandler.CHANNEL.sendToServer(new UpdateDepthPacket(PipeConnectorUtils.getDepthFromStack(pipeConnectorStack)));
-        player.displayClientMessage(Component.translatable("item.pipe_connector.message.newDepth",depthText).withStyle(ChatFormatting.YELLOW), true );
+        player.displayClientMessage(Component.translatable("item.pipe_connector.message.newDepth", depthText).withStyle(ChatFormatting.YELLOW), true);
 
         event.setCanceled(true);
     }

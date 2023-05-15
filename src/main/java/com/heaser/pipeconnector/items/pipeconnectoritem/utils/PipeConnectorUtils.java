@@ -3,18 +3,12 @@ package com.heaser.pipeconnector.items.pipeconnectoritem.utils;
 
 import com.heaser.pipeconnector.constants.TagKeys;
 import com.heaser.pipeconnector.items.pipeconnectoritem.PipeConnectorItem;
-import com.heaser.pipeconnector.network.NetworkHandler;
-import com.heaser.pipeconnector.network.PipeConnectorHighlightPacket;
-import com.heaser.pipeconnector.network.PipeUpdatePacket;
 import com.mojang.logging.LogUtils;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.tags.TagKey;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Inventory;
@@ -23,10 +17,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.network.PacketDistributor;
 import org.slf4j.Logger;
-
 
 import java.util.HashSet;
 import java.util.Set;
@@ -35,18 +26,21 @@ public class PipeConnectorUtils {
 
     private static final Logger LOGGER = LogUtils.getLogger();
 
-    public static boolean connectPathWithSegments(Level level, BlockPos start, BlockPos end, int depth, Block block, ServerPlayer serverPlayer) {
-        Player player = Minecraft.getInstance().player;
+    public static boolean connectPathWithSegments(Player player, BlockPos start, BlockPos end, int depth, Block block) {
+        //TODO: Don't need to get the player, just pass it in from where this used.
+        //TODO: The player already contains the level, don't really need to keep passing it from up the chain. Less is more.
+        Level level = player.getLevel();
 
-        Tuple validPathValueAndBlock = isValidPipePath(level, start, end, depth);
-        boolean isValidPath = (boolean) validPathValueAndBlock.getA();
-        String InvalidBlockName = (String) validPathValueAndBlock.getB();
+        // TODO: Set your types instead of raw classes so you don't need to cast things and it helps the IDE check stuff.
+        Tuple<Boolean, String> validPathValueAndBlock = isValidPipePath(level, start, end, depth);
+        boolean isValidPath = validPathValueAndBlock.getA();
+        String InvalidBlockName = validPathValueAndBlock.getB();
 
         Set<BlockPos> blockPosSet = getBlockPosSet(start, end, depth);
 
         LOGGER.debug(blockPosSet.toString());
 
-        assert player != null;
+        //TODO: Don't use assert keyword. It doesn't work outside of dev unless you have JVM flags set. Player already isn't null.
         boolean isCreativeMode = player.isCreative();
         int pipeLimit = 640;
 
@@ -66,15 +60,17 @@ public class PipeConnectorUtils {
             }
         }
         if (isValidPath) {
-            blockPosSet.forEach((blockPos -> {
+            //TODO: Renamed for easier reading.
+            blockPosSet.forEach((pathPos -> {
                 if (!isCreativeMode) {
+                    //TODO: Test pipe subtraction.
                     reduceNumberOfPipesInInventory(player);
-                    NetworkHandler.CHANNEL.sendToServer(new PipeUpdatePacket());
+                    //TODO: Networking shouldn't be needed for removing items. This would indicate you aren't on the right side.
                 }
+                ParticleHelper.serverSpawnMarkerParticle((ServerLevel) level, pathPos);
+                //TODO: Make this come from the player to fix bypassing other mods player restrictions.
 
-                PipeConnectorHighlightPacket packet = new PipeConnectorHighlightPacket(blockPos);
-                NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) serverPlayer), packet);
-                breakAndSetBlock(level, blockPos, block);
+                breakAndSetBlock(level, pathPos, block, player);
             }));
             return true;
         }
@@ -82,25 +78,22 @@ public class PipeConnectorUtils {
         return false;
     }
 
+    // TODO: Method call and variables is longer than just inlining the code it ran and making the variables easier to understand.
 
     // -----------------------------------------------------------------------------------------------------------------
 
-    public static BlockPos getNeighborInFacingDirection(BlockPos pos, Direction facing) {
-        return pos.relative(facing);
-    }
-
-    // -----------------------------------------------------------------------------------------------------------------
-
-
-    // -----------------------------------------------------------------------------------------------------------------
+    //TODO: I'm not really sure what the goal here is? Traversing the whole path only to store and return the last block seen that's not valid doesn't make sense.
+    // Would be better to fail at the first block hit unless you want to store every invalid spot for another reason. You don't need a Tuple for that, just an ArrayList of positions.
+    // Won't replace this as I can't tell what the goal is.
     public static Tuple<Boolean, String> isValidPipePath(Level level, BlockPos start, BlockPos end, int depth) {
         boolean isValid = true;
         String invalidBlockName = "";
         Set<BlockPos> blockPosSet = getBlockPosSet(start, end, depth);
         for (BlockPos blockPos : blockPosSet) {
-            if (!isBreakable(level, blockPos)) {
+            if (isNotBreakable(level, blockPos)) {
                 isValid = false;
-                invalidBlockName = level.getBlockState(blockPos).getBlock().getName().toString();
+                //TODO: Can't use `.toString()` on translatable components as you print the object as a string instead of the name. Use .getString() instead.
+                invalidBlockName = level.getBlockState(blockPos).getBlock().getName().getString();
             }
         }
         return new Tuple<>(isValid, invalidBlockName);
@@ -167,30 +160,25 @@ public class PipeConnectorUtils {
 
     // -----------------------------------------------------------------------------------------------------------------
 
-    private static void breakAndSetBlock(Level level, BlockPos pos, Block block) {
-        BlockState blockAtPos = level.getBlockState(pos);
+    //TODO: This method isn't ideal either as you should probably bundle your validations together into one as currently this will still probably bypass things it shouldn't.
+    private static void breakAndSetBlock(Level level, BlockPos pos, Block block, Player player) {
 
-        if (!PipeConnectorUtils.isVoidableBlock(blockAtPos)) {
-            level.destroyBlock(pos, true);
+        if (!level.getBlockState(pos).is(TagKeys.VOIDABLE_BLOCKS)) {
+            //TODO: Need to add the player as the breaker for reasons.
+            level.destroyBlock(pos, true, player);
         }
         level.setBlockAndUpdate(pos, block.defaultBlockState());
     }
 
     // -----------------------------------------------------------------------------------------------------------------
-
-    // -----------------------------------------------------------------------------------------------------------------
     // Prevent pipe connector from placing blocks in if an unbreakable block was reached
     private static boolean reachedUnbreakableBlock(Level level, BlockPos pos) {
-        if (!isBreakable(level, pos)) {
-            return true;
-        }
-        return false;
+        return isNotBreakable(level, pos);
     }
 
-    private static boolean isBreakable(Level level, BlockPos pos) {
-        BlockState blockPos = level.getBlockState(pos);
-        float hardness = blockPos.getDestroySpeed(level, pos);
-        return hardness != -1;
+    private static boolean isNotBreakable(Level level, BlockPos pos) {
+        //TODO: Pointless variables.
+        return level.getBlockState(pos).getDestroySpeed(level, pos) == -1;
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -220,19 +208,7 @@ public class PipeConnectorUtils {
     }
 
     // -----------------------------------------------------------------------------------------------------------------
-
-    public static boolean holdingAllowedPipe(TagKey<Item> tagKey, Player player) {
-        return player.getOffhandItem().is(tagKey);
-    }
-
-    // -----------------------------------------------------------------------------------------------------------------
-
-    private static boolean isVoidableBlock(BlockState blockState) {
-        return blockState.is(TagKeys.VOIDABLE_BLOCKS);
-    }
-
-
-    // -----------------------------------------------------------------------------------------------------------------
+    //TODO: Don't need a method for a single call that does a single thing. Break out larger groups of logic or repeatable stuff instead.
 
     // Check how many items that were in the players offhand are also available in the players inventory
     public static int getNumberOfPipesInInventory(Player player) {
@@ -262,11 +238,10 @@ public class PipeConnectorUtils {
             if (inventory.items.get(i).getItem() == pipe) {
                 if (inventory.items.get(i).getCount() > 1) {
                     inventory.items.get(i).shrink(1);
-                    return;
                 } else {
                     inventory.items.set(i, ItemStack.EMPTY);
-                    return;
                 }
+                return;
             }
         }
         // Reduce the number of pipes in the players offhand by one
