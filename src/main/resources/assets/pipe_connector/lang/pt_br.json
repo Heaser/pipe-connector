@@ -1,0 +1,17 @@
+{
+
+    "item.pipe_connector.pipe_connector": "Pipe Connector",
+    "item.pipe_connector.message.holdValidItem": "Você deve manter um item de tubo válido em sua mão inábil",
+    "item.pipe_connector.message.UpSideNotAllowed": "Você não pode conectar um tubo ao topo de um bloco",
+    "item.pipe_connector.message.firstPositionSet": "1ª posição escolhida em: %s",
+    "item.pipe_connector.message.secondPositionSet":"2ª posição escolhida em: %s",
+    "item.pipe_connector.message.resettingPositions": "Redefinindo posições",
+    "item.pipe_connector.tooltip.usageExplanation":"Shift + Right-Click em Blocos irá definir posições",
+    "item.pipe_connector.tooltip.CancelSelectionExplanation":"Shift + Right-Click no Ar cancelará a seleção",
+    "item.pipe_connector.tooltip.changeDepthExplanation":"Shift + Scroll wheel para mudar a profundidade da tubulação",
+    "item.pipe_connector.tooltip.shiftForMoreInfo": "Segure Shift para mais informações",
+    "item.pipe_connector.message.newDepth": "A profundidade foi definida para %s",
+    "item.pipe_connector.message.notEnoughPipes": "Não há tubos suficientes no inventário, faltando %s tubos",
+    "item.pipe_connector.message.reachedPipeLimit": "Não é possível colocar mais de %s tubos de uma só vez",
+    "item.pipe_connector.message.unbreakableBlockReached": "Pipes não podem substituir %s blocos"
+}
