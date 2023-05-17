@@ -463,6 +463,10 @@
     {
       "id": "thermal:fluid_duct",
       "required": false
+    },
+    {
+      "id": "thermal:fluid_duct_windowed",
+      "required": false
     }
   ]
 }
