@@ -9,14 +9,16 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.util.Tuple;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 import org.slf4j.Logger;
 
 import java.util.HashSet;
@@ -26,22 +28,14 @@ public class PipeConnectorUtils {
 
     private static final Logger LOGGER = LogUtils.getLogger();
 
-    public static boolean connectPathWithSegments(Player player, BlockPos start, BlockPos end, int depth, Block block) {
-        //TODO: Don't need to get the player, just pass it in from where this used.
-        //TODO: The player already contains the level, don't really need to keep passing it from up the chain. Less is more.
+    public static boolean connectPathWithSegments(Player player, BlockPos start, BlockPos end, int depth, Block block, UseOnContext context) {
         Level level = player.getLevel();
-
-        // TODO: Set your types instead of raw classes so you don't need to cast things and it helps the IDE check stuff.
-        Tuple<Boolean, String> validPathValueAndBlock = isValidPipePath(level, start, end, depth);
-        boolean isValidPath = validPathValueAndBlock.getA();
-        String InvalidBlockName = validPathValueAndBlock.getB();
-
-        Set<BlockPos> blockPosSet = getBlockPosSet(start, end, depth);
+        Set<BlockPos> blockPosSet = getBlockPosSet(start, end, depth, level);
 
         LOGGER.debug(blockPosSet.toString());
 
-        //TODO: Don't use assert keyword. It doesn't work outside of dev unless you have JVM flags set. Player already isn't null.
-        boolean isCreativeMode = player.isCreative();
+
+        boolean isCreativeMode = player.getAbilities().instabuild;
         int pipeLimit = 640;
 
         // Disable pipe check and reduction in creative mode.
@@ -59,49 +53,28 @@ public class PipeConnectorUtils {
                 return false;
             }
         }
-        if (isValidPath) {
-            //TODO: Renamed for easier reading.
+        boolean poop = !isNotBreakable(level, blockPosSet.iterator().next());
+        if (blockPosSet.size() > 1 && !isNotBreakable(level, blockPosSet.iterator().next())) {
             blockPosSet.forEach((pathPos -> {
                 if (!isCreativeMode) {
-                    //TODO: Test pipe subtraction.
                     reduceNumberOfPipesInInventory(player);
-                    //TODO: Networking shouldn't be needed for removing items. This would indicate you aren't on the right side.
                 }
                 ParticleHelper.serverSpawnMarkerParticle((ServerLevel) level, pathPos);
-                //TODO: Make this come from the player to fix bypassing other mods player restrictions.
-
-                breakAndSetBlock(level, pathPos, block, player);
+                boolean wasSet = breakAndSetBlock(level, pathPos, block, player, context);
             }));
             return true;
         }
-        player.displayClientMessage(Component.translatable("item.pipe_connector.message.unbreakableBlockReached", InvalidBlockName).withStyle(ChatFormatting.BOLD, ChatFormatting.YELLOW), true);
+        String invalidBlockName = level.getBlockState(blockPosSet.iterator().next()).getBlock().getName().getString();
+        player.displayClientMessage(Component.translatable("item.pipe_connector.message.unbreakableBlockReached",invalidBlockName).withStyle(ChatFormatting.BOLD, ChatFormatting.YELLOW), true);
         return false;
     }
 
-    // TODO: Method call and variables is longer than just inlining the code it ran and making the variables easier to understand.
-
     // -----------------------------------------------------------------------------------------------------------------
-
-    //TODO: I'm not really sure what the goal here is? Traversing the whole path only to store and return the last block seen that's not valid doesn't make sense.
-    // Would be better to fail at the first block hit unless you want to store every invalid spot for another reason. You don't need a Tuple for that, just an ArrayList of positions.
-    // Won't replace this as I can't tell what the goal is.
-    public static Tuple<Boolean, String> isValidPipePath(Level level, BlockPos start, BlockPos end, int depth) {
-        boolean isValid = true;
-        String invalidBlockName = "";
-        Set<BlockPos> blockPosSet = getBlockPosSet(start, end, depth);
-        for (BlockPos blockPos : blockPosSet) {
-            if (isNotBreakable(level, blockPos)) {
-                isValid = false;
-                //TODO: Can't use `.toString()` on translatable components as you print the object as a string instead of the name. Use .getString() instead.
-                invalidBlockName = level.getBlockState(blockPos).getBlock().getName().getString();
-            }
-        }
-        return new Tuple<>(isValid, invalidBlockName);
-    }
-
-    private static Set<BlockPos> getBlockPosSet(BlockPos start, BlockPos end, int depth) {
+    // This Method creates a set of BlockPos that will eventually which will eventually be used to bridge between the
+    // two pipe blocks, if the Set returned is of size of 1, then the path is invalid.
+    // -----------------------------------------------------------------------------------------------------------------
+    private static Set<BlockPos> getBlockPosSet(BlockPos start, BlockPos end, int depth, Level level) {
         Set<BlockPos> blockPosList = new HashSet<>();
-
 
         int deltaY = (start.getY() > end.getY()) ? Math.abs((start.getY() - end.getY())) : Math.abs(end.getY() - start.getY());
         int startDepth = depth, endDepth = depth;
@@ -113,11 +86,17 @@ public class PipeConnectorUtils {
         }
 
         for (int i = 0; i < startDepth; i++) {
+            if(isNotBreakable(level, start)) {
+                return clearAndAddUnbreakableBlockPosSet(start);
+            }
             blockPosList.add(start);
             start = start.below();
         }
 
         for (int i = 0; i < endDepth; i++) {
+            if(isNotBreakable(level, end)) {
+                return clearAndAddUnbreakableBlockPosSet(end);
+            }
             blockPosList.add(end);
             end = end.below();
         }
@@ -139,18 +118,27 @@ public class PipeConnectorUtils {
 
         //         Move along the Y-axis
         for (int i = 0; i < ySteps; i++) {
+            if(isNotBreakable(level, currentPos)) {
+                return clearAndAddUnbreakableBlockPosSet(currentPos);
+            }
             blockPosList.add(currentPos);
             currentPos = currentPos.offset(0, yDirection, 0);
         }
 
         // Move along the X-axis
         for (int i = 0; i < xSteps; i++) {
+            if(isNotBreakable(level, currentPos)) {
+                return clearAndAddUnbreakableBlockPosSet(currentPos);
+            }
             blockPosList.add(currentPos);
             currentPos = currentPos.offset(xDirection, 0, 0);
         }
 
         // Move along the Z-axis
         for (int i = 0; i < zSteps; i++) {
+            if(isNotBreakable(level, currentPos)) {
+                return clearAndAddUnbreakableBlockPosSet(currentPos);
+            }
             blockPosList.add(currentPos);
             currentPos = currentPos.offset(0, 0, zDirection);
         }
@@ -160,14 +148,29 @@ public class PipeConnectorUtils {
 
     // -----------------------------------------------------------------------------------------------------------------
 
-    //TODO: This method isn't ideal either as you should probably bundle your validations together into one as currently this will still probably bypass things it shouldn't.
-    private static void breakAndSetBlock(Level level, BlockPos pos, Block block, Player player) {
+    private static Set<BlockPos> clearAndAddUnbreakableBlockPosSet(BlockPos pos) {
+        Set<BlockPos> blockPosList = new HashSet<>();
+        blockPosList.add(pos);
+        return blockPosList;
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    private static boolean breakAndSetBlock(Level level, BlockPos pos, Block block, Player player, UseOnContext context) {
+
+        BlockPlaceContext blockPlaceContext = new BlockPlaceContext(context);
+        BlockState blockState = block.getStateForPlacement(blockPlaceContext);
 
         if (!level.getBlockState(pos).is(TagKeys.VOIDABLE_BLOCKS)) {
-            //TODO: Need to add the player as the breaker for reasons.
             level.destroyBlock(pos, true, player);
+            level.addDestroyBlockEffect(pos, level.getBlockState(pos));
         }
-        level.setBlockAndUpdate(pos, block.defaultBlockState());
+
+        if (blockState != null) {
+//            blockState.updateNeighbourShapes(level, pos, 3);
+            return level.setBlockAndUpdate(pos, blockState);
+        }
+        return false;
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -177,7 +180,6 @@ public class PipeConnectorUtils {
     }
 
     private static boolean isNotBreakable(Level level, BlockPos pos) {
-        //TODO: Pointless variables.
         return level.getBlockState(pos).getDestroySpeed(level, pos) == -1;
     }
 
@@ -208,8 +210,6 @@ public class PipeConnectorUtils {
     }
 
     // -----------------------------------------------------------------------------------------------------------------
-    //TODO: Don't need a method for a single call that does a single thing. Break out larger groups of logic or repeatable stuff instead.
-
     // Check how many items that were in the players offhand are also available in the players inventory
     public static int getNumberOfPipesInInventory(Player player) {
         Item pipe = player.getOffhandItem().getItem();

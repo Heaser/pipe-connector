@@ -19,7 +19,5 @@ public class NetworkHandler {
 
         // Syncs the depth of the pipe connector with the server
         CHANNEL.registerMessage(packetId++, UpdateDepthPacket.class, UpdateDepthPacket::encode, UpdateDepthPacket::decode, UpdateDepthPacket::handle);
-        //TODO: No syncing particles you goof.
-        //TODO: Nor syncing items....
     }
 }
