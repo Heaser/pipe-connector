@@ -117,15 +117,7 @@
       "required": false
     },
     {
-      "id": "thermal:energy_duct",
-      "required": false
-    },
-    {
-      "id": "thermal:fluid_duct",
-      "required": false
-    },
-    {
-      "id": "thermal:fluid_duct_windowed",
+      "id":"prettypipes:pipe",
       "required": false
     }
   ]
