@@ -167,20 +167,15 @@ public class PipeConnectorUtils {
         }
 
         if (blockState != null) {
-//            blockState.updateNeighbourShapes(level, pos, 3);
             return level.setBlockAndUpdate(pos, blockState);
         }
         return false;
     }
 
     // -----------------------------------------------------------------------------------------------------------------
-    // Prevent pipe connector from placing blocks in if an unbreakable block was reached
-    private static boolean reachedUnbreakableBlock(Level level, BlockPos pos) {
-        return isNotBreakable(level, pos);
-    }
-
     private static boolean isNotBreakable(Level level, BlockPos pos) {
-        return level.getBlockState(pos).getDestroySpeed(level, pos) == -1;
+        return (level.getBlockState(pos).getDestroySpeed(level, pos) == -1
+                && !level.getBlockState(pos).is(TagKeys.UNBREAKABLE_BLOCKS));
     }
 
     // -----------------------------------------------------------------------------------------------------------------

@@ -14,4 +14,5 @@ public class TagKeys {
 
     public static final TagKey<Item> PLACEABLE_ITEMS = ItemTags.create(new ResourceLocation(MODID, "placeable_items"));
     public static final TagKey<Block> VOIDABLE_BLOCKS = BlockTags.create(new ResourceLocation(MODID, "voidable_blocks"));
+    public static final TagKey<Block> UNBREAKABLE_BLOCKS = BlockTags.create(new ResourceLocation(MODID, "unbreakable_blocks"));
 }
