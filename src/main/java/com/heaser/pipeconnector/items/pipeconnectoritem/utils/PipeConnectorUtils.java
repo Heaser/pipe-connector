@@ -25,7 +25,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class PipeConnectorUtils {
-
     private static final Logger LOGGER = LogUtils.getLogger();
 
     public static boolean connectPathWithSegments(Player player, BlockPos start, BlockPos end, int depth, Block block, UseOnContext context) {
@@ -73,7 +72,7 @@ public class PipeConnectorUtils {
     // This Method creates a set of BlockPos that will eventually which will eventually be used to bridge between the
     // two pipe blocks, if the Set returned is of size of 1, then the path is invalid.
     // -----------------------------------------------------------------------------------------------------------------
-    private static Set<BlockPos> getBlockPosSet(BlockPos start, BlockPos end, int depth, Level level) {
+    public static Set<BlockPos> getBlockPosSet(BlockPos start, BlockPos end, int depth, Level level) {
         Set<BlockPos> blockPosList = new HashSet<>();
 
         int deltaY = (start.getY() > end.getY()) ? Math.abs((start.getY() - end.getY())) : Math.abs(end.getY() - start.getY());

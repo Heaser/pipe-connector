@@ -1,5 +1,6 @@
-package com.heaser.pipeconnector.items.pipeconnectoritem.utils;
+package com.heaser.pipeconnector.items.pipeconnectoritem.utils.client;
 
+import com.heaser.pipeconnector.items.pipeconnectoritem.utils.PipeConnectorUtils;
 import com.heaser.pipeconnector.network.NetworkHandler;
 import com.heaser.pipeconnector.network.UpdateDepthPacket;
 import net.minecraft.ChatFormatting;
