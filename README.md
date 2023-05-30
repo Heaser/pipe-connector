@@ -14,3 +14,6 @@ This mod tries to rectify that.
 * Hold a pipe in your off-hand and the Pipe Connector in your main hand, and Shift + Right-Click a block to set the first position, the do it again on another block to set the second Position, to place the Pipes.
 * Shift + Right click the air to reset positions.
 * Shift + Right Click on the same block to reset positions.
+
+
+Available on [CurseForge](https://www.curseforge.com/minecraft/mc-mods/pipe-connector)
