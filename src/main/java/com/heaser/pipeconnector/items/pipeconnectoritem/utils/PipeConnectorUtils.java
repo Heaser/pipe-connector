@@ -21,59 +21,65 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import org.slf4j.Logger;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 
 public class PipeConnectorUtils {
     private static final Logger LOGGER = LogUtils.getLogger();
 
     public static boolean connectPathWithSegments(Player player, BlockPos start, BlockPos end, int depth, Block block, UseOnContext context) {
         Level level = player.getLevel();
-        Set<BlockPos> blockPosSet = getBlockPosSet(start, end, depth, level);
+        Map<BlockPos, BlockState> blockPosMap = getBlockPosMap(start, end, depth, level);
 
-        LOGGER.debug(blockPosSet.toString());
+        LOGGER.debug(blockPosMap.toString());
 
 
         boolean isCreativeMode = player.getAbilities().instabuild;
         int pipeLimit = 640;
 
         // Disable pipe check and reduction in creative mode.
-        if (!isCreativeMode) {
-            int numOfPipes = getNumberOfPipesInInventory(player);
-            if (numOfPipes < blockPosSet.size()) {
-                int missingPipes = blockPosSet.size() - numOfPipes;
-                LOGGER.debug("Not enough pipes in inventory, missing " + missingPipes + " pipes.");
-                player.displayClientMessage(Component.translatable("item.pipe_connector.message.notEnoughPipes", missingPipes).withStyle(ChatFormatting.BOLD, ChatFormatting.YELLOW), true);
-                return false;
+        if (!isCreativeMode)
+            {
+                int numOfPipes = getNumberOfPipesInInventory(player);
+                if (numOfPipes < blockPosMap.size()) {
+                    int missingPipes = blockPosMap.size() - numOfPipes;
+                    LOGGER.debug("Not enough pipes in inventory, missing " + missingPipes + " pipes.");
+                    player.displayClientMessage(Component.translatable("item.pipe_connector.message.notEnoughPipes", missingPipes).withStyle(ChatFormatting.BOLD, ChatFormatting.YELLOW), true);
+                    return false;
+                }
             }
-            if (pipeLimit < blockPosSet.size()) {
+
+        // Checks if the pipe limit has been reached
+            if (pipeLimit < blockPosMap.size()) {
                 LOGGER.debug("Unable to place more than " + pipeLimit + " at once");
                 player.displayClientMessage(Component.translatable("item.pipe_connector.message.reachedPipeLimit", pipeLimit).withStyle(ChatFormatting.BOLD, ChatFormatting.YELLOW), true);
                 return false;
             }
+        // Checks if the block is unbreakable
+        for(Map.Entry<BlockPos, BlockState> set: blockPosMap.entrySet()) {
+            if (isNotBreakable(level, set.getKey())) {
+                String invalidBlockName = set.getValue().getBlock().getName().getString();
+                player.displayClientMessage(Component.translatable("item.pipe_connector.message.unbreakableBlockReached",invalidBlockName).withStyle(ChatFormatting.BOLD, ChatFormatting.YELLOW), true);
+                return false;
+            }
         }
-        boolean poop = !isNotBreakable(level, blockPosSet.iterator().next());
-        if (blockPosSet.size() > 1 && !isNotBreakable(level, blockPosSet.iterator().next())) {
-            blockPosSet.forEach((pathPos -> {
-                if (!isCreativeMode) {
-                    reduceNumberOfPipesInInventory(player);
-                }
-                ParticleHelper.serverSpawnMarkerParticle((ServerLevel) level, pathPos);
-                boolean wasSet = breakAndSetBlock(level, pathPos, block, player, context);
-            }));
-            return true;
+
+        for (Map.Entry<BlockPos, BlockState> set : blockPosMap.entrySet()) {
+            if (!isCreativeMode) {
+                reduceNumberOfPipesInInventory(player);
+            }
+            ParticleHelper.serverSpawnMarkerParticle((ServerLevel) level, set.getKey());
+            boolean wasSet = breakAndSetBlock(level, set.getKey(), block, player, context);
         }
-        String invalidBlockName = level.getBlockState(blockPosSet.iterator().next()).getBlock().getName().getString();
-        player.displayClientMessage(Component.translatable("item.pipe_connector.message.unbreakableBlockReached",invalidBlockName).withStyle(ChatFormatting.BOLD, ChatFormatting.YELLOW), true);
-        return false;
+        return true;
     }
 
     // -----------------------------------------------------------------------------------------------------------------
-    // This Method creates a set of BlockPos that will eventually which will eventually be used to bridge between the
-    // two pipe blocks, if the Set returned is of size of 1, then the path is invalid.
+    // This Method returns a Map of BlockPos & And BlockStates which will eventually be used to bridge between the
+    // two locations clicked by the Player.
     // -----------------------------------------------------------------------------------------------------------------
-    public static Set<BlockPos> getBlockPosSet(BlockPos start, BlockPos end, int depth, Level level) {
-        Set<BlockPos> blockPosList = new HashSet<>();
+    public static Map<BlockPos, BlockState> getBlockPosMap(BlockPos start, BlockPos end, int depth, Level level) {
+        Map <BlockPos, BlockState> blockHashMap = new HashMap<>();
 
         int deltaY = (start.getY() > end.getY()) ? Math.abs((start.getY() - end.getY())) : Math.abs(end.getY() - start.getY());
         int startDepth = depth, endDepth = depth;
@@ -85,18 +91,12 @@ public class PipeConnectorUtils {
         }
 
         for (int i = 0; i < startDepth; i++) {
-            if(isNotBreakable(level, start)) {
-                return clearAndAddUnbreakableBlockPosSet(start);
-            }
-            blockPosList.add(start);
+            blockHashMap.putIfAbsent(start, level.getBlockState(start));
             start = start.below();
         }
 
         for (int i = 0; i < endDepth; i++) {
-            if(isNotBreakable(level, end)) {
-                return clearAndAddUnbreakableBlockPosSet(end);
-            }
-            blockPosList.add(end);
+            blockHashMap.putIfAbsent(end, level.getBlockState(end));
             end = end.below();
         }
 
@@ -117,40 +117,23 @@ public class PipeConnectorUtils {
 
         //         Move along the Y-axis
         for (int i = 0; i < ySteps; i++) {
-            if(isNotBreakable(level, currentPos)) {
-                return clearAndAddUnbreakableBlockPosSet(currentPos);
-            }
-            blockPosList.add(currentPos);
+            blockHashMap.putIfAbsent(currentPos, level.getBlockState(currentPos));
             currentPos = currentPos.offset(0, yDirection, 0);
         }
 
         // Move along the X-axis
         for (int i = 0; i < xSteps; i++) {
-            if(isNotBreakable(level, currentPos)) {
-                return clearAndAddUnbreakableBlockPosSet(currentPos);
-            }
-            blockPosList.add(currentPos);
+            blockHashMap.putIfAbsent(currentPos, level.getBlockState(currentPos));
             currentPos = currentPos.offset(xDirection, 0, 0);
         }
 
         // Move along the Z-axis
         for (int i = 0; i < zSteps; i++) {
-            if(isNotBreakable(level, currentPos)) {
-                return clearAndAddUnbreakableBlockPosSet(currentPos);
-            }
-            blockPosList.add(currentPos);
+            blockHashMap.putIfAbsent(currentPos, level.getBlockState(currentPos));
             currentPos = currentPos.offset(0, 0, zDirection);
         }
 
-        return blockPosList;
-    }
-
-    // -----------------------------------------------------------------------------------------------------------------
-
-    private static Set<BlockPos> clearAndAddUnbreakableBlockPosSet(BlockPos pos) {
-        Set<BlockPos> blockPosList = new HashSet<>();
-        blockPosList.add(pos);
-        return blockPosList;
+        return blockHashMap;
     }
 
     // -----------------------------------------------------------------------------------------------------------------

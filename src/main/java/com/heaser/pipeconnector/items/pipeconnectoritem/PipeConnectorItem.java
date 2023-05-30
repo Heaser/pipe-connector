@@ -1,10 +1,8 @@
 package com.heaser.pipeconnector.items.pipeconnectoritem;
 
 import com.heaser.pipeconnector.constants.TagKeys;
-import com.heaser.pipeconnector.items.pipeconnectoritem.utils.CachedContext;
 import com.heaser.pipeconnector.items.pipeconnectoritem.utils.ParticleHelper;
 import com.heaser.pipeconnector.items.pipeconnectoritem.utils.PipeConnectorUtils;
-import com.heaser.pipeconnector.items.pipeconnectoritem.utils.client.ClientRenders;
 import com.mojang.logging.LogUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
@@ -37,9 +35,6 @@ public class PipeConnectorItem extends Item {
     private BlockPos endPosServer;
     private BlockPos startPosClient;
     private BlockPos endPosClient;
-
-    public CachedContext cachedContext = new CachedContext();
-
 
     public PipeConnectorItem(Properties properties) {
         super(properties);
@@ -108,11 +103,12 @@ public class PipeConnectorItem extends Item {
         if (isShitKeyDown) {
             if (startPosClient == null) {
                 startPosClient = clickedPosition;
+
             } else if (endPosClient == null) {
                 endPosClient = clickedPosition;
             }
             if(startPosClient != null && endPosClient != null) {
-                ClientRenders.getPipePos(startPosClient, endPosClient, depth, usingPlayer.getLevel());
+                // Render outline
             }
         }
     }
@@ -143,8 +139,7 @@ public class PipeConnectorItem extends Item {
                 endPosServer = clickedPosition;
                 endFace = clickedFace;
                 ParticleHelper.serverSpawnMarkerParticle((ServerLevel) level, endPosServer.relative(endFace));
-
-                resetBlockPositions(connectBlocks(usingPlayer, startPosServer, endPosServer, PipeConnectorUtils.getDepthFromStack(interactedItem), context), usingPlayer);
+               resetBlockPositions(connectBlocks(usingPlayer, startPosServer, endPosServer, PipeConnectorUtils.getDepthFromStack(interactedItem), context), usingPlayer);
             }
 
         }
@@ -175,7 +170,12 @@ public class PipeConnectorItem extends Item {
 
     private boolean connectBlocks(Player player, BlockPos startPos, BlockPos endPos, int depth, UseOnContext context) {
 // TODO: Return this to how they were, the following is just for testing.
-        return PipeConnectorUtils.connectPathWithSegments(player, startPos.relative(startFace), endPos.relative(endFace), depth, Block.byItem(player.getOffhandItem().getItem()), context);
+        return PipeConnectorUtils.connectPathWithSegments(player,
+                startPos.relative(startFace),
+                endPos.relative(endFace),
+                depth,
+                Block.byItem(player.getOffhandItem().getItem()),
+                context);
     }
 
     private void resetBlockPositions(boolean shouldDisplayMessage, Player player) {
