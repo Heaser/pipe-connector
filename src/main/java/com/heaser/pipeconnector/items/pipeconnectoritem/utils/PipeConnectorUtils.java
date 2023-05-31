@@ -81,7 +81,7 @@ public class PipeConnectorUtils {
     public static Map<BlockPos, BlockState> getBlockPosMap(BlockPos start, BlockPos end, int depth, Level level) {
         Map <BlockPos, BlockState> blockHashMap = new HashMap<>();
 
-        int deltaY = (start.getY() > end.getY()) ? Math.abs((start.getY() - end.getY())) : Math.abs(end.getY() - start.getY());
+        int deltaY = Math.abs(start.getY() - end.getY());
         int startDepth = depth, endDepth = depth;
 
         if (start.getY() > end.getY()) {
@@ -90,15 +90,8 @@ public class PipeConnectorUtils {
             startDepth -= deltaY;
         }
 
-        for (int i = 0; i < startDepth; i++) {
-            blockHashMap.putIfAbsent(start, level.getBlockState(start));
-            start = start.below();
-        }
-
-        for (int i = 0; i < endDepth; i++) {
-            blockHashMap.putIfAbsent(end, level.getBlockState(end));
-            end = end.below();
-        }
+        start = moveAndStoreStates(start, startDepth, 0, -1, 0, level, blockHashMap);
+        end = moveAndStoreStates(end, endDepth, 0, -1, 0, level, blockHashMap);
 
         // Create bridge
         int dx = end.getX() - start.getX();
@@ -115,29 +108,25 @@ public class PipeConnectorUtils {
 
         BlockPos currentPos = start.above();
 
-        //         Move along the Y-axis
-        for (int i = 0; i < ySteps; i++) {
-            blockHashMap.putIfAbsent(currentPos, level.getBlockState(currentPos));
-            currentPos = currentPos.offset(0, yDirection, 0);
-        }
-
-        // Move along the X-axis
-        for (int i = 0; i < xSteps; i++) {
-            blockHashMap.putIfAbsent(currentPos, level.getBlockState(currentPos));
-            currentPos = currentPos.offset(xDirection, 0, 0);
-        }
-
-        // Move along the Z-axis
-        for (int i = 0; i < zSteps; i++) {
-            blockHashMap.putIfAbsent(currentPos, level.getBlockState(currentPos));
-            currentPos = currentPos.offset(0, 0, zDirection);
-        }
+        currentPos = moveAndStoreStates(currentPos, ySteps, 0, yDirection, 0, level, blockHashMap);
+        currentPos = moveAndStoreStates(currentPos, xSteps, xDirection, 0, 0, level, blockHashMap);
+        moveAndStoreStates(currentPos, zSteps, 0, 0, zDirection, level, blockHashMap);
 
         return blockHashMap;
     }
 
     // -----------------------------------------------------------------------------------------------------------------
 
+    private static BlockPos moveAndStoreStates(BlockPos start, int steps, int xDirection, int yDirection, int zDirection, Level level, Map<BlockPos, BlockState> map) {
+        BlockPos currentPos = start;
+        for (int i = 0; i < steps; i++) {
+            map.putIfAbsent(currentPos, level.getBlockState(currentPos));
+            currentPos = currentPos.offset(xDirection, yDirection, zDirection);
+        }
+        return currentPos;
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
     private static boolean breakAndSetBlock(Level level, BlockPos pos, Block block, Player player, UseOnContext context) {
 
         BlockPlaceContext blockPlaceContext = new BlockPlaceContext(context);
