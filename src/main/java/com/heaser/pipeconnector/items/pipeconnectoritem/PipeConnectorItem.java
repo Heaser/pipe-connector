@@ -31,10 +31,10 @@ public class PipeConnectorItem extends Item {
     Direction endFace;
     Direction startFace;
     private static final Logger LOGGER = LogUtils.getLogger();
-    private BlockPos startPosServer;
-    private BlockPos endPosServer;
-    private BlockPos startPosClient;
-    private BlockPos endPosClient;
+    private static BlockPos startPosServer;
+    private static BlockPos endPosServer;
+    private static BlockPos startPosClient;
+    private static BlockPos endPosClient;
 
     public PipeConnectorItem(Properties properties) {
         super(properties);
@@ -187,6 +187,10 @@ public class PipeConnectorItem extends Item {
         if (shouldDisplayMessage) {
             player.displayClientMessage(Component.translatable("item.pipe_connector.message.resettingPositions"), true);
         }
+    }
+
+    public static BlockPos getStartPosClient() {
+        return startPosClient;
     }
 
     // -----------------------------------------------------------------------------------------------------------------

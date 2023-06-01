@@ -1,7 +1,7 @@
 package com.heaser.pipeconnector;
 
 import com.heaser.pipeconnector.items.ModItems;
-import com.heaser.pipeconnector.items.pipeconnectoritem.utils.client.ClientEvents;
+import com.heaser.pipeconnector.items.pipeconnectoritem.client.ClientEvents;
 import com.heaser.pipeconnector.network.NetworkHandler;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
