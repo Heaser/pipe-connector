@@ -119,6 +119,10 @@
     {
       "id":"prettypipes:pipe",
       "required": false
+    },
+    {
+      "id": "create:fluid_pipe",
+      "required": false
     }
   ]
 }
