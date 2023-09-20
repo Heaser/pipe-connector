@@ -5,6 +5,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.simple.SimpleChannel;
 
+
+
 public class NetworkHandler {
     private static final String PROTOCOL_VERSION = "1";
     public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
@@ -17,7 +19,12 @@ public class NetworkHandler {
     public static void register() {
         int packetId = 0;
 
-        // Syncs the depth of the pipe connector with the server
-        CHANNEL.registerMessage(packetId++, UpdateDepthPacket.class, UpdateDepthPacket::encode, UpdateDepthPacket::decode, UpdateDepthPacket::handle);
+        CHANNEL.messageBuilder(UpdateDepthPacket.class, packetId++)
+                .encoder(UpdateDepthPacket::encode)
+                .decoder(UpdateDepthPacket::new)
+                .consumerMainThread(UpdateDepthPacket::handle)
+                .add();
+
+        PipeConnector.LOGGER.debug("Registered {} Packets for {}", packetId, PipeConnector.MODID);
     }
 }

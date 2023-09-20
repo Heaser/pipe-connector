@@ -1,6 +1,7 @@
 package com.heaser.pipeconnector.items.pipeconnectoritem.utils;
 
 
+import com.heaser.pipeconnector.PipeConnector;
 import com.heaser.pipeconnector.constants.TagKeys;
 import com.heaser.pipeconnector.items.pipeconnectoritem.PipeConnectorItem;
 import com.mojang.logging.LogUtils;
@@ -160,19 +161,19 @@ public class PipeConnectorUtils {
     // -----------------------------------------------------------------------------------------------------------------
 
     public static int getDepthFromStack(ItemStack stack) {
-        if (stack.hasTag()) {
-            return stack.getTag().getInt("Depth");
+        CompoundTag tag = stack.getOrCreateTagElement(PipeConnector.MODID);
+        if(tag.contains("Depth",tag.TAG_INT)) {
+            return tag.getInt("Depth");
         }
+
         return 0; // Default depth value if the tag is missing
     }
 
     // -----------------------------------------------------------------------------------------------------------------
 
     public static void setDepthToStack(ItemStack stack, int depth) {
-        if (!stack.hasTag()) {
-            stack.setTag(new CompoundTag());
-        }
-        stack.getTag().putInt("Depth", depth);
+        CompoundTag tag = stack.getOrCreateTagElement(PipeConnector.MODID);
+        tag.putInt("Depth", depth);
     }
 
     // -----------------------------------------------------------------------------------------------------------------

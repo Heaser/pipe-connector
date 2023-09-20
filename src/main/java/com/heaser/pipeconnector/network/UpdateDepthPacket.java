@@ -1,6 +1,9 @@
 package com.heaser.pipeconnector.network;
 
 
+import com.heaser.pipeconnector.PipeConnector;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.NetworkEvent;
 import net.minecraft.network.FriendlyByteBuf;
 
@@ -13,17 +16,23 @@ public class UpdateDepthPacket {
         this.depth = depth;
     }
 
-    public static void encode(UpdateDepthPacket packet, FriendlyByteBuf buf) {
-        buf.writeInt(packet.depth);
+    public UpdateDepthPacket(FriendlyByteBuf buf) {
+        this.depth = buf.readInt();
     }
 
-    public static UpdateDepthPacket decode(FriendlyByteBuf buf) {
-        return new UpdateDepthPacket(buf.readInt());
+    public void encode(FriendlyByteBuf buf) {
+        buf.writeInt(this.depth);
     }
 
-    public static void handle(UpdateDepthPacket packet, Supplier<NetworkEvent.Context> ctx) {
+
+    public void handle(Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
-            ctx.get().getSender().getMainHandItem().getOrCreateTag().putInt("Depth", packet.depth);
+            ServerPlayer sender = ctx.get().getSender();
+            if(sender == null)
+                return;
+
+            CompoundTag tag = sender.getMainHandItem().getOrCreateTagElement(PipeConnector.MODID);
+            tag.putInt("Depth", this.depth);
         });
         ctx.get().setPacketHandled(true);
     }
