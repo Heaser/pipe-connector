@@ -7,6 +7,7 @@ import com.heaser.pipeconnector.items.pipeconnectoritem.PipeConnectorItem;
 import com.mojang.logging.LogUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -174,6 +175,80 @@ public class PipeConnectorUtils {
     public static void setDepthToStack(ItemStack stack, int depth) {
         CompoundTag tag = stack.getOrCreateTagElement(PipeConnector.MODID);
         tag.putInt("Depth", depth);
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    public static void setStartPositionAndDirection(ItemStack stack, Direction direction, BlockPos startPos) {
+        CompoundTag tag = stack.getOrCreateTagElement(PipeConnector.MODID);
+        tag.putByte("StartDirection", (byte) direction.get3DDataValue());
+        tag.putInt("StartX", startPos.getX());
+        tag.putInt("StartY", startPos.getY());
+        tag.putInt("StartZ", startPos.getZ());
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    public static BlockPos getStartPosition(ItemStack stack) {
+        CompoundTag tag = stack.getOrCreateTagElement(PipeConnector.MODID);
+        if(!tag.contains("StartX") || !tag.contains("StartY") || !tag.contains("StartZ")) {
+            return null;
+        }
+        int x = tag.getInt("StartX");
+        int y = tag.getInt("StartY");
+        int z = tag.getInt("StartZ");
+        return new BlockPos(x, y, z);
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    public static Direction getStartDirection(ItemStack stack) {
+        CompoundTag tag = stack.getOrCreateTagElement(PipeConnector.MODID);
+        byte direction = tag.getByte("StartDirection");
+        return Direction.from3DDataValue(direction);
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    public static void setEndPositionAndDirection(ItemStack stack, Direction direction, BlockPos endPos) {
+        CompoundTag tag = stack.getOrCreateTagElement(PipeConnector.MODID);
+        tag.putByte("EndDirection", (byte) direction.get3DDataValue());
+        tag.putInt("EndX", endPos.getX());
+        tag.putInt("EndY", endPos.getY());
+        tag.putInt("EndZ", endPos.getZ());
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    public static BlockPos getEndPosition(ItemStack stack) {
+        CompoundTag tag = stack.getOrCreateTagElement(PipeConnector.MODID);
+        int x = tag.getInt("EndX");
+        int y = tag.getInt("EndY");
+        int z = tag.getInt("EndZ");
+        return new BlockPos(x, y, z);
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    public static Direction getEndDirection(ItemStack stack) {
+        CompoundTag tag = stack.getOrCreateTagElement(PipeConnector.MODID);
+        byte direction = tag.getByte("EndDirection");
+        return Direction.from3DDataValue(direction);
+    }
+
+    public static void resetPositionAndDirectionTags(ItemStack stack, Player player, boolean shouldShowMessage) {
+        CompoundTag tag = stack.getOrCreateTagElement(PipeConnector.MODID);
+        tag.remove("StartDirection");
+        tag.remove("StartX");
+        tag.remove("StartY");
+        tag.remove("StartZ");
+        tag.remove("EndDirection");
+        tag.remove("EndX");
+        tag.remove("EndY");
+        tag.remove("EndZ");
+        if(shouldShowMessage) {
+            player.displayClientMessage(Component.translatable("item.pipe_connector.message.resettingPositions"), true);
+        }
     }
 
     // -----------------------------------------------------------------------------------------------------------------

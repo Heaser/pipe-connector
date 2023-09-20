@@ -3,7 +3,6 @@ package com.heaser.pipeconnector.items.pipeconnectoritem;
 import com.heaser.pipeconnector.constants.TagKeys;
 import com.heaser.pipeconnector.items.pipeconnectoritem.utils.ParticleHelper;
 import com.heaser.pipeconnector.items.pipeconnectoritem.utils.PipeConnectorUtils;
-import com.mojang.logging.LogUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
@@ -21,18 +20,12 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 
 public class PipeConnectorItem extends Item {
-    Direction endFace;
-    Direction startFace;
-    private static final Logger LOGGER = LogUtils.getLogger();
-    private static BlockPos startPosServer;
-    private static BlockPos endPosServer;
     private static BlockPos startPosClient;
     private static BlockPos endPosClient;
 
@@ -51,7 +44,7 @@ public class PipeConnectorItem extends Item {
             boolean isShiftKeyDown = player.isShiftKeyDown();
 
             if (useHand == InteractionHand.MAIN_HAND && isShiftKeyDown && isAir) {
-                resetBlockPositions(true, player);
+                PipeConnectorUtils.resetPositionAndDirectionTags(player.getMainHandItem(), player, true);
             }
         }
         return super.use(level, player, useHand);
@@ -117,7 +110,6 @@ public class PipeConnectorItem extends Item {
     // -----------------------------------------------------------------------------------------------------------------
     private boolean handleServerSideLogic(Player usingPlayer, boolean isShiftKeyDown, Level level, ItemStack interactedItem, BlockPos clickedPosition, Direction clickedFace, UseOnContext context) {
         boolean holdingAllowedPipe = usingPlayer.getOffhandItem().is(TagKeys.PLACEABLE_ITEMS);
-
         if (isShiftKeyDown) {
             if (!holdingAllowedPipe) {
                 usingPlayer.displayClientMessage(Component.translatable("item.pipe_connector.message.holdValidItem").withStyle(ChatFormatting.GOLD), true);
@@ -127,19 +119,28 @@ public class PipeConnectorItem extends Item {
                 usingPlayer.displayClientMessage(Component.translatable("item.pipe_connector.message.UpSideNotAllowed").withStyle(ChatFormatting.BOLD, ChatFormatting.GREEN), true);
                 return false;
             }
-            if (startPosServer == null) {
-                startPosServer = clickedPosition;
-                startFace = clickedFace;
-                ParticleHelper.serverSpawnMarkerParticle((ServerLevel) level, startPosServer.relative(startFace));
+            if(PipeConnectorUtils.getStartPosition(interactedItem) == null) {
+                PipeConnectorUtils.setStartPositionAndDirection(interactedItem, clickedFace, clickedPosition);
+                ParticleHelper.serverSpawnMarkerParticle((ServerLevel) level, clickedPosition.relative(clickedFace));
             } else {
-                if (clickedPosition.equals(startPosServer)) {
-                    resetBlockPositions(true, usingPlayer);
+                if (clickedPosition.equals(PipeConnectorUtils.getStartPosition(interactedItem))) {
+                    PipeConnectorUtils.resetPositionAndDirectionTags(interactedItem, usingPlayer, true);
                     return false;
                 }
-                endPosServer = clickedPosition;
-                endFace = clickedFace;
-                ParticleHelper.serverSpawnMarkerParticle((ServerLevel) level, endPosServer.relative(endFace));
-               resetBlockPositions(connectBlocks(usingPlayer, startPosServer, endPosServer, PipeConnectorUtils.getDepthFromStack(interactedItem), context), usingPlayer);
+                PipeConnectorUtils.setEndPositionAndDirection(interactedItem, clickedFace, clickedPosition);
+                ParticleHelper.serverSpawnMarkerParticle((ServerLevel) level, clickedPosition.relative(clickedFace));
+
+               Direction startDirection = PipeConnectorUtils.getStartDirection(interactedItem);
+               BlockPos StartPos = PipeConnectorUtils.getStartPosition(interactedItem);
+               int depth = PipeConnectorUtils.getDepthFromStack(interactedItem);
+               boolean wasSuccessful = connectBlocks(usingPlayer,
+                       StartPos,
+                       startDirection,
+                       clickedPosition,
+                       clickedFace,
+                       depth,
+                       context);
+               PipeConnectorUtils.resetPositionAndDirectionTags(interactedItem, usingPlayer, wasSuccessful);
             }
 
         }
@@ -168,29 +169,20 @@ public class PipeConnectorItem extends Item {
 
     // -----------------------------------------------------------------------------------------------------------------
 
-    private boolean connectBlocks(Player player, BlockPos startPos, BlockPos endPos, int depth, UseOnContext context) {
+    private boolean connectBlocks(Player player,
+                                  BlockPos startPos,
+                                  Direction startDirection,
+                                  BlockPos endPos,
+                                  Direction endDirection,
+                                  int depth,
+                                  UseOnContext context) {
 // TODO: Return this to how they were, the following is just for testing.
         return PipeConnectorUtils.connectPathWithSegments(player,
-                startPos.relative(startFace),
-                endPos.relative(endFace),
+                startPos.relative(startDirection),
+                endPos.relative(endDirection),
                 depth,
                 Block.byItem(player.getOffhandItem().getItem()),
                 context);
-    }
-
-    private void resetBlockPositions(boolean shouldDisplayMessage, Player player) {
-        startPosServer = null;
-        endPosServer = null;
-
-        startPosClient = null;
-        endPosClient = null;
-        if (shouldDisplayMessage) {
-            player.displayClientMessage(Component.translatable("item.pipe_connector.message.resettingPositions"), true);
-        }
-    }
-
-    public static BlockPos getStartPosClient() {
-        return startPosClient;
     }
 
     // -----------------------------------------------------------------------------------------------------------------
