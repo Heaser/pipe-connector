@@ -27,24 +27,23 @@ public class ClientEvents {
         }
 
         ItemStack pipeConnectorStack = PipeConnectorUtils.holdingPipeConnector(player);
-        if (pipeConnectorStack.isEmpty()) {
+        if (pipeConnectorStack == null || pipeConnectorStack.isEmpty()) {
             return;
         }
 
         int depth = PipeConnectorUtils.getDepthFromStack(pipeConnectorStack);
 
-        PipeConnectorUtils.setDepthToStack(pipeConnectorStack, depth += scroll);
-
+        depth += scroll;
         if (depth < 2) {
-            PipeConnectorUtils.setDepthToStack(pipeConnectorStack, 99);
+            depth = 99;
         } else if (depth > 99) {
-            PipeConnectorUtils.setDepthToStack(pipeConnectorStack, 2);
-        } else {
-            PipeConnectorUtils.setDepthToStack(pipeConnectorStack, depth);
+            depth = 2;
         }
+        PipeConnectorUtils.setDepthToStack(pipeConnectorStack, depth);
+
 
         // Syncs with server to prevent cases where the client and server are out of sync
-        NetworkHandler.CHANNEL.sendToServer(new UpdateDepthPacket(PipeConnectorUtils.getDepthFromStack(pipeConnectorStack)));
+        NetworkHandler.CHANNEL.sendToServer(new UpdateDepthPacket(depth));
         player.displayClientMessage(Component.translatable("item.pipe_connector.message.newDepth", depth - 1).withStyle(ChatFormatting.YELLOW), true);
 
         event.setCanceled(true);
