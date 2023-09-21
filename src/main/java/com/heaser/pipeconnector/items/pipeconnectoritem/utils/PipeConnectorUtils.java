@@ -27,13 +27,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PipeConnectorUtils {
-    private static final Logger LOGGER = LogUtils.getLogger();
 
     public static boolean connectPathWithSegments(Player player, BlockPos start, BlockPos end, int depth, Block block, UseOnContext context) {
         Level level = player.getLevel();
         Map<BlockPos, BlockState> blockPosMap = getBlockPosMap(start, end, depth, level);
 
-        LOGGER.debug(blockPosMap.toString());
+        PipeConnector.LOGGER.debug(blockPosMap.toString());
 
 
         boolean isCreativeMode = player.getAbilities().instabuild;
@@ -45,7 +44,7 @@ public class PipeConnectorUtils {
                 int numOfPipes = getNumberOfPipesInInventory(player);
                 if (numOfPipes < blockPosMap.size()) {
                     int missingPipes = blockPosMap.size() - numOfPipes;
-                    LOGGER.debug("Not enough pipes in inventory, missing " + missingPipes + " pipes.");
+                    PipeConnector.LOGGER.debug("Not enough pipes in inventory, missing " + missingPipes + " pipes.");
                     player.displayClientMessage(Component.translatable("item.pipe_connector.message.notEnoughPipes", missingPipes).withStyle(ChatFormatting.BOLD, ChatFormatting.YELLOW), true);
                     return false;
                 }
@@ -53,7 +52,7 @@ public class PipeConnectorUtils {
 
         // Checks if the pipe limit has been reached
             if (pipeLimit < blockPosMap.size()) {
-                LOGGER.debug("Unable to place more than " + pipeLimit + " at once");
+                PipeConnector.LOGGER.debug("Unable to place more than " + pipeLimit + " at once");
                 player.displayClientMessage(Component.translatable("item.pipe_connector.message.reachedPipeLimit", pipeLimit).withStyle(ChatFormatting.BOLD, ChatFormatting.YELLOW), true);
                 return false;
             }
