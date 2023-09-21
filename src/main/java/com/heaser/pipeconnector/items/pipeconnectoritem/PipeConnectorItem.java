@@ -123,7 +123,8 @@ public class PipeConnectorItem extends Item {
                 PipeConnectorUtils.setStartPositionAndDirection(interactedItem, clickedFace, clickedPosition);
                 ParticleHelper.serverSpawnMarkerParticle((ServerLevel) level, clickedPosition.relative(clickedFace));
             } else {
-                if (clickedPosition.equals(PipeConnectorUtils.getStartPosition(interactedItem))) {
+                if (clickedPosition.equals(PipeConnectorUtils.getStartPosition(interactedItem))
+                        && clickedFace.equals(PipeConnectorUtils.getStartDirection(interactedItem))) {
                     PipeConnectorUtils.resetPositionAndDirectionTags(interactedItem, usingPlayer, true);
                     return false;
                 }
@@ -151,10 +152,6 @@ public class PipeConnectorItem extends Item {
     @ParametersAreNonnullByDefault
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> components, TooltipFlag tooltipFlag) {
-
-        // Depth will be displayed as depth-1 to the player to reduce confusion
-        //int depth = PipeConnectorUtils.getDepthFromStack(stack) - 1;
-
         if (Screen.hasShiftDown()) {
 
             components.add(Component.translatable("item.pipe_connector.tooltip.usageExplanation").withStyle(ChatFormatting.DARK_AQUA));
