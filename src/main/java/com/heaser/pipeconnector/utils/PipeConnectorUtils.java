@@ -150,11 +150,16 @@ public class PipeConnectorUtils {
     }
 
     // -----------------------------------------------------------------------------------------------------------------
-    public static ItemStack holdingPipeConnector(Player player) {
-        if (player.getItemInHand(InteractionHand.MAIN_HAND) != ItemStack.EMPTY && player.getItemInHand(InteractionHand.MAIN_HAND).getItem() instanceof PipeConnectorItem) {
+    public static ItemStack heldPipeConnector(Player player) {
+        if (isHoldingPipeConnector(player)) {
             return player.getItemInHand(InteractionHand.MAIN_HAND);
         }
         return null;
+    }
+
+    public static boolean isHoldingPipeConnector(Player player) {
+        return player.getItemInHand(InteractionHand.MAIN_HAND) != ItemStack.EMPTY &&
+                player.getItemInHand(InteractionHand.MAIN_HAND).getItem() instanceof PipeConnectorItem;
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -172,6 +177,11 @@ public class PipeConnectorUtils {
 
     public static void setDepthToStack(ItemStack stack, int depth) {
         CompoundTag tag = stack.getOrCreateTagElement(PipeConnector.MODID);
+        if (depth < 2) {
+            depth = 99;
+        } else if (depth > 99) {
+            depth = 2;
+        }
         tag.putInt("Depth", depth);
     }
 

@@ -26,21 +26,14 @@ public class ClientEvents {
             return;
         }
 
-        ItemStack pipeConnectorStack = PipeConnectorUtils.holdingPipeConnector(player);
+        ItemStack pipeConnectorStack = PipeConnectorUtils.heldPipeConnector(player);
         if (pipeConnectorStack == null || pipeConnectorStack.isEmpty()) {
             return;
         }
 
         int depth = PipeConnectorUtils.getDepthFromStack(pipeConnectorStack);
-
-        depth += scroll;
-        if (depth < 2) {
-            depth = 99;
-        } else if (depth > 99) {
-            depth = 2;
-        }
-        PipeConnectorUtils.setDepthToStack(pipeConnectorStack, depth);
-
+        PipeConnectorUtils.setDepthToStack(pipeConnectorStack, depth + scroll);
+        depth = PipeConnectorUtils.getDepthFromStack(pipeConnectorStack);
 
         // Syncs with server to prevent cases where the client and server are out of sync
         NetworkHandler.CHANNEL.sendToServer(new UpdateDepthPacket(depth));

@@ -1,7 +1,9 @@
 package com.heaser.pipeconnector.items;
 
+import com.heaser.pipeconnector.PipeConnector;
 import com.heaser.pipeconnector.constants.TagKeys;
 import com.heaser.pipeconnector.particles.ParticleHelper;
+import com.heaser.pipeconnector.utils.GeneralUtils;
 import com.heaser.pipeconnector.utils.PipeConnectorUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
@@ -35,7 +37,7 @@ public class PipeConnectorItem extends Item {
     @NotNull
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand useHand) {
-        if (!level.isClientSide) {
+        if (GeneralUtils.isServerSide(level)) {
             BlockPos playerLookingAt = player.blockPosition().relative(player.getDirection());
             boolean isAir = level.getBlockState(playerLookingAt).isAir();
             boolean isShiftKeyDown = player.isShiftKeyDown();
@@ -52,25 +54,19 @@ public class PipeConnectorItem extends Item {
     @Override
     @NotNull
     public InteractionResult useOn(UseOnContext context) {
-        boolean success = false;
-        Player usingPlayer = context.getPlayer();
         Level level = context.getLevel();
         ItemStack interactedItem = context.getItemInHand();
-        BlockPos clickedPosition = context.getClickedPos();
-        Direction clickedFace = context.getClickedFace();
 
-        if(usingPlayer != null) {
-            boolean isShiftKeyDown = usingPlayer.isShiftKeyDown();
             // Handle logic for both client and server
             handleCommonLogic(interactedItem);
 
             // Handle Server logic
-            if(!level.isClientSide) {
-                success = handleServerSideLogic(usingPlayer, isShiftKeyDown, level, interactedItem, clickedPosition, clickedFace, context);
+            if(GeneralUtils.isServerSide(level)) {
+                return handleServerSideUseOn(context);
             }
-        }
 
-        return success ? InteractionResult.SUCCESS : InteractionResult.FAIL;
+
+        return InteractionResult.FAIL;
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -78,39 +74,51 @@ public class PipeConnectorItem extends Item {
     private void handleCommonLogic(ItemStack interactedItem) {
         int depth = PipeConnectorUtils.getDepthFromStack(interactedItem);
         if (depth == 0) {
-            PipeConnectorUtils.setDepthToStack(interactedItem, 1);
+            PipeConnectorUtils.setDepthToStack(interactedItem, 2);
         }
     }
 
     // -----------------------------------------------------------------------------------------------------------------
-    private boolean handleServerSideLogic(Player usingPlayer, boolean isShiftKeyDown, Level level, ItemStack interactedItem, BlockPos clickedPosition, Direction clickedFace, UseOnContext context) {
-        boolean holdingAllowedPipe = usingPlayer.getOffhandItem().is(TagKeys.PLACEABLE_ITEMS);
+    private InteractionResult handleServerSideUseOn(UseOnContext context) {
+        Player usingPlayer = context.getPlayer();
+        Level level = context.getLevel();
+        ItemStack interactedItem = context.getItemInHand();
+        BlockPos clickedPosition = context.getClickedPos();
+        Direction clickedFace = context.getClickedFace();
+
+        if(usingPlayer == null) {
+            return InteractionResult.FAIL;
+        }
+        boolean isShiftKeyDown = usingPlayer.isShiftKeyDown();
+
+        boolean isHoldingAllowedPipe = usingPlayer.getOffhandItem().is(TagKeys.PLACEABLE_ITEMS);
         if (isShiftKeyDown) {
-            if (!holdingAllowedPipe) {
+            if (!isHoldingAllowedPipe) {
                 usingPlayer.displayClientMessage(Component.translatable("item.pipe_connector.message.holdValidItem").withStyle(ChatFormatting.GOLD), true);
-                return false;
+                return InteractionResult.FAIL;
             }
             if (clickedFace == Direction.UP) {
                 usingPlayer.displayClientMessage(Component.translatable("item.pipe_connector.message.UpSideNotAllowed").withStyle(ChatFormatting.BOLD, ChatFormatting.GREEN), true);
-                return false;
+                return InteractionResult.FAIL;
             }
-            if(PipeConnectorUtils.getStartPosition(interactedItem) == null) {
+
+            BlockPos startPos = PipeConnectorUtils.getStartPosition(interactedItem);
+            Direction startDirection = PipeConnectorUtils.getStartDirection(interactedItem);
+
+            if(startPos == null) {
                 PipeConnectorUtils.setStartPositionAndDirection(interactedItem, clickedFace, clickedPosition);
                 ParticleHelper.serverSpawnMarkerParticle((ServerLevel) level, clickedPosition.relative(clickedFace));
             } else {
-                if (clickedPosition.equals(PipeConnectorUtils.getStartPosition(interactedItem))
-                        && clickedFace.equals(PipeConnectorUtils.getStartDirection(interactedItem))) {
+                if (clickedPosition.equals(startPos) && clickedFace.equals(startDirection)) {
                     PipeConnectorUtils.resetPositionAndDirectionTags(interactedItem, usingPlayer, true);
-                    return false;
+                    return InteractionResult.FAIL;
                 }
                 PipeConnectorUtils.setEndPositionAndDirection(interactedItem, clickedFace, clickedPosition);
                 ParticleHelper.serverSpawnMarkerParticle((ServerLevel) level, clickedPosition.relative(clickedFace));
 
-               Direction startDirection = PipeConnectorUtils.getStartDirection(interactedItem);
-               BlockPos StartPos = PipeConnectorUtils.getStartPosition(interactedItem);
                int depth = PipeConnectorUtils.getDepthFromStack(interactedItem);
                boolean wasSuccessful = connectBlocks(usingPlayer,
-                       StartPos,
+                       startPos,
                        startDirection,
                        clickedPosition,
                        clickedFace,
@@ -120,7 +128,7 @@ public class PipeConnectorItem extends Item {
             }
 
         }
-        return true;
+        return InteractionResult.SUCCESS;
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -128,11 +136,9 @@ public class PipeConnectorItem extends Item {
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> components, TooltipFlag tooltipFlag) {
         if (Screen.hasShiftDown()) {
-
             components.add(Component.translatable("item.pipe_connector.tooltip.usageExplanation").withStyle(ChatFormatting.DARK_AQUA));
             components.add(Component.translatable("item.pipe_connector.tooltip.CancelSelectionExplanation").withStyle(ChatFormatting.BLUE));
             components.add(Component.translatable("item.pipe_connector.tooltip.changeDepthExplanation").withStyle(ChatFormatting.LIGHT_PURPLE));
-
         } else {
             components.add(Component.translatable("item.pipe_connector.tooltip.shiftForMoreInfo").withStyle(ChatFormatting.GOLD));
         }
@@ -148,7 +154,7 @@ public class PipeConnectorItem extends Item {
                                   Direction endDirection,
                                   int depth,
                                   UseOnContext context) {
-// TODO: Return this to how they were, the following is just for testing.
+//
         return PipeConnectorUtils.connectPathWithSegments(player,
                 startPos.relative(startDirection),
                 endPos.relative(endDirection),
