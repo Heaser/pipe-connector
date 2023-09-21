@@ -1,4 +1,4 @@
-package com.heaser.pipeconnector.items.pipeconnectoritem;
+package com.heaser.pipeconnector.items;
 
 import com.heaser.pipeconnector.constants.TagKeys;
 import com.heaser.pipeconnector.items.pipeconnectoritem.utils.ParticleHelper;

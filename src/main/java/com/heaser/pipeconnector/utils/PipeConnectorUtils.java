@@ -1,4 +1,4 @@
-package com.heaser.pipeconnector.items.pipeconnectoritem.utils;
+package com.heaser.pipeconnector.utils;
 
 
 import com.heaser.pipeconnector.PipeConnector;

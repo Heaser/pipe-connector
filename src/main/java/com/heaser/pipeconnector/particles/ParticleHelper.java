@@ -1,4 +1,4 @@
-package com.heaser.pipeconnector.items.pipeconnectoritem.utils;
+package com.heaser.pipeconnector.particles;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;

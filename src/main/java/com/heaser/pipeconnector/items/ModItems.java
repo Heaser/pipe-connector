@@ -1,7 +1,6 @@
 package com.heaser.pipeconnector.items;
 
 import com.heaser.pipeconnector.PipeConnector;
-import com.heaser.pipeconnector.items.pipeconnectoritem.PipeConnectorItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.registries.DeferredRegister;
