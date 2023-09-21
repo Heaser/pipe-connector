@@ -3,8 +3,8 @@ package com.heaser.pipeconnector.utils;
 
 import com.heaser.pipeconnector.PipeConnector;
 import com.heaser.pipeconnector.constants.TagKeys;
-import com.heaser.pipeconnector.items.pipeconnectoritem.PipeConnectorItem;
-import com.mojang.logging.LogUtils;
+import com.heaser.pipeconnector.items.PipeConnectorItem;
+import com.heaser.pipeconnector.particles.ParticleHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -21,7 +21,6 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import org.slf4j.Logger;
 
 import java.util.HashMap;
 import java.util.Map;

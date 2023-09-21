@@ -1,8 +1,8 @@
 package com.heaser.pipeconnector.items;
 
 import com.heaser.pipeconnector.constants.TagKeys;
-import com.heaser.pipeconnector.items.pipeconnectoritem.utils.ParticleHelper;
-import com.heaser.pipeconnector.items.pipeconnectoritem.utils.PipeConnectorUtils;
+import com.heaser.pipeconnector.particles.ParticleHelper;
+import com.heaser.pipeconnector.utils.PipeConnectorUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
@@ -26,9 +26,6 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
 
 public class PipeConnectorItem extends Item {
-    private static BlockPos startPosClient;
-    private static BlockPos endPosClient;
-
     public PipeConnectorItem(Properties properties) {
         super(properties);
     }
@@ -67,11 +64,6 @@ public class PipeConnectorItem extends Item {
             // Handle logic for both client and server
             handleCommonLogic(interactedItem);
 
-            // Handle client logic
-            if (level.isClientSide) {
-                handleClientSideLogic(usingPlayer, isShiftKeyDown, clickedPosition, PipeConnectorUtils.getDepthFromStack(interactedItem));
-            }
-
             // Handle Server logic
             if(!level.isClientSide) {
                 success = handleServerSideLogic(usingPlayer, isShiftKeyDown, level, interactedItem, clickedPosition, clickedFace, context);
@@ -89,23 +81,6 @@ public class PipeConnectorItem extends Item {
             PipeConnectorUtils.setDepthToStack(interactedItem, 1);
         }
     }
-
-    // -----------------------------------------------------------------------------------------------------------------
-
-    private void handleClientSideLogic(Player usingPlayer, boolean isShitKeyDown, BlockPos clickedPosition, int depth) {
-        if (isShitKeyDown) {
-            if (startPosClient == null) {
-                startPosClient = clickedPosition;
-
-            } else if (endPosClient == null) {
-                endPosClient = clickedPosition;
-            }
-            if(startPosClient != null && endPosClient != null) {
-                // Render outline
-            }
-        }
-    }
-
 
     // -----------------------------------------------------------------------------------------------------------------
     private boolean handleServerSideLogic(Player usingPlayer, boolean isShiftKeyDown, Level level, ItemStack interactedItem, BlockPos clickedPosition, Direction clickedFace, UseOnContext context) {
