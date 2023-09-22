@@ -1,19 +1,23 @@
 package com.heaser.pipeconnector.items;
 
 import com.heaser.pipeconnector.PipeConnector;
+import com.heaser.pipeconnector.client.gui.PipeConnectorGui;
 import com.heaser.pipeconnector.constants.TagKeys;
 import com.heaser.pipeconnector.particles.ParticleHelper;
 import com.heaser.pipeconnector.utils.GeneralUtils;
 import com.heaser.pipeconnector.utils.PipeConnectorUtils;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -21,6 +25,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -37,13 +42,14 @@ public class PipeConnectorItem extends Item {
     @NotNull
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand useHand) {
-        if (GeneralUtils.isServerSide(level)) {
+
+        if (level.isClientSide()) {
             BlockPos playerLookingAt = player.blockPosition().relative(player.getDirection());
             boolean isAir = level.getBlockState(playerLookingAt).isAir();
             boolean isShiftKeyDown = player.isShiftKeyDown();
 
             if (useHand == InteractionHand.MAIN_HAND && isShiftKeyDown && isAir) {
-                PipeConnectorUtils.resetPositionAndDirectionTags(player.getMainHandItem(), player, true);
+                Minecraft.getInstance().setScreen(new PipeConnectorGui());
             }
         }
         return super.use(level, player, useHand);
@@ -57,14 +63,13 @@ public class PipeConnectorItem extends Item {
         Level level = context.getLevel();
         ItemStack interactedItem = context.getItemInHand();
 
-            // Handle logic for both client and server
-            handleCommonLogic(interactedItem);
+        // Handle logic for both client and server
+        handleCommonLogic(interactedItem);
 
-            // Handle Server logic
-            if(GeneralUtils.isServerSide(level)) {
-                return handleServerSideUseOn(context);
-            }
-
+        // Handle Server logic
+        if(GeneralUtils.isServerSide(level)) {
+            return handleServerSideUseOn(context);
+        }
 
         return InteractionResult.FAIL;
     }
@@ -94,11 +99,13 @@ public class PipeConnectorItem extends Item {
         boolean isHoldingAllowedPipe = usingPlayer.getOffhandItem().is(TagKeys.PLACEABLE_ITEMS);
         if (isShiftKeyDown) {
             if (!isHoldingAllowedPipe) {
-                usingPlayer.displayClientMessage(Component.translatable("item.pipe_connector.message.holdValidItem").withStyle(ChatFormatting.GOLD), true);
+                usingPlayer.displayClientMessage(Component.translatable("item.pipe_connector.message.holdValidItem")
+                        .withStyle(ChatFormatting.GOLD), true);
                 return InteractionResult.FAIL;
             }
             if (clickedFace == Direction.UP) {
-                usingPlayer.displayClientMessage(Component.translatable("item.pipe_connector.message.UpSideNotAllowed").withStyle(ChatFormatting.BOLD, ChatFormatting.GREEN), true);
+                usingPlayer.displayClientMessage(Component.translatable("item.pipe_connector.message.UpSideNotAllowed")
+                        .withStyle(ChatFormatting.BOLD, ChatFormatting.GREEN), true);
                 return InteractionResult.FAIL;
             }
 

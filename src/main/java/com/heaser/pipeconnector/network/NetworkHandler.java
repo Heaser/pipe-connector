@@ -25,6 +25,13 @@ public class NetworkHandler {
                 .consumerMainThread(UpdateDepthPacket::handle)
                 .add();
 
+
+        CHANNEL.messageBuilder(ResetPacket.class, packetId++)
+                .encoder(ResetPacket::encode)
+                .decoder(ResetPacket::new)
+                .consumerMainThread(ResetPacket::handle)
+                .add();
+
         PipeConnector.LOGGER.debug("Registered {} Packets for {}", packetId, PipeConnector.MODID);
     }
 }

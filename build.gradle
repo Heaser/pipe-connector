@@ -1,6 +1,7 @@
 plugins {
     id 'maven-publish'
     id 'net.minecraftforge.gradle' version '5.1.+'
+    id 'org.parchmentmc.librarian.forgegradle' version '1.+'
 }
 
 apply plugin: 'idea'
@@ -13,7 +14,8 @@ java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 println "Java: ${System.getProperty 'java.version'}, JVM: ${System.getProperty 'java.vm.version'} (${System.getProperty 'java.vendor'}), Arch: ${System.getProperty 'os.arch'}"
 minecraft {
-    mappings channel: 'official', version: mod_minecraft_version
+//    mappings channel: 'official', version: mod_minecraft_version
+    mappings channel: 'parchment', version: '2022.08.14-1.19.2'
     runs {
         client {
             workingDirectory project.file('run')
@@ -94,6 +96,7 @@ dependencies {
     runtimeOnly fg.deobf("curse.maven:construction-wand-399558:4455719")
     runtimeOnly fg.deobf("curse.maven:pretty-pipes-376737:4049655")
     runtimeOnly fg.deobf("curse.maven:jei-238222:4494410")
+
 }
 
 // Example for how to get properties into the manifest for reading at runtime.
