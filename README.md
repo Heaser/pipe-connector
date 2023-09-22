@@ -16,4 +16,21 @@ This mod tries to rectify that.
 * Shift + Right Click on the same block to reset positions.
 
 
+
+
 Available on [CurseForge](https://www.curseforge.com/minecraft/mc-mods/pipe-connector)
+
+
+Supported Pipes:
+* All pipes from Pipez
+* All pipes from Mekanism
+* Super Factory Manager Cable
+* Refined Storage Cable
+* Pipes from Pretty Pipes
+* Create Pipe
+
+### **Modpack makers can support additional pipes via tags.**
+
+
+**Known issues:**
+* AE2 and Thermal Dynamics Ducts can cause issues when placed with the Pipe Connecotor, it is currently not advised to add the tags for them.
