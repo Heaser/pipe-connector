@@ -33,4 +33,4 @@ Supported Pipes:
 
 
 **Known issues:**
-* AE2 and Thermal Dynamics Ducts can cause issues when placed with the Pipe Connecotor, it is currently not advised to add the tags for them.
+* AE2 and Thermal Dynamics Ducts can cause issues when placed with the Pipe Connector, it is currently not advised to add the tags for them.
