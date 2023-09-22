@@ -16,7 +16,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber(modid = PipeConnector.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
-public class ClientEvents {
+public class DepthSetterEvent {
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void MouseScrollEvent(InputEvent.MouseScrollingEvent event) {
         Player player = Minecraft.getInstance().player;
