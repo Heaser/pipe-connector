@@ -32,6 +32,12 @@ public class NetworkHandler {
                 .consumerMainThread(ResetPacket::handle)
                 .add();
 
+        CHANNEL.messageBuilder(BuildPipesPacket.class, packetId++)
+                .encoder(BuildPipesPacket::encode)
+                .decoder(BuildPipesPacket::new)
+                .consumerMainThread(BuildPipesPacket::handle)
+                .add();
+
         PipeConnector.LOGGER.debug("Registered {} Packets for {}", packetId, PipeConnector.MODID);
     }
 }

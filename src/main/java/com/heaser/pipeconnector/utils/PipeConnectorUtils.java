@@ -59,7 +59,7 @@ public class PipeConnectorUtils {
         for(Map.Entry<BlockPos, BlockState> set: blockPosMap.entrySet()) {
             if (isNotBreakable(level, set.getKey())) {
                 String invalidBlockName = set.getValue().getBlock().getName().getString();
-                player.displayClientMessage(Component.translatable("item.pipe_connector.message.unbreakableBlockReached",invalidBlockName).withStyle(ChatFormatting.BOLD, ChatFormatting.YELLOW), true);
+                player.displayClientMessage(Component.translatable("item.pipe_connector.message.unbreakableBlockReached",invalidBlockName).withStyle(ChatFormatting.BOLD, ChatFormatting.DARK_RED), true);
                 return false;
             }
         }
@@ -230,6 +230,9 @@ public class PipeConnectorUtils {
 
     public static BlockPos getEndPosition(ItemStack stack) {
         CompoundTag tag = stack.getOrCreateTagElement(PipeConnector.MODID);
+        if(!tag.contains("EndX") || !tag.contains("EndY") || !tag.contains("EndZ")) {
+            return null;
+        }
         int x = tag.getInt("EndX");
         int y = tag.getInt("EndY");
         int z = tag.getInt("EndZ");
@@ -300,5 +303,23 @@ public class PipeConnectorUtils {
         } else {
             player.setItemInHand(InteractionHand.OFF_HAND, ItemStack.EMPTY);
         }
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    public static boolean connectBlocks(Player player,
+                                  BlockPos startPos,
+                                  Direction startDirection,
+                                  BlockPos endPos,
+                                  Direction endDirection,
+                                  int depth,
+                                  UseOnContext context) {
+
+        return PipeConnectorUtils.connectPathWithSegments(player,
+                startPos.relative(startDirection),
+                endPos.relative(endDirection),
+                depth,
+                Block.byItem(player.getOffhandItem().getItem()),
+                context);
     }
 }

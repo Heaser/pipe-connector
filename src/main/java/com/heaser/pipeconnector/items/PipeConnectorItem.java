@@ -1,6 +1,5 @@
 package com.heaser.pipeconnector.items;
 
-import com.heaser.pipeconnector.PipeConnector;
 import com.heaser.pipeconnector.client.gui.PipeConnectorGui;
 import com.heaser.pipeconnector.constants.TagKeys;
 import com.heaser.pipeconnector.particles.ParticleHelper;
@@ -13,19 +12,17 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
-import net.minecraftforge.network.NetworkHooks;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -49,7 +46,8 @@ public class PipeConnectorItem extends Item {
             boolean isShiftKeyDown = player.isShiftKeyDown();
 
             if (useHand == InteractionHand.MAIN_HAND && isShiftKeyDown && isAir) {
-                Minecraft.getInstance().setScreen(new PipeConnectorGui());
+                ItemStack interactedItem = player.getItemInHand(useHand);
+                Minecraft.getInstance().setScreen(new PipeConnectorGui(interactedItem));
             }
         }
         return super.use(level, player, useHand);
@@ -122,16 +120,6 @@ public class PipeConnectorItem extends Item {
                 }
                 PipeConnectorUtils.setEndPositionAndDirection(interactedItem, clickedFace, clickedPosition);
                 ParticleHelper.serverSpawnMarkerParticle((ServerLevel) level, clickedPosition.relative(clickedFace));
-
-               int depth = PipeConnectorUtils.getDepthFromStack(interactedItem);
-               boolean wasSuccessful = connectBlocks(usingPlayer,
-                       startPos,
-                       startDirection,
-                       clickedPosition,
-                       clickedFace,
-                       depth,
-                       context);
-               PipeConnectorUtils.resetPositionAndDirectionTags(interactedItem, usingPlayer, wasSuccessful);
             }
 
         }
@@ -141,6 +129,7 @@ public class PipeConnectorItem extends Item {
     // -----------------------------------------------------------------------------------------------------------------
     @ParametersAreNonnullByDefault
     @Override
+    @OnlyIn(Dist.CLIENT)
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> components, TooltipFlag tooltipFlag) {
         if (Screen.hasShiftDown()) {
             components.add(Component.translatable("item.pipe_connector.tooltip.usageExplanation").withStyle(ChatFormatting.DARK_AQUA));
@@ -150,24 +139,6 @@ public class PipeConnectorItem extends Item {
             components.add(Component.translatable("item.pipe_connector.tooltip.shiftForMoreInfo").withStyle(ChatFormatting.GOLD));
         }
         super.appendHoverText(stack, level, components, tooltipFlag);
-    }
-
-    // -----------------------------------------------------------------------------------------------------------------
-
-    private boolean connectBlocks(Player player,
-                                  BlockPos startPos,
-                                  Direction startDirection,
-                                  BlockPos endPos,
-                                  Direction endDirection,
-                                  int depth,
-                                  UseOnContext context) {
-//
-        return PipeConnectorUtils.connectPathWithSegments(player,
-                startPos.relative(startDirection),
-                endPos.relative(endDirection),
-                depth,
-                Block.byItem(player.getOffhandItem().getItem()),
-                context);
     }
 
     // -----------------------------------------------------------------------------------------------------------------

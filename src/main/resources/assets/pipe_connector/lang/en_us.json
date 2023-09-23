@@ -13,5 +13,13 @@
   "item.pipe_connector.message.newDepth": "Depth was set to %s",
   "item.pipe_connector.message.notEnoughPipes": "Not enough pipes in inventory, missing %s pipes",
   "item.pipe_connector.message.reachedPipeLimit": "Unable to place more than %s pipes at once",
-  "item.pipe_connector.message.unbreakableBlockReached": "Pipes cannot replace %s blocks"
+  "item.pipe_connector.message.unbreakableBlockReached": "Pipes cannot replace %s blocks",
+  "item.pipe_connector.gui.button.ResetPipePos": "Reset",
+  "item.pipe_connector.gui.button.PlacePipes": "Place Pipes",
+  "item.pipe_connector.gui.button.tooltip.disabledResetPipePos": "You haven't chosen a any positions yet",
+  "item.pipe_connector.gui.button.tooltip.disabledPlacePipes": "Please choose 2 positions first",
+  "item.pipe_connector.gui.label.depth": "Depth: %s",
+  "item.pipe_connector.gui.label.requiredPipes": "Required Pipes: %s",
+  "item.pipe_connector.gui.label.availablePipes": "Available Pipes: %s"
+
 }
