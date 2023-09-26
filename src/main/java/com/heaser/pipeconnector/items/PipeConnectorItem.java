@@ -24,7 +24,6 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
-
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.List;
@@ -38,19 +37,19 @@ public class PipeConnectorItem extends Item {
     @ParametersAreNonnullByDefault
     @NotNull
     @Override
+    @OnlyIn(Dist.CLIENT)
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand useHand) {
-
+        ItemStack interactedItem = player.getItemInHand(useHand);
         if (level.isClientSide()) {
             BlockPos playerLookingAt = player.blockPosition().relative(player.getDirection());
             boolean isAir = level.getBlockState(playerLookingAt).isAir();
             boolean isShiftKeyDown = player.isShiftKeyDown();
 
             if (useHand == InteractionHand.MAIN_HAND && isShiftKeyDown && isAir) {
-                ItemStack interactedItem = player.getItemInHand(useHand);
                 Minecraft.getInstance().setScreen(new PipeConnectorGui(interactedItem));
             }
         }
-        return super.use(level, player, useHand);
+        return InteractionResultHolder.pass(player.getItemInHand(useHand));
     }
 
     // -----------------------------------------------------------------------------------------------------------------

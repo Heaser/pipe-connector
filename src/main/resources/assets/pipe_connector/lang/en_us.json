@@ -20,6 +20,7 @@
   "item.pipe_connector.gui.button.tooltip.disabledPlacePipes": "Please choose 2 positions first",
   "item.pipe_connector.gui.label.depth": "Depth: %s",
   "item.pipe_connector.gui.label.requiredPipes": "Required Pipes: %s",
-  "item.pipe_connector.gui.label.availablePipes": "Available Pipes: %s"
+  "item.pipe_connector.gui.label.availablePipes": "Available Pipes: %s",
+  "item.pipe_connector.gui.button.bridgeType": "Bridge Type: %s"
 
 }
