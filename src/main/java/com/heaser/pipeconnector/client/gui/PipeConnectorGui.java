@@ -52,6 +52,16 @@ public class PipeConnectorGui extends Screen {
         createLabel(poseStack, 0.65, 0.6, new DepthLabel());
     }
 
+    @Override
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if ((keyCode == 256 && this.shouldCloseOnEsc()) || keyCode == 69) {
+            this.onClose();
+            return true;
+        } else {
+            return super.keyPressed(keyCode, scanCode, modifiers);
+        }
+    }
+
     private void createButton(double marginXPercent, double marginYPercent, BaseButton baseButton) {
         int marginX = (int) (imageWidth * marginXPercent);
         int marginY = (int) (imageHeight * marginYPercent);
@@ -87,6 +97,8 @@ public class PipeConnectorGui extends Screen {
             this.onClose();
         }
     }
+
+
 
     private int getScreenX() {
         return (this.width - imageWidth) / 2;
