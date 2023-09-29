@@ -23,7 +23,9 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public class PipeConnectorUtils {
 
@@ -74,12 +76,24 @@ public class PipeConnectorUtils {
         return true;
     }
 
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    public static HashSet<PreviewInfo> getBlockPosSet(Map<BlockPos, BlockState> blockPosMap) {
+        HashSet<PreviewInfo> previewSet = new HashSet<>();
+        for (Map.Entry<BlockPos, BlockState> blockPair : blockPosMap.entrySet()) {
+            previewSet.add(new PreviewInfo(blockPair.getKey()));
+        }
+        return previewSet;
+    }
+
     // -----------------------------------------------------------------------------------------------------------------
     // This Method returns a Map of BlockPos & And BlockStates which will eventually be used to bridge between the
     // two locations clicked by the Player.
     // -----------------------------------------------------------------------------------------------------------------
     public static Map<BlockPos, BlockState> getBlockPosMap(BlockPos start, BlockPos end, int depth, Level level) {
         Map <BlockPos, BlockState> blockHashMap = new HashMap<>();
+
 
         int deltaY = Math.abs(start.getY() - end.getY());
         int startDepth = depth, endDepth = depth;

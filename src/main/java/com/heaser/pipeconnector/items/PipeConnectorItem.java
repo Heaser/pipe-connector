@@ -2,9 +2,12 @@ package com.heaser.pipeconnector.items;
 
 import com.heaser.pipeconnector.client.gui.PipeConnectorGui;
 import com.heaser.pipeconnector.constants.TagKeys;
+import com.heaser.pipeconnector.network.NetworkHandler;
+import com.heaser.pipeconnector.network.SyncBuildPath;
 import com.heaser.pipeconnector.particles.ParticleHelper;
 import com.heaser.pipeconnector.utils.GeneralUtils;
 import com.heaser.pipeconnector.utils.PipeConnectorUtils;
+import com.heaser.pipeconnector.utils.PreviewInfo;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
@@ -12,6 +15,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -23,9 +27,11 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.HashSet;
 import java.util.List;
 
 public class PipeConnectorItem extends Item {
@@ -61,7 +67,11 @@ public class PipeConnectorItem extends Item {
         ItemStack interactedItem = context.getItemInHand();
 
         // Handle logic for both client and server
-        handleCommonLogic(interactedItem);
+        handleCommonUseOn(interactedItem);
+
+        if (GeneralUtils.isServerSide((level))) {
+
+        }
 
         // Handle Server logic
         if(GeneralUtils.isServerSide(level)) {
@@ -72,8 +82,7 @@ public class PipeConnectorItem extends Item {
     }
 
     // -----------------------------------------------------------------------------------------------------------------
-
-    private void handleCommonLogic(ItemStack interactedItem) {
+    private void handleCommonUseOn(ItemStack interactedItem) {
         int depth = PipeConnectorUtils.getDepthFromStack(interactedItem);
         if (depth == 0) {
             PipeConnectorUtils.setDepthToStack(interactedItem, 2);
@@ -119,6 +128,14 @@ public class PipeConnectorItem extends Item {
                 }
                 PipeConnectorUtils.setEndPositionAndDirection(interactedItem, clickedFace, clickedPosition);
                 ParticleHelper.serverSpawnMarkerParticle((ServerLevel) level, clickedPosition.relative(clickedFace));
+                ServerPlayer player = (ServerPlayer) usingPlayer;
+                int depth = PipeConnectorUtils.getDepthFromStack(interactedItem);
+                HashSet<PreviewInfo> buildPath = PipeConnectorUtils.getBlockPosSet(
+                        PipeConnectorUtils.getBlockPosMap(startPos, clickedPosition, depth, level)
+                );
+
+                NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> player),
+                        new SyncBuildPath(buildPath));
             }
 
         }
