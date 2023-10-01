@@ -11,8 +11,8 @@ This mod tries to rectify that.
 
 ### How does it work?
 * Hold the Pipe Connector in your hand and Shift + Mouse wheel to set the depth you want the Pipe to go to.
-* Hold a pipe in your off-hand and the Pipe Connector in your main hand, and Shift + Right-Click a block to set the first position, the do it again on another block to set the second Position, to place the Pipes.
-* Shift + Right click the air to reset positions.
+* Hold a pipe in your off-hand and the Pipe Connector in your main hand, and Shift + Right-Click a block to set the first position, the do it again on another block to set the second Position.
+* Shift + Right click the air to open the GUi and place the pipes or reset the positions.
 * Shift + Right Click on the same block to reset positions.
 
 
