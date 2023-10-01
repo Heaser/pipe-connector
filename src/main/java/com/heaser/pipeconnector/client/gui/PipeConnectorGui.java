@@ -81,7 +81,7 @@ public class PipeConnectorGui extends Screen {
         int drawStartX = this.getScreenX() + marginX;
         int drawStartY = this.getScreenY() + marginY;
 
-        drawString(poseStack, this.font, label.getLabel(pipeConnectorStack), drawStartX, drawStartY, 5592405);
+        drawString(poseStack, this.font, label.getLabel(pipeConnectorStack), drawStartX, drawStartY, 12181157);
     }
 
     private void drawTooltip(PoseStack matrixStack, int mouseX, int mouseY, BaseButton baseButton) {
@@ -105,7 +105,7 @@ public class PipeConnectorGui extends Screen {
     }
 
     private int getScreenY() {
-        return (this.height - imageHeight) /2;
+        return (this.height - imageHeight) / 2;
     }
 }
 

@@ -2,18 +2,16 @@ package com.heaser.pipeconnector.utils;
 
 
 import com.heaser.pipeconnector.PipeConnector;
-import com.heaser.pipeconnector.constants.TagKeys;
-import com.heaser.pipeconnector.items.PipeConnectorItem;
-import com.heaser.pipeconnector.network.NetworkHandler;
-import com.heaser.pipeconnector.network.SyncBuildPath;
 import com.heaser.pipeconnector.particles.ParticleHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -24,12 +22,11 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.network.PacketDistributor;
+import net.minecraft.world.level.dimension.DimensionType;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 public class PipeConnectorUtils {
 
@@ -63,7 +60,7 @@ public class PipeConnectorUtils {
             }
         // Checks if the block is unbreakable
         for(Map.Entry<BlockPos, BlockState> set: blockPosMap.entrySet()) {
-            if (isNotBreakable(level, set.getKey())) {
+            if (GeneralUtils.isNotBreakable(level, set.getKey())) {
                 String invalidBlockName = set.getValue().getBlock().getName().getString();
                 player.displayClientMessage(Component.translatable("item.pipe_connector.message.unbreakableBlockReached",invalidBlockName).withStyle(ChatFormatting.BOLD, ChatFormatting.DARK_RED), true);
                 return false;
@@ -150,7 +147,7 @@ public class PipeConnectorUtils {
         BlockPlaceContext blockPlaceContext = new BlockPlaceContext(context);
         BlockState blockState = block.getStateForPlacement(blockPlaceContext);
 
-        if (!isVoidableBlock(level, pos)) {
+        if (!GeneralUtils.isVoidableBlock(level, pos)) {
             level.destroyBlock(pos, true, player);
             level.addDestroyBlockEffect(pos, level.getBlockState(pos));
         }
@@ -161,31 +158,6 @@ public class PipeConnectorUtils {
         return false;
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
-    public static boolean isNotBreakable(Level level, BlockPos pos) {
-        return (level.getBlockState(pos).getDestroySpeed(level, pos) == -1
-                && !level.getBlockState(pos).is(TagKeys.UNBREAKABLE_BLOCKS));
-    }
-
-
-    // -----------------------------------------------------------------------------------------------------------------
-
-    public static boolean isVoidableBlock(Level level, BlockPos pos) {
-        return level.getBlockState(pos).is(TagKeys.VOIDABLE_BLOCKS);
-    }
-
-    // -----------------------------------------------------------------------------------------------------------------
-    public static ItemStack heldPipeConnector(Player player) {
-        if (isHoldingPipeConnector(player)) {
-            return player.getItemInHand(InteractionHand.MAIN_HAND);
-        }
-        return null;
-    }
-
-    public static boolean isHoldingPipeConnector(Player player) {
-        return player.getItemInHand(InteractionHand.MAIN_HAND) != ItemStack.EMPTY &&
-                player.getItemInHand(InteractionHand.MAIN_HAND).getItem() instanceof PipeConnectorItem;
-    }
 
     // -----------------------------------------------------------------------------------------------------------------
 
@@ -234,6 +206,26 @@ public class PipeConnectorUtils {
     }
 
     // -----------------------------------------------------------------------------------------------------------------
+    public static BlockPos getRelativeStartPosition(ItemStack stack) {
+        BlockPos startPos = getStartPosition(stack);
+        if (startPos == null) {
+            return null;
+        }
+        Direction startDirection = getStartDirection(stack);
+        return startPos.relative(startDirection);
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+    public static BlockPos getRelativeEndPosition(ItemStack stack) {
+        BlockPos endPos = getEndPosition(stack);
+        if (endPos == null) {
+            return null;
+        }
+        Direction endDirection = getEndDirection(stack);
+        return endPos.relative(endDirection);
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
 
     public static Direction getStartDirection(ItemStack stack) {
         CompoundTag tag = stack.getOrCreateTagElement(PipeConnector.MODID);
@@ -270,6 +262,16 @@ public class PipeConnectorUtils {
         CompoundTag tag = stack.getOrCreateTagElement(PipeConnector.MODID);
         byte direction = tag.getByte("EndDirection");
         return Direction.from3DDataValue(direction);
+    }
+
+    public static String getDimension(ItemStack stack) {
+        CompoundTag tag = stack.getOrCreateTagElement(PipeConnector.MODID);
+        return tag.getString("DimensionName");
+    }
+
+    public static void setDimension(ItemStack stack, String dimensionName) {
+        CompoundTag tag = stack.getOrCreateTagElement(PipeConnector.MODID);
+        tag.putString("DimensionName", dimensionName);
     }
 
     public static void resetPositionAndDirectionTags(ItemStack stack, Player player, boolean shouldShowMessage) {
@@ -346,33 +348,5 @@ public class PipeConnectorUtils {
                 depth,
                 Block.byItem(player.getOffhandItem().getItem()),
                 context);
-    }
-
-    // -----------------------------------------------------------------------------------------------------------------
-    public static void updateBlockPreview(ServerPlayer player, ItemStack interactedItem) {
-        Level level = player.getLevel();
-        if (interactedItem.getItem() instanceof PipeConnectorItem) {
-            int depth = getDepthFromStack(interactedItem);
-            BlockPos startPos = getStartPosition(interactedItem);
-            BlockPos endPos = getEndPosition(interactedItem);
-            Direction startDirection = getStartDirection(interactedItem);
-            Direction endDirection = getEndDirection(interactedItem);
-            if (startPos != null && endPos != null) {
-                startPos = startPos.relative(startDirection);
-                endPos = endPos.relative(endDirection);
-                HashSet<PreviewInfo> buildPath = PipeConnectorUtils.getBlockPosSet(
-                        PipeConnectorUtils.getBlockPosMap(startPos, endPos, depth, level)
-                );
-
-                NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> player),
-                        new SyncBuildPath(buildPath));
-            }
-        }
-    }
-
-    // -----------------------------------------------------------------------------------------------------------------
-    public static void resetBlockPreview(ServerPlayer player) {
-        NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> player),
-                new SyncBuildPath(new HashSet<>()));
     }
 }

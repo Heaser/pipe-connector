@@ -1,5 +1,6 @@
 package com.heaser.pipeconnector.network;
 
+import com.heaser.pipeconnector.utils.GeneralUtils;
 import com.heaser.pipeconnector.utils.PipeConnectorUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -32,7 +33,7 @@ public class BuildPipesPacket {
             if(sender == null)
                 return;
 
-            if (!PipeConnectorUtils.isHoldingPipeConnector(sender)) {
+            if (!GeneralUtils.isHoldingPipeConnector(sender)) {
                 return;
             }
             ItemStack interactedItem = sender.getMainHandItem();
@@ -56,7 +57,6 @@ public class BuildPipesPacket {
                     depth,
                     new UseOnContext(sender, InteractionHand.MAIN_HAND, virtualHitResult));
             PipeConnectorUtils.resetPositionAndDirectionTags(interactedItem, sender, wasSuccessful);
-            PipeConnectorUtils.resetBlockPreview(sender);
         });
         context.get().setPacketHandled(true);
     }

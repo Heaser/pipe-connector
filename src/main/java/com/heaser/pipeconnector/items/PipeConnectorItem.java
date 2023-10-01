@@ -2,12 +2,9 @@ package com.heaser.pipeconnector.items;
 
 import com.heaser.pipeconnector.client.gui.PipeConnectorGui;
 import com.heaser.pipeconnector.constants.TagKeys;
-import com.heaser.pipeconnector.network.NetworkHandler;
-import com.heaser.pipeconnector.network.SyncBuildPath;
 import com.heaser.pipeconnector.particles.ParticleHelper;
 import com.heaser.pipeconnector.utils.GeneralUtils;
 import com.heaser.pipeconnector.utils.PipeConnectorUtils;
-import com.heaser.pipeconnector.utils.PreviewInfo;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
@@ -15,7 +12,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -27,11 +23,9 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.HashSet;
 import java.util.List;
 
 public class PipeConnectorItem extends Item {
@@ -120,16 +114,20 @@ public class PipeConnectorItem extends Item {
 
             if(startPos == null) {
                 PipeConnectorUtils.setStartPositionAndDirection(interactedItem, clickedFace, clickedPosition);
+                PipeConnectorUtils.setDimension(interactedItem, level.dimensionTypeId().toString());
                 ParticleHelper.serverSpawnMarkerParticle((ServerLevel) level, clickedPosition.relative(clickedFace));
             } else {
-                if (clickedPosition.equals(startPos) && clickedFace.equals(startDirection)) {
+                if (!level.dimensionTypeId().toString().equals(PipeConnectorUtils.getDimension(interactedItem))) {
+                    PipeConnectorUtils.resetPositionAndDirectionTags(interactedItem, usingPlayer, false);
+                    return InteractionResult.FAIL;
+                }
+                else if (clickedPosition.equals(startPos) && clickedFace.equals(startDirection)) {
                     PipeConnectorUtils.resetPositionAndDirectionTags(interactedItem, usingPlayer, true);
-                    PipeConnectorUtils.resetBlockPreview((ServerPlayer) usingPlayer);
                     return InteractionResult.FAIL;
                 }
                 PipeConnectorUtils.setEndPositionAndDirection(interactedItem, clickedFace, clickedPosition);
+
                 ParticleHelper.serverSpawnMarkerParticle((ServerLevel) level, clickedPosition.relative(clickedFace));
-                PipeConnectorUtils.updateBlockPreview((ServerPlayer) usingPlayer, interactedItem);
             }
 
         }
@@ -143,7 +141,7 @@ public class PipeConnectorItem extends Item {
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> components, TooltipFlag tooltipFlag) {
         if (Screen.hasShiftDown()) {
             components.add(Component.translatable("item.pipe_connector.tooltip.usageExplanation").withStyle(ChatFormatting.DARK_AQUA));
-            components.add(Component.translatable("item.pipe_connector.tooltip.CancelSelectionExplanation").withStyle(ChatFormatting.BLUE));
+            components.add(Component.translatable("item.pipe_connector.tooltip.openGui").withStyle(ChatFormatting.BLUE));
             components.add(Component.translatable("item.pipe_connector.tooltip.changeDepthExplanation").withStyle(ChatFormatting.LIGHT_PURPLE));
         } else {
             components.add(Component.translatable("item.pipe_connector.tooltip.shiftForMoreInfo").withStyle(ChatFormatting.GOLD));

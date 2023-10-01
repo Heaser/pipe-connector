@@ -1,6 +1,7 @@
 package com.heaser.pipeconnector.client;
 
 import com.heaser.pipeconnector.PipeConnector;
+import com.heaser.pipeconnector.utils.GeneralUtils;
 import com.heaser.pipeconnector.utils.PipeConnectorUtils;
 import com.heaser.pipeconnector.network.NetworkHandler;
 import com.heaser.pipeconnector.network.UpdateDepthPacket;
@@ -26,7 +27,7 @@ public class DepthSetterEvent {
             return;
         }
 
-        ItemStack pipeConnectorStack = PipeConnectorUtils.heldPipeConnector(player);
+        ItemStack pipeConnectorStack = GeneralUtils.heldPipeConnector(player);
         if (pipeConnectorStack == null || pipeConnectorStack.isEmpty()) {
             return;
         }

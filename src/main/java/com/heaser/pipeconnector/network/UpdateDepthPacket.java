@@ -2,6 +2,7 @@ package com.heaser.pipeconnector.network;
 
 
 import com.heaser.pipeconnector.PipeConnector;
+import com.heaser.pipeconnector.utils.GeneralUtils;
 import com.heaser.pipeconnector.utils.PipeConnectorUtils;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
@@ -32,13 +33,12 @@ public class UpdateDepthPacket {
             if(sender == null)
                 return;
 
-            if (!PipeConnectorUtils.isHoldingPipeConnector(sender)) {
+            if (!GeneralUtils.isHoldingPipeConnector(sender)) {
                 return;
             }
             ItemStack item = sender.getMainHandItem();
             CompoundTag tag = item.getOrCreateTagElement(PipeConnector.MODID);
             tag.putInt("Depth", this.depth);
-            PipeConnectorUtils.updateBlockPreview(sender, item);
         });
         ctx.get().setPacketHandled(true);
     }

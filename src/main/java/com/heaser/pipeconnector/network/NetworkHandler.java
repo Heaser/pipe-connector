@@ -38,13 +38,6 @@ public class NetworkHandler {
                 .consumerMainThread(BuildPipesPacket::handle)
                 .add();
 
-        CHANNEL.messageBuilder(SyncBuildPath.class, packetId++).
-                encoder(SyncBuildPath::encode).
-                decoder(SyncBuildPath::new).
-                consumerMainThread(SyncBuildPath::handle)
-                .add();
-
-
         PipeConnector.LOGGER.debug("Registered {} Packets for {}", packetId, PipeConnector.MODID);
     }
 }
