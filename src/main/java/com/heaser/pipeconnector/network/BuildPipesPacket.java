@@ -56,6 +56,7 @@ public class BuildPipesPacket {
                     depth,
                     new UseOnContext(sender, InteractionHand.MAIN_HAND, virtualHitResult));
             PipeConnectorUtils.resetPositionAndDirectionTags(interactedItem, sender, wasSuccessful);
+            PipeConnectorUtils.resetBlockPreview(sender);
         });
         context.get().setPacketHandled(true);
     }

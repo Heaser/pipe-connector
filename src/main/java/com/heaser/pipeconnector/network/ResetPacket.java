@@ -27,6 +27,7 @@ public class ResetPacket {
                 return;
             }
             PipeConnectorUtils.resetPositionAndDirectionTags(sender.getMainHandItem(), sender, true);
+            PipeConnectorUtils.resetBlockPreview(sender);
         });
         ctx.get().setPacketHandled(true);
     }

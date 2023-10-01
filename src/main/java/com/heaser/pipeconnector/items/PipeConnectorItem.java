@@ -124,18 +124,12 @@ public class PipeConnectorItem extends Item {
             } else {
                 if (clickedPosition.equals(startPos) && clickedFace.equals(startDirection)) {
                     PipeConnectorUtils.resetPositionAndDirectionTags(interactedItem, usingPlayer, true);
+                    PipeConnectorUtils.resetBlockPreview((ServerPlayer) usingPlayer);
                     return InteractionResult.FAIL;
                 }
                 PipeConnectorUtils.setEndPositionAndDirection(interactedItem, clickedFace, clickedPosition);
                 ParticleHelper.serverSpawnMarkerParticle((ServerLevel) level, clickedPosition.relative(clickedFace));
-                ServerPlayer player = (ServerPlayer) usingPlayer;
-                int depth = PipeConnectorUtils.getDepthFromStack(interactedItem);
-                HashSet<PreviewInfo> buildPath = PipeConnectorUtils.getBlockPosSet(
-                        PipeConnectorUtils.getBlockPosMap(startPos, clickedPosition, depth, level)
-                );
-
-                NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> player),
-                        new SyncBuildPath(buildPath));
+                PipeConnectorUtils.updateBlockPreview((ServerPlayer) usingPlayer, interactedItem);
             }
 
         }

@@ -4,6 +4,8 @@ package com.heaser.pipeconnector.utils;
 import com.heaser.pipeconnector.PipeConnector;
 import com.heaser.pipeconnector.constants.TagKeys;
 import com.heaser.pipeconnector.items.PipeConnectorItem;
+import com.heaser.pipeconnector.network.NetworkHandler;
+import com.heaser.pipeconnector.network.SyncBuildPath;
 import com.heaser.pipeconnector.particles.ParticleHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -11,6 +13,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -21,6 +24,7 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.network.PacketDistributor;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -146,7 +150,7 @@ public class PipeConnectorUtils {
         BlockPlaceContext blockPlaceContext = new BlockPlaceContext(context);
         BlockState blockState = block.getStateForPlacement(blockPlaceContext);
 
-        if (!level.getBlockState(pos).is(TagKeys.VOIDABLE_BLOCKS)) {
+        if (!isVoidableBlock(level, pos)) {
             level.destroyBlock(pos, true, player);
             level.addDestroyBlockEffect(pos, level.getBlockState(pos));
         }
@@ -158,9 +162,16 @@ public class PipeConnectorUtils {
     }
 
     // -----------------------------------------------------------------------------------------------------------------
-    private static boolean isNotBreakable(Level level, BlockPos pos) {
+    public static boolean isNotBreakable(Level level, BlockPos pos) {
         return (level.getBlockState(pos).getDestroySpeed(level, pos) == -1
                 && !level.getBlockState(pos).is(TagKeys.UNBREAKABLE_BLOCKS));
+    }
+
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    public static boolean isVoidableBlock(Level level, BlockPos pos) {
+        return level.getBlockState(pos).is(TagKeys.VOIDABLE_BLOCKS);
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -335,5 +346,33 @@ public class PipeConnectorUtils {
                 depth,
                 Block.byItem(player.getOffhandItem().getItem()),
                 context);
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+    public static void updateBlockPreview(ServerPlayer player, ItemStack interactedItem) {
+        Level level = player.getLevel();
+        if (interactedItem.getItem() instanceof PipeConnectorItem) {
+            int depth = getDepthFromStack(interactedItem);
+            BlockPos startPos = getStartPosition(interactedItem);
+            BlockPos endPos = getEndPosition(interactedItem);
+            Direction startDirection = getStartDirection(interactedItem);
+            Direction endDirection = getEndDirection(interactedItem);
+            if (startPos != null && endPos != null) {
+                startPos = startPos.relative(startDirection);
+                endPos = endPos.relative(endDirection);
+                HashSet<PreviewInfo> buildPath = PipeConnectorUtils.getBlockPosSet(
+                        PipeConnectorUtils.getBlockPosMap(startPos, endPos, depth, level)
+                );
+
+                NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> player),
+                        new SyncBuildPath(buildPath));
+            }
+        }
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+    public static void resetBlockPreview(ServerPlayer player) {
+        NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> player),
+                new SyncBuildPath(new HashSet<>()));
     }
 }

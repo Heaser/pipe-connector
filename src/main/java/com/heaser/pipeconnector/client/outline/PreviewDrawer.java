@@ -1,11 +1,13 @@
 package com.heaser.pipeconnector.client.outline;
 
+import com.heaser.pipeconnector.utils.PipeConnectorUtils;
 import com.heaser.pipeconnector.utils.PreviewInfo;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.AABB;
 import net.minecraftforge.api.distmarker.Dist;
@@ -28,7 +30,14 @@ public class PreviewDrawer {
 
         for (PreviewInfo previewInfo : previewMap) {
             AABB aabb = new AABB(previewInfo.pos).move(-d0, -d1, -d2);
-            LevelRenderer.renderLineBox(pose, builder, aabb, 1F, 0, 0, 1F);
+
+            if (PipeConnectorUtils.isNotBreakable(player.getLevel(), previewInfo.pos)) {
+                LevelRenderer.renderLineBox(pose, builder, aabb, 1F, 0, 0, 1F);
+            } else if (PipeConnectorUtils.isVoidableBlock(player.getLevel(), previewInfo.pos)) {
+                LevelRenderer.renderLineBox(pose, builder, aabb, 1F, 1F, 0, 1F);
+            } else {
+                LevelRenderer.renderLineBox(pose, builder, aabb, 0, 1F, 0, 1F);
+            }
         }
     }
 }

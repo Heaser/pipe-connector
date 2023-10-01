@@ -5,6 +5,7 @@ import com.heaser.pipeconnector.PipeConnector;
 import com.heaser.pipeconnector.utils.PipeConnectorUtils;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.network.NetworkEvent;
 import net.minecraft.network.FriendlyByteBuf;
 
@@ -34,9 +35,10 @@ public class UpdateDepthPacket {
             if (!PipeConnectorUtils.isHoldingPipeConnector(sender)) {
                 return;
             }
-
-            CompoundTag tag = sender.getMainHandItem().getOrCreateTagElement(PipeConnector.MODID);
+            ItemStack item = sender.getMainHandItem();
+            CompoundTag tag = item.getOrCreateTagElement(PipeConnector.MODID);
             tag.putInt("Depth", this.depth);
+            PipeConnectorUtils.updateBlockPreview(sender, item);
         });
         ctx.get().setPacketHandled(true);
     }
