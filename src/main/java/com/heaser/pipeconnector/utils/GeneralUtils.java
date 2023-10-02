@@ -36,13 +36,17 @@ public class GeneralUtils
         return (level.getBlockState(pos).getDestroySpeed(level, pos) == -1
                 && !level.getBlockState(pos).is(TagKeys.UNBREAKABLE_BLOCKS));
     }
-    // ---------------------------------------------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
 
     public static boolean isVoidableBlock(Level level, BlockPos pos) {
         return level.getBlockState(pos).is(TagKeys.VOIDABLE_BLOCKS);
     }
 
-    // ---------------------------------------------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------------------
+
+    public static boolean isPlaceableBlock(Player player) {
+        return player.getOffhandItem().is(TagKeys.PLACEABLE_ITEMS);
+    }
 }
 
 

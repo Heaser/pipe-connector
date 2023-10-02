@@ -6,11 +6,8 @@ import com.heaser.pipeconnector.particles.ParticleHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Inventory;
@@ -22,13 +19,13 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.dimension.DimensionType;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
 public class PipeConnectorUtils {
+
 
     public static boolean connectPathWithSegments(Player player, BlockPos start, BlockPos end, int depth, Block block, UseOnContext context) {
         Level level = player.getLevel();
@@ -44,7 +41,7 @@ public class PipeConnectorUtils {
         if (!isCreativeMode)
             {
                 int numOfPipes = getNumberOfPipesInInventory(player);
-                if (numOfPipes < blockPosMap.size()) {
+                if (!hasEnoughPipesInInventory(numOfPipes, blockPosMap.size())) {
                     int missingPipes = blockPosMap.size() - numOfPipes;
                     PipeConnector.LOGGER.debug("Not enough pipes in inventory, missing " + missingPipes + " pipes.");
                     player.displayClientMessage(Component.translatable("item.pipe_connector.message.notEnoughPipes", missingPipes).withStyle(ChatFormatting.BOLD, ChatFormatting.YELLOW), true);
@@ -77,7 +74,11 @@ public class PipeConnectorUtils {
         return true;
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
 
+    public static boolean hasEnoughPipesInInventory(int NumberOfPipesInInventory, int PathSize) {
+        return NumberOfPipesInInventory >= PathSize;
+    }
     // -----------------------------------------------------------------------------------------------------------------
 
     public static HashSet<PreviewInfo> getBlockPosSet(Map<BlockPos, BlockState> blockPosMap) {

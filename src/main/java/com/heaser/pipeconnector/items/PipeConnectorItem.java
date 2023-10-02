@@ -63,10 +63,6 @@ public class PipeConnectorItem extends Item {
         // Handle logic for both client and server
         handleCommonUseOn(interactedItem);
 
-        if (GeneralUtils.isServerSide((level))) {
-
-        }
-
         // Handle Server logic
         if(GeneralUtils.isServerSide(level)) {
             return handleServerSideUseOn(context);
@@ -96,9 +92,8 @@ public class PipeConnectorItem extends Item {
         }
         boolean isShiftKeyDown = usingPlayer.isShiftKeyDown();
 
-        boolean isHoldingAllowedPipe = usingPlayer.getOffhandItem().is(TagKeys.PLACEABLE_ITEMS);
         if (isShiftKeyDown) {
-            if (!isHoldingAllowedPipe) {
+            if (!GeneralUtils.isPlaceableBlock(usingPlayer)) {
                 usingPlayer.displayClientMessage(Component.translatable("item.pipe_connector.message.holdValidItem")
                         .withStyle(ChatFormatting.GOLD), true);
                 return InteractionResult.FAIL;

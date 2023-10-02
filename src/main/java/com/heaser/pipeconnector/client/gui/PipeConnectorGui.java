@@ -35,8 +35,7 @@ public class PipeConnectorGui extends Screen {
     @Override
     protected void init() {
         createButton(0.65, 0.7, new ResetButton());
-        createButton(0.65, 0.8, new BuildPipesButton());
-
+        createButton(0.65, 0.8, new BuildPipesButton(this.getMinecraft().player));
     }
 
     @Override
