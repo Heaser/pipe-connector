@@ -47,6 +47,13 @@ public class GeneralUtils
     public static boolean isPlaceableBlock(Player player) {
         return player.getOffhandItem().is(TagKeys.PLACEABLE_ITEMS);
     }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    public static boolean isVoidableOrNotBreakable(Level level, BlockPos pos) {
+        return isVoidableBlock(level, pos) || isNotBreakable(level, pos);
+    }
 }
+
 
 

@@ -3,6 +3,7 @@ package com.heaser.pipeconnector.utils;
 
 import com.heaser.pipeconnector.PipeConnector;
 import com.heaser.pipeconnector.particles.ParticleHelper;
+import com.heaser.pipeconnector.utils.pathfinding.PathfindingAStarAlgorithm;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -19,10 +20,10 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
+import java.util.*;
 
 public class PipeConnectorUtils {
 
@@ -96,7 +97,6 @@ public class PipeConnectorUtils {
     public static Map<BlockPos, BlockState> getBlockPosMap(BlockPos start, BlockPos end, int depth, Level level) {
         Map <BlockPos, BlockState> blockHashMap = new HashMap<>();
 
-
         int deltaY = Math.abs(start.getY() - end.getY());
         int startDepth = depth, endDepth = depth;
 
@@ -109,24 +109,13 @@ public class PipeConnectorUtils {
         start = moveAndStoreStates(start, startDepth, 0, -1, 0, level, blockHashMap);
         end = moveAndStoreStates(end, endDepth, 0, -1, 0, level, blockHashMap);
 
-        // Create bridge
-        int dx = end.getX() - start.getX();
-        int dy = end.getY() - start.getY();
-        int dz = end.getZ() - start.getZ();
-
-        int xSteps = Math.abs(dx);
-        int ySteps = Math.abs(dy);
-        int zSteps = Math.abs(dz);
-
-        int xDirection = dx > 0 ? 1 : -1;
-        int yDirection = dy > 0 ? 1 : -1;
-        int zDirection = dz > 0 ? 1 : -1;
-
-        BlockPos currentPos = start.above();
-
-        currentPos = moveAndStoreStates(currentPos, ySteps, 0, yDirection, 0, level, blockHashMap);
-        currentPos = moveAndStoreStates(currentPos, xSteps, xDirection, 0, 0, level, blockHashMap);
-        moveAndStoreStates(currentPos, zSteps, 0, 0, zDirection, level, blockHashMap);
+        List<BlockPos> test = PathfindingAStarAlgorithm.findPathAStar(start, end, level);
+        if(test == null) {
+            return blockHashMap;
+        }
+        for(BlockPos pos : test) {
+            blockHashMap.putIfAbsent(pos, level.getBlockState(pos));
+        }
 
         return blockHashMap;
     }

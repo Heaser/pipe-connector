@@ -96,6 +96,7 @@ dependencies {
     runtimeOnly fg.deobf("curse.maven:construction-wand-399558:4455719")
     runtimeOnly fg.deobf("curse.maven:pretty-pipes-376737:4049655")
     runtimeOnly fg.deobf("curse.maven:jei-238222:4494410")
+//    runtimeOnly fg.deobf("curse.maven:mcjtylib-233105:4501791")
 
 }
 
