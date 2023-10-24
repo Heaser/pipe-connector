@@ -8,7 +8,6 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
 
-@OnlyIn(Dist.CLIENT)
 public abstract class BaseButton {
     public Component label;
 

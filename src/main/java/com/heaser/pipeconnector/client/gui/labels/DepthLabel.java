@@ -5,7 +5,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-@OnlyIn(Dist.CLIENT)
 public class DepthLabel extends BaseLabel {
     public DepthLabel() {
         super("item.pipe_connector.gui.label.depth");

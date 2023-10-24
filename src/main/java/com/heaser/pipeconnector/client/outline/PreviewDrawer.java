@@ -20,7 +20,6 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.util.HashSet;
 
-@OnlyIn(Dist.CLIENT)
 public class PreviewDrawer {
     public HashSet<PreviewInfo> previewMap = new HashSet<>();
     private BuildParameters cachedParameters = new BuildParameters();
