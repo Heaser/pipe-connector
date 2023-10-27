@@ -52,7 +52,8 @@ public class BuildPipesButton extends BaseButton {
         int existingPipes = PipeConnectorUtils.getNumberOfPipesInInventory(player);
         int neededPipes = ClientSetup.PREVIEW_DRAWER.previewMap.size();
         int missingPipes = neededPipes - existingPipes;
-        if (!PipeConnectorUtils.hasEnoughPipesInInventory(existingPipes, neededPipes)) {
+
+        if (!PipeConnectorUtils.hasEnoughPipesInInventory(player, existingPipes, neededPipes)) {
             return Component.translatable("item.pipe_connector.gui.button.tooltip.disabledNotEnoughPipes", missingPipes);
         }
         return null;

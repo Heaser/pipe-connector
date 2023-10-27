@@ -38,17 +38,13 @@ public class PipeConnectorUtils {
         boolean isCreativeMode = player.getAbilities().instabuild;
         int pipeLimit = 640;
 
-        // Disable pipe check and reduction in creative mode.
-        if (!isCreativeMode)
-            {
-                int numOfPipes = getNumberOfPipesInInventory(player);
-                if (!hasEnoughPipesInInventory(numOfPipes, blockPosMap.size())) {
-                    int missingPipes = blockPosMap.size() - numOfPipes;
-                    PipeConnector.LOGGER.debug("Not enough pipes in inventory, missing " + missingPipes + " pipes.");
-                    player.displayClientMessage(Component.translatable("item.pipe_connector.message.notEnoughPipes", missingPipes).withStyle(ChatFormatting.BOLD, ChatFormatting.YELLOW), true);
-                    return false;
-                }
-            }
+        int numOfPipes = getNumberOfPipesInInventory(player);
+        if (!hasEnoughPipesInInventory(player, numOfPipes, blockPosMap.size())) {
+            int missingPipes = blockPosMap.size() - numOfPipes;
+            PipeConnector.LOGGER.debug("Not enough pipes in inventory, missing " + missingPipes + " pipes.");
+            player.displayClientMessage(Component.translatable("item.pipe_connector.message.notEnoughPipes", missingPipes).withStyle(ChatFormatting.BOLD, ChatFormatting.YELLOW), true);
+            return false;
+        }
 
         // Checks if the pipe limit has been reached
             if (pipeLimit < blockPosMap.size()) {
@@ -77,8 +73,9 @@ public class PipeConnectorUtils {
 
     // -----------------------------------------------------------------------------------------------------------------
 
-    public static boolean hasEnoughPipesInInventory(int NumberOfPipesInInventory, int PathSize) {
-        return NumberOfPipesInInventory >= PathSize;
+    public static boolean hasEnoughPipesInInventory(Player player, int NumberOfPipesInInventory, int PathSize) {
+        boolean isCreativeMode = player.getAbilities().instabuild;
+        return isCreativeMode || NumberOfPipesInInventory >= PathSize;
     }
     // -----------------------------------------------------------------------------------------------------------------
 
