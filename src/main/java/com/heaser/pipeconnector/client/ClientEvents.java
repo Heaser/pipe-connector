@@ -11,10 +11,15 @@ import net.minecraftforge.client.event.RenderLevelStageEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import org.openjdk.nashorn.internal.ir.annotations.Ignore;
 
 @Mod.EventBusSubscriber(modid = PipeConnector.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public class ClientEvents {
 
+
+
+    /*
+    // Currently commented out to solve some compatibility issues with other mods - using onGameRenderOverlay instead.
     @SubscribeEvent(priority = EventPriority.LOW)
     public static void onRenderWorld(RenderLevelStageEvent event) {
 

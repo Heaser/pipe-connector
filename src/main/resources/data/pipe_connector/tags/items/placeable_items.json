@@ -123,6 +123,10 @@
     {
       "id": "create:fluid_pipe",
       "required": false
+    },
+    {
+      "id": "storagenetwork:kabel",
+      "required": false
     }
   ]
 }
