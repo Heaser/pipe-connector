@@ -8,6 +8,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
+import net.minecraftforge.client.event.RenderLevelLastEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -33,5 +34,17 @@ public class ClientEvents {
             }
         }
     }
+    */
 
+    @SubscribeEvent(priority = EventPriority.LOW)
+    @SuppressWarnings("removal")
+    public static void onGameRenderOverlay(RenderLevelLastEvent event) {
+        PoseStack stack = event.getPoseStack();
+        MultiBufferSource.BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
+        double partialTicks = event.getPartialTick();
+        Entity cameraEntity =  Minecraft.getInstance().cameraEntity;
+        if (cameraEntity instanceof Player) {
+            ClientSetup.PREVIEW_DRAWER.handleOnRenderLevel(stack, buffer, partialTicks, (Player)cameraEntity);
+        }
+    }
 }
