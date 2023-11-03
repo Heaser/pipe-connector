@@ -28,9 +28,11 @@ Supported Pipes:
 * Refined Storage Cable
 * Pipes from Pretty Pipes
 * Create Pipe
+* Thermal Dynamics Ducts
+* Simple Storage Network Cable
 
 ### **Modpack makers can support additional pipes via tags.**
 
 
 **Known issues:**
-* AE2 and Thermal Dynamics Ducts can cause issues when placed with the Pipe Connector, it is currently not advised to add the tags for them.
+* AE2 cable are not being placed correctly and are not supported until we resolve the issue.
