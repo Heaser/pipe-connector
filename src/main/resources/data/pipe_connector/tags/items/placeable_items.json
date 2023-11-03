@@ -117,7 +117,7 @@
       "required": false
     },
     {
-      "id":"prettypipes:pipe",
+      "id": "prettypipes:pipe",
       "required": false
     },
     {
@@ -126,6 +126,18 @@
     },
     {
       "id": "storagenetwork:kabel",
+      "required": false
+    },
+    {
+      "id": "thermal:fluid_duct",
+      "required": false
+    },
+    {
+      "id": "thermal:fluid_duct_windowed",
+      "required": false
+    },
+    {
+      "id": "thermal:energy_duct",
       "required": false
     }
   ]
