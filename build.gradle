@@ -1,7 +1,8 @@
 plugins {
     id 'maven-publish'
-    id 'net.minecraftforge.gradle' version '5.1.+'
+    id 'net.minecraftforge.gradle' version '[6.0,6.2)'
     id 'org.parchmentmc.librarian.forgegradle' version '1.+'
+    // id 'org.gradle.toolchains.foojay-resolver-convention' version '0.5.0'
 }
 
 apply plugin: 'idea'
@@ -15,7 +16,7 @@ java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 println "Java: ${System.getProperty 'java.version'}, JVM: ${System.getProperty 'java.vm.version'} (${System.getProperty 'java.vendor'}), Arch: ${System.getProperty 'os.arch'}"
 minecraft {
 //    mappings channel: 'official', version: mod_minecraft_version
-    mappings channel: 'parchment', version: '2022.08.14-1.19.2'
+    mappings channel: 'parchment', version: '2023.09.03-1.20.1'
     runs {
         client {
             workingDirectory project.file('run')
@@ -84,21 +85,21 @@ repositories {
 }
 
 dependencies {
-    minecraft "net.minecraftforge:forge:${mod_minecraft_version}-${forge_version}"
+    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
-    runtimeOnly fg.deobf("curse.maven:pipez-${pipez_mod_id}:${pipez_mod_file_id}")
-    runtimeOnly fg.deobf("curse.maven:refined-storage-${refinedstorage_mod_id}:${refinedstorage_mod_file_id}")
-    runtimeOnly fg.deobf("curse.maven:mekanism-${mekanism_mod_id}:${mekanism_mod_file_id}")
+    // runtimeOnly fg.deobf("curse.maven:pipez-${pipez_mod_id}:${pipez_mod_file_id}")
+    // runtimeOnly fg.deobf("curse.maven:refined-storage-${refinedstorage_mod_id}:${refinedstorage_mod_file_id}")
+    // runtimeOnly fg.deobf("curse.maven:mekanism-${mekanism_mod_id}:${mekanism_mod_file_id}")
 //    runtimeOnly fg.deobf("curse.maven:applied-energistics2-223794:4498125")
 
-    runtimeOnly fg.deobf("curse.maven:cofh-core-69162:4801049")
-    runtimeOnly fg.deobf("curse.maven:thermal-dynamics-227443:4760633")
-    runtimeOnly fg.deobf("curse.maven:thermal-foundation-222880:4782926")
+    // runtimeOnly fg.deobf("curse.maven:cofh-core-69162:4801049")
+    // runtimeOnly fg.deobf("curse.maven:thermal-dynamics-227443:4760633")
+    // runtimeOnly fg.deobf("curse.maven:thermal-foundation-222880:4782926")
 
-    runtimeOnly fg.deobf("curse.maven:construction-wand-399558:4455719")
-    runtimeOnly fg.deobf("curse.maven:pretty-pipes-376737:4049655")
-    runtimeOnly fg.deobf("curse.maven:jei-238222:4494410")
-    runtimeOnly fg.deobf("curse.maven:mcjtylib-233105:4501791")
+    // runtimeOnly fg.deobf("curse.maven:construction-wand-399558:4455719")
+    // runtimeOnly fg.deobf("curse.maven:pretty-pipes-376737:4049655")
+    // runtimeOnly fg.deobf("curse.maven:jei-238222:4494410")
+    // runtimeOnly fg.deobf("curse.maven:mcjtylib-233105:4501791")
 
 }
 
