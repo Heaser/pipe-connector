@@ -42,7 +42,7 @@ public class PipeConnectorGui extends Screen {
         RenderSystem.setShaderTexture(0, PIPE_CONNECTOR_TEXTURE);
         int drawStartX = getScreenX();
         int drawStartY = getScreenY();
-        // guiGraphics.blit(drawStartX, drawStartY, 0, imageWidth, imageHeight);
+        guiGraphics.blit(PIPE_CONNECTOR_TEXTURE, drawStartX, drawStartY, 0, 0, imageWidth, imageHeight);
         super.render(guiGraphics, mouseX, mouseY, partialTick);
 
         createLabel(guiGraphics, 0.65, 0.6, new DepthLabel());
