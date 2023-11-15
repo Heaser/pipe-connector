@@ -7,15 +7,13 @@ import com.heaser.pipeconnector.client.gui.buttons.ResetButton;
 import com.heaser.pipeconnector.client.gui.labels.BaseLabel;
 import com.heaser.pipeconnector.client.gui.labels.DepthLabel;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
 public class PipeConnectorGui extends Screen {
@@ -38,16 +36,16 @@ public class PipeConnectorGui extends Screen {
     }
 
     @Override
-    public void render(@NotNull PoseStack poseStack, int mouseX, int mouseY, float partialTicks) {
+    public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShaderTexture(0, PIPE_CONNECTOR_TEXTURE);
         int drawStartX = getScreenX();
         int drawStartY = getScreenY();
-        blit(poseStack, drawStartX, drawStartY, 0, 0, imageWidth, imageHeight);
-        super.render(poseStack, mouseX, mouseY, partialTicks);
+        // guiGraphics.blit(drawStartX, drawStartY, 0, imageWidth, imageHeight);
+        super.render(guiGraphics, mouseX, mouseY, partialTick);
 
-        createLabel(poseStack, 0.65, 0.6, new DepthLabel());
+        createLabel(guiGraphics, 0.65, 0.6, new DepthLabel());
     }
 
     @Override
@@ -65,27 +63,29 @@ public class PipeConnectorGui extends Screen {
         int marginY = (int) (imageHeight * marginYPercent);
         int drawStartX = this.getScreenX() + marginX;
         int drawStartY = this.getScreenY() + marginY;
-
-        Button button = new Button(drawStartX, drawStartY, BUTTON_WIDTH, BUTTON_HEIGHT,
-                baseButton.label, clickedButton -> onButtonClick(clickedButton, baseButton),
-                (clickedButton, matrixStack, mouseX, mouseY) -> drawTooltip(matrixStack, mouseX, mouseY, baseButton));
+        Button button = Button.builder(baseButton.label, clickedButton -> onButtonClick(clickedButton, baseButton))
+                .pos(drawStartX, drawStartY)
+                .size(BUTTON_WIDTH, BUTTON_HEIGHT)
+                //.tooltip()
+                .build();
+        //(clickedButton, guiGraphics, mouseX, mouseY) -> drawTooltip(guiGraphics, mouseX, mouseY, baseButton)
         button.active = baseButton.isActive(pipeConnectorStack);
         addRenderableWidget(button);
     }
 
-    private void createLabel(PoseStack poseStack, double marginXPercent, double marginYPercent, BaseLabel label) {
+    private void createLabel(GuiGraphics guiGraphics, double marginXPercent, double marginYPercent, BaseLabel label) {
         int marginX = (int) (imageWidth * marginXPercent);
         int marginY = (int) (imageHeight * marginYPercent);
         int drawStartX = this.getScreenX() + marginX;
         int drawStartY = this.getScreenY() + marginY;
 
-        drawString(poseStack, this.font, label.getLabel(pipeConnectorStack), drawStartX, drawStartY, 12181157);
+        guiGraphics.drawString(this.font, label.getLabel(pipeConnectorStack), drawStartX, drawStartY, 12181157);
     }
 
-    private void drawTooltip(PoseStack matrixStack, int mouseX, int mouseY, BaseButton baseButton) {
+    private void drawTooltip(GuiGraphics guiGraphics, int mouseX, int mouseY, BaseButton baseButton) {
         Component tooltipText = baseButton.getTooltip(pipeConnectorStack);
         if(tooltipText != null && isMouseOver(mouseX, mouseY)) {
-            renderTooltip(matrixStack, tooltipText, mouseX, mouseY);
+            //guiGraphics.renderTooltip(, tooltipText, mouseX, mouseY);
         }
     }
 

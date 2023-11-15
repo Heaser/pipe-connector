@@ -87,23 +87,20 @@ repositories {
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
-    // runtimeOnly fg.deobf("curse.maven:pipez-${pipez_mod_id}:${pipez_mod_file_id}")
-    // runtimeOnly fg.deobf("curse.maven:refined-storage-${refinedstorage_mod_id}:${refinedstorage_mod_file_id}")
-    // runtimeOnly fg.deobf("curse.maven:mekanism-${mekanism_mod_id}:${mekanism_mod_file_id}")
-//    runtimeOnly fg.deobf("curse.maven:applied-energistics2-223794:4498125")
+    runtimeOnly fg.deobf("curse.maven:pipez-443900:4713656")
+    runtimeOnly fg.deobf("curse.maven:refined-storage-${refinedstorage_mod_id}:4844585")
+    runtimeOnly fg.deobf("curse.maven:mekanism-${mekanism_mod_id}:4866575")
+
+    // runtimeOnly fg.deobf("curse.maven:applied-energistics2-223794:4857895")
 
     // runtimeOnly fg.deobf("curse.maven:cofh-core-69162:4801049")
     // runtimeOnly fg.deobf("curse.maven:thermal-dynamics-227443:4760633")
     // runtimeOnly fg.deobf("curse.maven:thermal-foundation-222880:4782926")
-
-    // runtimeOnly fg.deobf("curse.maven:construction-wand-399558:4455719")
-    // runtimeOnly fg.deobf("curse.maven:pretty-pipes-376737:4049655")
-    // runtimeOnly fg.deobf("curse.maven:jei-238222:4494410")
-    // runtimeOnly fg.deobf("curse.maven:mcjtylib-233105:4501791")
-
+    runtimeOnly fg.deobf("curse.maven:pretty-pipes-376737:4769646")
+    runtimeOnly fg.deobf("curse.maven:jei-238222:4712868")
+    runtimeOnly fg.deobf("curse.maven:mcjtylib-233105:4747680")
 }
 
-// Example for how to get properties into the manifest for reading at runtime.
 jar {
     manifest {
         attributes([
@@ -119,17 +116,17 @@ jar {
 }
 
 
-processResources {
-    filesMatching('**/*.toml') {
-        expand(
-                'mod_id': mod_id,
-                'mod_version': mod_version,
-                'mod_vendor': mod_vendor,
-                'mod_name': mod_name,
-                'mod_forge_version': mod_forge_version,
-                'mod_loader_version': mod_loader_version,
-                'mod_minecraft_version': mod_minecraft_version,
-        )
+tasks.named('processResources', ProcessResources).configure {
+    var replaceProperties = [
+            minecraft_version: minecraft_version, minecraft_version_range: minecraft_version_range,
+            forge_version: forge_version, forge_version_range: forge_version_range,
+            loader_version_range: loader_version_range,
+            mod_id: mod_id, mod_name: mod_name, mod_version: mod_version
+    ]
+    inputs.properties replaceProperties
+
+    filesMatching(['META-INF/mods.toml', 'pack.mcmeta']) {
+        expand replaceProperties + [project: project]
     }
 }
 

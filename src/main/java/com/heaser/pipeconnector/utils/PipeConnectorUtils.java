@@ -29,7 +29,7 @@ public class PipeConnectorUtils {
 
 
     public static boolean connectPathWithSegments(Player player, BlockPos start, BlockPos end, int depth, Block block, UseOnContext context) {
-        Level level = player.getLevel();
+        Level level = player.level();
         Map<BlockPos, BlockState> blockPosMap = getBlockPosMap(start, end, depth, level);
 
         PipeConnector.LOGGER.debug(blockPosMap.toString());

@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="${mod_loader_version}"
+loaderVersion="${loader_version_range}"
 license="MIT License"
 [[mods]]
 modId="${mod_id}"
@@ -14,12 +14,12 @@ This tries to solve a long lasting issue of digging some blocks to put your pipe
 [[dependencies.${mod_id}]]
     modId="forge"
     mandatory=true
-    versionRange="${mod_forge_version}"
+    versionRange="${forge_version_range}"
     ordering="NONE"
     side="BOTH"
 [[dependencies.${mod_id}]]
     modId="minecraft"
     mandatory=true
-    versionRange="[${mod_minecraft_version}]"
+    versionRange="${minecraft_version_range}"
     ordering="NONE"
     side="BOTH"

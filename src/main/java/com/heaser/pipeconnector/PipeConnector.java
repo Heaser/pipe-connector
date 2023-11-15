@@ -28,6 +28,7 @@ public class PipeConnector {
 
     private void commonSetup(final FMLCommonSetupEvent event) {
         event.enqueueWork(NetworkHandler::register);
+        MinecraftForge.EVENT_BUS.register(new ModItems());
     }
 
     private void clientSetup(final FMLClientSetupEvent event) {

@@ -15,8 +15,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.util.HashSet;
 
@@ -33,7 +31,7 @@ public class PreviewDrawer {
             return;
         }
         else if(shouldUpdatePreview(heldItem)) {
-            Level currentLevel = player.getLevel();
+            Level currentLevel = player.level();
             previewMap = getNewPreview(heldItem, currentLevel);
         }
 
@@ -69,9 +67,9 @@ public class PreviewDrawer {
                 LevelRenderer.renderLineBox(pose, builder, aabb, 0.5F, 0.7F, 0.9F, 1F);
             } else if(previewInfo.isRelativeEndPos(pipeConnector)) {
                 LevelRenderer.renderLineBox(pose, builder, aabb, 1F, 0.5F, 0.3F, 1F);
-            } else if (GeneralUtils.isNotBreakable(player.getLevel(), previewInfo.pos)) {
+            } else if (GeneralUtils.isNotBreakable(player.level(), previewInfo.pos)) {
                 LevelRenderer.renderLineBox(pose, builder, aabb, 1F, 0, 0, 1F);
-            } else if (GeneralUtils.isVoidableBlock(player.getLevel(), previewInfo.pos)) {
+            } else if (GeneralUtils.isVoidableBlock(player.level(), previewInfo.pos)) {
                 LevelRenderer.renderLineBox(pose, builder, aabb, 1F, 1F, 0, 1F);
             } else {
                 LevelRenderer.renderLineBox(pose, builder, aabb, 0, 1F, 0, 0.5F);
