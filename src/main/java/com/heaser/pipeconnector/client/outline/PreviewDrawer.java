@@ -6,15 +6,16 @@ import com.heaser.pipeconnector.utils.PipeConnectorUtils;
 import com.heaser.pipeconnector.utils.PreviewInfo;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.HashSet;
 
@@ -25,7 +26,7 @@ public class PreviewDrawer {
     public PreviewDrawer() {
     }
 
-    public void handleOnRenderLevel(PoseStack pose, MultiBufferSource buffer, double partialTicks, Player player) {
+    public void handleOnRenderLevel(PoseStack pose, MultiBufferSource buffer, Player player) {
         ItemStack heldItem = GeneralUtils.heldPipeConnector(player);
         if (heldItem == null) {
             return;
@@ -35,7 +36,7 @@ public class PreviewDrawer {
             previewMap = getNewPreview(heldItem, currentLevel);
         }
 
-        draw(pose, buffer, partialTicks, player, heldItem);
+        draw(pose, buffer, player, heldItem);
     }
 
     private HashSet<PreviewInfo> getNewPreview(ItemStack pipeConnector, Level currentLevel) {
@@ -54,14 +55,12 @@ public class PreviewDrawer {
         );
     }
 
-    private void draw(PoseStack pose, MultiBufferSource buffer, double partialTicks, Player player, ItemStack pipeConnector) {
-        VertexConsumer builder = buffer.getBuffer(RenderType.LINES);
-        double d0 = player.xOld + (player.getX() - player.xOld) * partialTicks;
-        double d1 = player.yOld + player.getEyeHeight() + (player.getY() - player.yOld) * partialTicks;
-        double d2 = player.zOld + (player.getZ() - player.zOld) * partialTicks;
+    private void draw(PoseStack pose, MultiBufferSource buffer, Player player, ItemStack pipeConnector) {
+        VertexConsumer builder = buffer.getBuffer(PipeConnectorRenderType.LINES_NO_DEPTH_TEST);
+        Vec3 offset = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
 
         for (PreviewInfo previewInfo : previewMap) {
-            AABB aabb = new AABB(previewInfo.pos).move(-d0, -d1, -d2);
+            AABB aabb = new AABB(previewInfo.pos).move(-offset.x, -offset.y, -offset.z);
 
             if(previewInfo.isRelativeStartPos(pipeConnector)) {
                 LevelRenderer.renderLineBox(pose, builder, aabb, 0.5F, 0.7F, 0.9F, 1F);

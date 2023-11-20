@@ -17,13 +17,12 @@ public class ClientEvents {
     @SubscribeEvent(priority = EventPriority.LOW)
     public static void onRenderWorld(RenderLevelStageEvent event) {
 
-        if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_TRIPWIRE_BLOCKS) {
+        if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_BLOCK_ENTITIES) {
             PoseStack stack = event.getPoseStack();
             MultiBufferSource.BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
-            double partialTicks = event.getPartialTick();
             Entity cameraEntity = event.getCamera().getEntity();
             if (cameraEntity instanceof Player) {
-                ClientSetup.PREVIEW_DRAWER.handleOnRenderLevel(stack, buffer, partialTicks, (Player)cameraEntity);
+                ClientSetup.PREVIEW_DRAWER.handleOnRenderLevel(stack, buffer, (Player)cameraEntity);
             }
         }
     }
