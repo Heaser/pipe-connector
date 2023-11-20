@@ -10,10 +10,13 @@ import javax.annotation.Nullable;
 
 public abstract class BaseButton {
     public Component label;
+    public Button button;
 
     public BaseButton(String name) {
         this.label = Component.translatable(name);
     }
+
+    public void bindButton(Button button) {this.button = button;}
 
     abstract public void onClick(Button clickedButton);
 

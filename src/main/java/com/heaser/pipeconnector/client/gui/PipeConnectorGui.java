@@ -23,6 +23,8 @@ public class PipeConnectorGui extends Screen {
     private static final int BUTTON_WIDTH = 80;
     private static final int BUTTON_HEIGHT = 20;
     private final ItemStack pipeConnectorStack;
+    private BaseButton resetBaseButton;
+    private BaseButton buildBasePipesButton;
 
     public PipeConnectorGui(ItemStack pipeConnectorStack) {
         super(Component.literal("PipeConnectorScreen"));
@@ -31,8 +33,8 @@ public class PipeConnectorGui extends Screen {
 
     @Override
     protected void init() {
-        createButton(0.65, 0.7, new ResetButton());
-        createButton(0.65, 0.8, new BuildPipesButton(this.getMinecraft().player));
+        resetBaseButton = createButton(0.65, 0.7, new ResetButton());
+        buildBasePipesButton = createButton(0.65, 0.8, new BuildPipesButton(this.getMinecraft().player));
     }
 
     @Override
@@ -42,6 +44,8 @@ public class PipeConnectorGui extends Screen {
         RenderSystem.setShaderTexture(0, PIPE_CONNECTOR_TEXTURE);
         int drawStartX = getScreenX();
         int drawStartY = getScreenY();
+        drawTooltip(guiGraphics, mouseX, mouseY, resetBaseButton);
+        drawTooltip(guiGraphics, mouseX, mouseY, buildBasePipesButton);
         guiGraphics.blit(PIPE_CONNECTOR_TEXTURE, drawStartX, drawStartY, 0, 0, imageWidth, imageHeight);
         super.render(guiGraphics, mouseX, mouseY, partialTick);
 
@@ -58,7 +62,7 @@ public class PipeConnectorGui extends Screen {
         }
     }
 
-    private void createButton(double marginXPercent, double marginYPercent, BaseButton baseButton) {
+    private BaseButton createButton(double marginXPercent, double marginYPercent, BaseButton baseButton) {
         int marginX = (int) (imageWidth * marginXPercent);
         int marginY = (int) (imageHeight * marginYPercent);
         int drawStartX = this.getScreenX() + marginX;
@@ -66,11 +70,11 @@ public class PipeConnectorGui extends Screen {
         Button button = Button.builder(baseButton.label, clickedButton -> onButtonClick(clickedButton, baseButton))
                 .pos(drawStartX, drawStartY)
                 .size(BUTTON_WIDTH, BUTTON_HEIGHT)
-                //.tooltip()
                 .build();
-        //(clickedButton, guiGraphics, mouseX, mouseY) -> drawTooltip(guiGraphics, mouseX, mouseY, baseButton)
         button.active = baseButton.isActive(pipeConnectorStack);
+        baseButton.bindButton(button);
         addRenderableWidget(button);
+        return baseButton;
     }
 
     private void createLabel(GuiGraphics guiGraphics, double marginXPercent, double marginYPercent, BaseLabel label) {
@@ -84,8 +88,8 @@ public class PipeConnectorGui extends Screen {
 
     private void drawTooltip(GuiGraphics guiGraphics, int mouseX, int mouseY, BaseButton baseButton) {
         Component tooltipText = baseButton.getTooltip(pipeConnectorStack);
-        if(tooltipText != null && isMouseOver(mouseX, mouseY)) {
-            //guiGraphics.renderTooltip(, tooltipText, mouseX, mouseY);
+        if(tooltipText != null && baseButton.button.isHovered()) {
+            guiGraphics.renderTooltip(this.font, tooltipText, mouseX, mouseY);
         }
     }
 
