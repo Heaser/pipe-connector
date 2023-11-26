@@ -21,6 +21,7 @@ public class UpdateBridgeTypePacket {
     }
 
     public void encode(FriendlyByteBuf buf) {
+        buf.writeUtf(bridgeType);
     }
 
     public void handle(Supplier<NetworkEvent.Context> ctx) {
