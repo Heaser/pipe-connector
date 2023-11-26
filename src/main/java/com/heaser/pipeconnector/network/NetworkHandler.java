@@ -38,6 +38,12 @@ public class NetworkHandler {
                 .consumerMainThread(BuildPipesPacket::handle)
                 .add();
 
+        CHANNEL.messageBuilder(UpdateBridgeTypePacket.class, packetId++)
+                .encoder(UpdateBridgeTypePacket::encode)
+                .decoder(UpdateBridgeTypePacket::new)
+                .consumerMainThread(UpdateBridgeTypePacket::handle)
+                .add();
+
         PipeConnector.LOGGER.debug("Registered {} Packets for {}", packetId, PipeConnector.MODID);
     }
 }

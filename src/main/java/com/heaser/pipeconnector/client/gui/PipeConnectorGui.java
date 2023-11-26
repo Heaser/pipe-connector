@@ -1,9 +1,7 @@
 package com.heaser.pipeconnector.client.gui;
 
 import com.heaser.pipeconnector.PipeConnector;
-import com.heaser.pipeconnector.client.gui.buttons.BaseButton;
-import com.heaser.pipeconnector.client.gui.buttons.BuildPipesButton;
-import com.heaser.pipeconnector.client.gui.buttons.ResetButton;
+import com.heaser.pipeconnector.client.gui.buttons.*;
 import com.heaser.pipeconnector.client.gui.labels.BaseLabel;
 import com.heaser.pipeconnector.client.gui.labels.DepthLabel;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -20,11 +18,11 @@ public class PipeConnectorGui extends Screen {
     public static final ResourceLocation PIPE_CONNECTOR_TEXTURE = new ResourceLocation(PipeConnector.MODID, "textures/gui/settings.png");
     protected static final Integer imageWidth = 256;
     protected static final Integer imageHeight = 256;
-    private static final int BUTTON_WIDTH = 80;
-    private static final int BUTTON_HEIGHT = 20;
     private final ItemStack pipeConnectorStack;
     private BaseButton resetBaseButton;
     private BaseButton buildBasePipesButton;
+    private BaseButton bridgeTypeButton;
+    private BaseButton bridgeTypeInfoButton;
 
     public PipeConnectorGui(ItemStack pipeConnectorStack) {
         super(Component.literal("PipeConnectorScreen"));
@@ -33,6 +31,8 @@ public class PipeConnectorGui extends Screen {
 
     @Override
     protected void init() {
+        bridgeTypeButton = createButton(0.10, 0.2, new BridgeTypeButton(this.getMinecraft().player));
+        bridgeTypeInfoButton = createButton(0.40, 0.2, new BridgeTypeInfoButton());
         resetBaseButton = createButton(0.65, 0.7, new ResetButton());
         buildBasePipesButton = createButton(0.65, 0.8, new BuildPipesButton(this.getMinecraft().player));
     }
@@ -46,6 +46,8 @@ public class PipeConnectorGui extends Screen {
         int drawStartY = getScreenY();
         drawTooltip(guiGraphics, mouseX, mouseY, resetBaseButton);
         drawTooltip(guiGraphics, mouseX, mouseY, buildBasePipesButton);
+        drawTooltip(guiGraphics, mouseX, mouseY, bridgeTypeButton);
+        drawTooltip(guiGraphics, mouseX, mouseY, bridgeTypeInfoButton);
         guiGraphics.blit(PIPE_CONNECTOR_TEXTURE, drawStartX, drawStartY, 0, 0, imageWidth, imageHeight);
         super.render(guiGraphics, mouseX, mouseY, partialTick);
 
@@ -67,9 +69,10 @@ public class PipeConnectorGui extends Screen {
         int marginY = (int) (imageHeight * marginYPercent);
         int drawStartX = this.getScreenX() + marginX;
         int drawStartY = this.getScreenY() + marginY;
+
         Button button = Button.builder(baseButton.label, clickedButton -> onButtonClick(clickedButton, baseButton))
                 .pos(drawStartX, drawStartY)
-                .size(BUTTON_WIDTH, BUTTON_HEIGHT)
+                .size(baseButton.getButtonWidth(), baseButton.getButtonHeight())
                 .build();
         button.active = baseButton.isActive(pipeConnectorStack);
         baseButton.bindButton(button);

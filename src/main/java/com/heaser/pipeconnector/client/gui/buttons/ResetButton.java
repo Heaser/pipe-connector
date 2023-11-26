@@ -12,7 +12,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class ResetButton extends BaseButton {
     public ResetButton() {
-        super("item.pipe_connector.gui.button.ResetPipePos");
+        super("item.pipe_connector.gui.button.ResetPipePos", 20, 80);
     }
 
     @Override

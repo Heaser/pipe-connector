@@ -1,5 +1,7 @@
 package com.heaser.pipeconnector.network;
 
+import com.heaser.pipeconnector.client.gui.buttons.BridgeTypeButton;
+import com.heaser.pipeconnector.constants.BridgeType;
 import com.heaser.pipeconnector.utils.GeneralUtils;
 import com.heaser.pipeconnector.utils.PipeConnectorUtils;
 import net.minecraft.core.BlockPos;
@@ -42,6 +44,7 @@ public class BuildPipesPacket {
             BlockPos endPosition = PipeConnectorUtils.getEndPosition(interactedItem);
             Direction startDirection = PipeConnectorUtils.getStartDirection(interactedItem);
             Direction endDirection = PipeConnectorUtils.getEndDirection(interactedItem);
+            BridgeType bridgeType = PipeConnectorUtils.getBridgeType(interactedItem);
 
             if (startPosition == null || endPosition == null) {
                 return;
@@ -55,7 +58,8 @@ public class BuildPipesPacket {
                     endPosition,
                     endDirection,
                     depth,
-                    new UseOnContext(sender, InteractionHand.MAIN_HAND, virtualHitResult));
+                    new UseOnContext(sender, InteractionHand.MAIN_HAND, virtualHitResult),
+                    bridgeType);
             PipeConnectorUtils.resetPositionAndDirectionTags(interactedItem, sender, wasSuccessful);
         });
         context.get().setPacketHandled(true);

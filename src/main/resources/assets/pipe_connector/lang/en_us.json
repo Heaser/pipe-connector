@@ -10,7 +10,7 @@
   "item.pipe_connector.tooltip.usageExplanation":"Shift + Right-Click on Blocks will set positions",
   "item.pipe_connector.tooltip.CancelSelectionExplanation":"Shift + Right-Click on Air will cancel selection",
   "item.pipe_connector.tooltip.changeDepthExplanation":"Shift + Scroll wheel to change Pipe depth",
-  "item.pipe_connector.tooltip.openGui":"Shift + Left-Click to open the GUI to Place Pipes or Reset Positions",
+  "item.pipe_connector.tooltip.openGui":"Shift + Right-Click on an air block to open the GUI to Place Pipes or Reset Positions",
   "item.pipe_connector.tooltip.shiftForMoreInfo": "Hold Shift for more info",
   "item.pipe_connector.message.newDepth": "Depth was set to %s",
   "item.pipe_connector.message.notEnoughPipes": "Not enough pipes in inventory, missing %s pipes",
@@ -24,6 +24,14 @@
   "item.pipe_connector.gui.label.depth": "Depth: %s",
   "item.pipe_connector.gui.label.requiredPipes": "Required Pipes: %s",
   "item.pipe_connector.gui.label.availablePipes": "Available Pipes: %s",
-  "item.pipe_connector.gui.button.bridgeType": "Bridge Type: %s"
+  "item.pipe_connector.gui.button.bridgeType": "Bridge Type: %s",
+  "item.pipe_connector.gui.button.aStarPathfinding": "A* Pathfinding",
+  "item.pipe_connector.gui.tooltip.aStarPathfinding": "This will try to find the shortest path between the two positions, Will also try to go around ores",
+  "item.pipe_connector.gui.button.defaultPathfinding": "Default Pathfinding",
+  "item.pipe_connector.gui.tooltip.defaultPathfinding": "This will try to find the shortest path between the two positions, Will not try to go around ores",
+  "item.pipe_connector.gui.button.stepPath": "Step Path",
+  "item.pipe_connector.gui.tooltip.stepPath": "After choosing the first position, the path wlil follow your steps at selected depth",
+  "item.pipe_connector.gui.tooltip.comingSoon": "Coming SoonTM...",
+  "item.pipe_connector.gui.button.infoSign": "?"
 
 }

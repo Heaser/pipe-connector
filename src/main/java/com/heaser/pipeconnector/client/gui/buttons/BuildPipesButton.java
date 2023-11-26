@@ -16,14 +16,13 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 public class BuildPipesButton extends BaseButton {
     private final LocalPlayer player;
     public BuildPipesButton(LocalPlayer player) {
-        super("item.pipe_connector.gui.button.PlacePipes");
+        super("item.pipe_connector.gui.button.PlacePipes", 20, 80);
         this.player = player;
     }
 
     @Override
     public void onClick(Button clickedButton) {
         NetworkHandler.CHANNEL.sendToServer(new BuildPipesPacket());
-
     }
 
     @Override

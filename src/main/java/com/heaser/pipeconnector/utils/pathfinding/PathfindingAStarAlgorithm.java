@@ -1,6 +1,7 @@
 package com.heaser.pipeconnector.utils.pathfinding;
 
 import com.heaser.pipeconnector.PipeConnector;
+import com.heaser.pipeconnector.constants.BridgeType;
 import com.heaser.pipeconnector.utils.GeneralUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
@@ -8,6 +9,8 @@ import net.minecraft.world.level.Level;
 import java.util.*;
 
 public class PathfindingAStarAlgorithm {
+    public final BridgeType bridgeType = BridgeType.A_STAR;
+
     public static List<BlockPos> findPathAStar(BlockPos start, BlockPos end, Level level) {
 
         Set<BlockPos> openSet = new HashSet<>();

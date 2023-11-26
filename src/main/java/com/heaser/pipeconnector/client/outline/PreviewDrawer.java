@@ -51,8 +51,12 @@ public class PreviewDrawer {
         startPos = startPos.relative(startDirection);
         endPos = endPos.relative(endDirection);
         return PipeConnectorUtils.getBlockPosSet(
-                PipeConnectorUtils.getBlockPosMap(startPos, endPos, depth, currentLevel)
-        );
+                PipeConnectorUtils.getBlockPosMap(
+                        startPos,
+                        endPos,
+                        depth,
+                        currentLevel,
+                        PipeConnectorUtils.getBridgeType(pipeConnector)));
     }
 
     private void draw(PoseStack pose, MultiBufferSource buffer, Player player, ItemStack pipeConnector) {

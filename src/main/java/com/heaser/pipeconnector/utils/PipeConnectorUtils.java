@@ -2,6 +2,7 @@ package com.heaser.pipeconnector.utils;
 
 
 import com.heaser.pipeconnector.PipeConnector;
+import com.heaser.pipeconnector.constants.BridgeType;
 import com.heaser.pipeconnector.particles.ParticleHelper;
 import com.heaser.pipeconnector.utils.pathfinding.PathfindingAStarAlgorithm;
 import net.minecraft.ChatFormatting;
@@ -28,9 +29,9 @@ import java.util.*;
 public class PipeConnectorUtils {
 
 
-    public static boolean connectPathWithSegments(Player player, BlockPos start, BlockPos end, int depth, Block block, UseOnContext context) {
+    public static boolean connectPathWithSegments(Player player, BlockPos start, BlockPos end, int depth, Block block, UseOnContext context, BridgeType bridgeType) {
         Level level = player.level();
-        Map<BlockPos, BlockState> blockPosMap = getBlockPosMap(start, end, depth, level);
+        Map<BlockPos, BlockState> blockPosMap = getBlockPosMap(start, end, depth, level, bridgeType);
 
         PipeConnector.LOGGER.debug(blockPosMap.toString());
 
@@ -91,7 +92,7 @@ public class PipeConnectorUtils {
     // This Method returns a Map of BlockPos & And BlockStates which will eventually be used to bridge between the
     // two locations clicked by the Player.
     // -----------------------------------------------------------------------------------------------------------------
-    public static Map<BlockPos, BlockState> getBlockPosMap(BlockPos start, BlockPos end, int depth, Level level) {
+    public static Map<BlockPos, BlockState> getBlockPosMap(BlockPos start, BlockPos end, int depth, Level level, BridgeType bridgeType) {
         Map <BlockPos, BlockState> blockHashMap = new HashMap<>();
 
         int deltaY = Math.abs(start.getY() - end.getY());
@@ -106,7 +107,12 @@ public class PipeConnectorUtils {
         start = moveAndStoreStates(start, startDepth, 0, -1, 0, level, blockHashMap);
         end = moveAndStoreStates(end, endDepth, 0, -1, 0, level, blockHashMap);
 
-        List<BlockPos> test = PathfindingAStarAlgorithm.findPathAStar(start, end, level);
+        List<BlockPos> test = null;
+        switch (bridgeType) {
+            case A_STAR -> test = PathfindingAStarAlgorithm.findPathAStar(start, end, level);
+            case STEP -> test = PathfindingAStarAlgorithm.findPathAStar(start, end, level);
+            case DEFAULT -> test = PathfindingAStarAlgorithm.findPathAStar(start, end, level);
+        }
         if(test == null) {
             return blockHashMap;
         }
@@ -161,10 +167,10 @@ public class PipeConnectorUtils {
 
     public static void setDepthToStack(ItemStack stack, int depth) {
         CompoundTag tag = stack.getOrCreateTagElement(PipeConnector.MODID);
-        if (depth < 2) {
+        if (depth < 0) {
             depth = 99;
         } else if (depth > 99) {
-            depth = 2;
+            depth = 0;
         }
         tag.putInt("Depth", depth);
     }
@@ -251,15 +257,38 @@ public class PipeConnectorUtils {
         return Direction.from3DDataValue(direction);
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
+
     public static String getDimension(ItemStack stack) {
         CompoundTag tag = stack.getOrCreateTagElement(PipeConnector.MODID);
         return tag.getString("DimensionName");
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
+
     public static void setDimension(ItemStack stack, String dimensionName) {
         CompoundTag tag = stack.getOrCreateTagElement(PipeConnector.MODID);
         tag.putString("DimensionName", dimensionName);
     }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    public static BridgeType getBridgeType(ItemStack stack) {
+        CompoundTag tag = stack.getOrCreateTagElement(PipeConnector.MODID);
+        if(tag.contains("BridgeType",tag.TAG_STRING)) {
+            return BridgeType.valueOf(tag.getString("BridgeType"));
+        }
+        return BridgeType.DEFAULT;
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    public static void setBridgeType(ItemStack stack, BridgeType bridgeType) {
+        CompoundTag tag = stack.getOrCreateTagElement(PipeConnector.MODID);
+        tag.putString("BridgeType", bridgeType.toString());
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
 
     public static void resetPositionAndDirectionTags(ItemStack stack, Player player, boolean shouldShowMessage) {
         CompoundTag tag = stack.getOrCreateTagElement(PipeConnector.MODID);
@@ -327,13 +356,15 @@ public class PipeConnectorUtils {
                                   BlockPos endPos,
                                   Direction endDirection,
                                   int depth,
-                                  UseOnContext context) {
+                                  UseOnContext context,
+                                  BridgeType bridgeType) {
 
         return PipeConnectorUtils.connectPathWithSegments(player,
                 startPos.relative(startDirection),
                 endPos.relative(endDirection),
                 depth,
                 Block.byItem(player.getOffhandItem().getItem()),
-                context);
+                context,
+                bridgeType);
     }
 }

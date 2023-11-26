@@ -38,7 +38,7 @@ public class DepthSetterEvent {
 
         // Syncs with server to prevent cases where the client and server are out of sync
         NetworkHandler.CHANNEL.sendToServer(new UpdateDepthPacket(depth));
-        player.displayClientMessage(Component.translatable("item.pipe_connector.message.newDepth", depth - 1).withStyle(ChatFormatting.YELLOW), true);
+        player.displayClientMessage(Component.translatable("item.pipe_connector.message.newDepth", depth).withStyle(ChatFormatting.YELLOW), true);
 
         event.setCanceled(true);
     }
