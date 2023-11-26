@@ -10,14 +10,13 @@ public class ParticleHelper {
     private static final Random random = new Random();
 
     public static void serverSpawnMarkerParticle(ServerLevel level, BlockPos pos) {
-        for (int i = 0; i < 30; i++) { // Slightly increased count for a denser effect
+        for (int i = 0; i < 30; i++) {
             ParticleOptions particleType = switch (random.nextInt(3)) {
                 case 0 -> ParticleTypes.END_ROD;
                 case 1 -> ParticleTypes.PORTAL;
                 default -> ParticleTypes.ELECTRIC_SPARK;
             };
 
-            // Selecting futuristic particles
 
             double angle = 2 * Math.PI * i / 30;
             double dx = Math.cos(angle) * 0.1;
