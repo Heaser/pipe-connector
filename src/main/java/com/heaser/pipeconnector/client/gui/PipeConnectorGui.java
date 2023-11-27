@@ -31,8 +31,8 @@ public class PipeConnectorGui extends Screen {
 
     @Override
     protected void init() {
-        bridgeTypeButton = createButton(0.10, 0.2, new BridgeTypeButton(this.getMinecraft().player));
-        bridgeTypeInfoButton = createButton(0.40, 0.2, new BridgeTypeInfoButton());
+        bridgeTypeButton = createButton(0.05, 0.2, new BridgeTypeButton(this.getMinecraft().player));
+        bridgeTypeInfoButton = createButton(0.45, 0.2, new BridgeTypeInfoButton());
         resetBaseButton = createButton(0.65, 0.7, new ResetButton());
         buildBasePipesButton = createButton(0.65, 0.8, new BuildPipesButton(this.getMinecraft().player));
     }

@@ -19,14 +19,16 @@ public class BridgeTypeInfoButton extends InfoButton {
 
     }
 
+
+
     @Override
     public Component getTooltip(ItemStack itemStack) {
         if(getBridgeType(itemStack) == BridgeType.DEFAULT) {
-            return Component.translatable("item.pipe_connector.gui.tooltip.aStarPathfinding");
-        } else if(getBridgeType(itemStack) == BridgeType.A_STAR) {
-            return Component.translatable("item.pipe_connector.gui.tooltip.comingSoon");
-        } else if(getBridgeType(itemStack) == BridgeType.STEP) {
             return Component.translatable("item.pipe_connector.gui.tooltip.defaultPathfinding");
+        } else if(getBridgeType(itemStack) == BridgeType.A_STAR) {
+            return Component.translatable("item.pipe_connector.gui.tooltip.aStarPathfinding");
+        } else if(getBridgeType(itemStack) == BridgeType.STEP) {
+            return Component.translatable("item.pipe_connector.gui.tooltip.comingSoon");
         }
         return null;
     }

@@ -21,6 +21,10 @@ public abstract class BaseButton  {
     public void setLabel(String name) {
         this.label = Component.translatable(name);
     }
+
+    public Component getLabel() {
+        return label;
+    }
     public void bindButton(Button button) {this.button = button;}
 
     abstract public void onClick(Button clickedButton);

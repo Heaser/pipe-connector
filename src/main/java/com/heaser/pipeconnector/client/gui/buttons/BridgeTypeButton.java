@@ -4,15 +4,18 @@ import com.heaser.pipeconnector.constants.BridgeType;
 import com.heaser.pipeconnector.network.NetworkHandler;
 import com.heaser.pipeconnector.network.UpdateBridgeTypePacket;
 import com.heaser.pipeconnector.utils.PipeConnectorUtils;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.world.entity.player.Player;
 
 public class BridgeTypeButton extends BaseButton {
     private Player player;
+
     public BridgeTypeButton(Player player) {
-        super("item.pipe_connector.gui.button.defaultPathfinding", 20, 80);
+        super(getInitialLabel(player), 20, 100);
         this.player = player;
     }
+
 
     @Override
     public void onClick(Button clickedButton) {
@@ -20,16 +23,29 @@ public class BridgeTypeButton extends BaseButton {
         if(bridgeType == BridgeType.DEFAULT) {
             bridgeType = BridgeType.A_STAR;
             this.setLabel("item.pipe_connector.gui.button.aStarPathfinding");
-            NetworkHandler.CHANNEL.sendToServer(new UpdateBridgeTypePacket(BridgeType.A_STAR));
+            this.button.setMessage(this.getLabel());
         } else if(bridgeType == BridgeType.A_STAR) {
             bridgeType = BridgeType.STEP;
-            this.setLabel("item.pipe_connector.gui.button.stepPathfinding");
-            NetworkHandler.CHANNEL.sendToServer(new UpdateBridgeTypePacket(BridgeType.STEP));
+            this.setLabel("item.pipe_connector.gui.button.stepPath");
+            this.button.setMessage(this.getLabel());
         } else if(bridgeType == BridgeType.STEP) {
             bridgeType = BridgeType.DEFAULT;
             this.setLabel("item.pipe_connector.gui.button.defaultPathfinding");
-            NetworkHandler.CHANNEL.sendToServer(new UpdateBridgeTypePacket(BridgeType.DEFAULT));
+            this.button.setMessage(this.getLabel());
         }
+        NetworkHandler.CHANNEL.sendToServer(new UpdateBridgeTypePacket(bridgeType));
+    }
+
+
+    private static String getInitialLabel(Player player) {
+        BridgeType bridgeType = PipeConnectorUtils.getBridgeType(player.getMainHandItem());
+        return switch (bridgeType) {
+            case A_STAR -> "item.pipe_connector.gui.button.aStarPathfinding";
+            case STEP -> "item.pipe_connector.gui.button.stepPath";
+            default -> "item.pipe_connector.gui.button.defaultPathfinding";
+        };
     }
 }
+
+
 

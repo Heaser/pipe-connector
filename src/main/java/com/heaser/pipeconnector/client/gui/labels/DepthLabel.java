@@ -11,7 +11,7 @@ public class DepthLabel extends BaseLabel {
     }
 
     public String getValue(ItemStack itemStack) {
-        int depth = PipeConnectorUtils.getDepthFromStack(itemStack) - 1;
+        int depth = PipeConnectorUtils.getDepthFromStack(itemStack);
         return String.valueOf(depth);
     }
 }
