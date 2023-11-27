@@ -1,16 +1,20 @@
 package com.heaser.pipeconnector.client.gui.buttons;
 
+import com.heaser.pipeconnector.PipeConnector;
 import com.heaser.pipeconnector.constants.BridgeType;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
 import static com.heaser.pipeconnector.utils.PipeConnectorUtils.getBridgeType;
 
 public class BridgeTypeInfoButton extends InfoButton {
+    private Player player;
 
-    public BridgeTypeInfoButton() {
+    public BridgeTypeInfoButton(Player player) {
         super();
+        this.player = player;
     }
 
 
@@ -21,9 +25,9 @@ public class BridgeTypeInfoButton extends InfoButton {
 
     @Override
     public Component getTooltip(ItemStack itemStack) {
-        if(getBridgeType(itemStack) == BridgeType.DEFAULT) {
+        if(getBridgeType(player.getMainHandItem()) == BridgeType.DEFAULT) {
             return Component.translatable("item.pipe_connector.gui.tooltip.defaultPathfinding");
-        } else if(getBridgeType(itemStack) == BridgeType.A_STAR) {
+        } else if(getBridgeType(player.getMainHandItem()) == BridgeType.A_STAR) {
             return Component.translatable("item.pipe_connector.gui.tooltip.aStarPathfinding");
         }
         return null;

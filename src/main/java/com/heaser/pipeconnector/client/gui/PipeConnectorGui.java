@@ -34,7 +34,7 @@ public class PipeConnectorGui extends Screen {
     @Override
     protected void init() {
         bridgeTypeButton = createButton(0.05, 0.2, new BridgeTypeButton(this.getMinecraft().player));
-        bridgeTypeInfoButton = createButton(0.45, 0.2, new BridgeTypeInfoButton());
+        bridgeTypeInfoButton = createButton(0.45, 0.2, new BridgeTypeInfoButton(this.getMinecraft().player));
         resetBaseButton = createButton(0.65, 0.7, new ResetButton());
         buildBasePipesButton = createButton(0.65, 0.8, new BuildPipesButton(this.getMinecraft().player));
     }
@@ -43,6 +43,7 @@ public class PipeConnectorGui extends Screen {
 
     @Override
     public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+        // todo: update item stack here
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShaderTexture(0, PIPE_CONNECTOR_TEXTURE);
