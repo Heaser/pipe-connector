@@ -110,7 +110,7 @@ public class PipeConnectorUtils {
         List<BlockPos> test = null;
         switch (bridgeType) {
             case A_STAR -> test = PathfindingAStarAlgorithm.findPathAStar(start, end, level);
-            case STEP -> test = PathfindingAStarAlgorithm.findPathAStar(start, end, level);
+//            case STEP -> test = PathfindingAStarAlgorithm.findPathAStar(start, end, level);
             case DEFAULT -> test = PathfindingAStarAlgorithm.findPathAStar(start, end, level);
         }
         if(test == null) {

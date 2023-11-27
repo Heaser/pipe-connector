@@ -29,6 +29,8 @@ public class PipeConnectorGui extends Screen {
         this.pipeConnectorStack = pipeConnectorStack;
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
+
     @Override
     protected void init() {
         bridgeTypeButton = createButton(0.05, 0.2, new BridgeTypeButton(this.getMinecraft().player));
@@ -36,6 +38,8 @@ public class PipeConnectorGui extends Screen {
         resetBaseButton = createButton(0.65, 0.7, new ResetButton());
         buildBasePipesButton = createButton(0.65, 0.8, new BuildPipesButton(this.getMinecraft().player));
     }
+
+    // -----------------------------------------------------------------------------------------------------------------
 
     @Override
     public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
@@ -54,6 +58,8 @@ public class PipeConnectorGui extends Screen {
         createLabel(guiGraphics, 0.65, 0.6, new DepthLabel());
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
+
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         if ((keyCode == 256 && this.shouldCloseOnEsc()) || keyCode == 69) {
@@ -63,6 +69,8 @@ public class PipeConnectorGui extends Screen {
             return super.keyPressed(keyCode, scanCode, modifiers);
         }
     }
+
+    // -----------------------------------------------------------------------------------------------------------------
 
     private BaseButton createButton(double marginXPercent, double marginYPercent, BaseButton baseButton) {
         int marginX = (int) (imageWidth * marginXPercent);
@@ -80,6 +88,8 @@ public class PipeConnectorGui extends Screen {
         return baseButton;
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
+
     private void createLabel(GuiGraphics guiGraphics, double marginXPercent, double marginYPercent, BaseLabel label) {
         int marginX = (int) (imageWidth * marginXPercent);
         int marginY = (int) (imageHeight * marginYPercent);
@@ -89,12 +99,16 @@ public class PipeConnectorGui extends Screen {
         guiGraphics.drawString(this.font, label.getLabel(pipeConnectorStack), drawStartX, drawStartY, 12181157);
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
+
     private void drawTooltip(GuiGraphics guiGraphics, int mouseX, int mouseY, BaseButton baseButton) {
         Component tooltipText = baseButton.getTooltip(pipeConnectorStack);
         if(tooltipText != null && baseButton.button.isHovered()) {
             guiGraphics.renderTooltip(this.font, tooltipText, mouseX, mouseY);
         }
     }
+
+    // -----------------------------------------------------------------------------------------------------------------
 
     private void onButtonClick(Button clickedButton, BaseButton baseButton) {
         baseButton.onClick(clickedButton);
@@ -103,14 +117,23 @@ public class PipeConnectorGui extends Screen {
         }
     }
 
-
+    // -----------------------------------------------------------------------------------------------------------------
 
     private int getScreenX() {
         return (this.width - imageWidth) / 2;
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
+
     private int getScreenY() {
         return (this.height - imageHeight) / 2;
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    @Override
+    public boolean isPauseScreen() {
+        return false;
     }
 }
 

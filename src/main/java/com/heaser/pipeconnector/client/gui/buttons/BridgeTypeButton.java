@@ -4,7 +4,6 @@ import com.heaser.pipeconnector.constants.BridgeType;
 import com.heaser.pipeconnector.network.NetworkHandler;
 import com.heaser.pipeconnector.network.UpdateBridgeTypePacket;
 import com.heaser.pipeconnector.utils.PipeConnectorUtils;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.world.entity.player.Player;
 
@@ -20,15 +19,12 @@ public class BridgeTypeButton extends BaseButton {
     @Override
     public void onClick(Button clickedButton) {
         BridgeType bridgeType = PipeConnectorUtils.getBridgeType(player.getMainHandItem());
+
         if(bridgeType == BridgeType.DEFAULT) {
             bridgeType = BridgeType.A_STAR;
             this.setLabel("item.pipe_connector.gui.button.aStarPathfinding");
             this.button.setMessage(this.getLabel());
         } else if(bridgeType == BridgeType.A_STAR) {
-            bridgeType = BridgeType.STEP;
-            this.setLabel("item.pipe_connector.gui.button.stepPath");
-            this.button.setMessage(this.getLabel());
-        } else if(bridgeType == BridgeType.STEP) {
             bridgeType = BridgeType.DEFAULT;
             this.setLabel("item.pipe_connector.gui.button.defaultPathfinding");
             this.button.setMessage(this.getLabel());
@@ -41,7 +37,6 @@ public class BridgeTypeButton extends BaseButton {
         BridgeType bridgeType = PipeConnectorUtils.getBridgeType(player.getMainHandItem());
         return switch (bridgeType) {
             case A_STAR -> "item.pipe_connector.gui.button.aStarPathfinding";
-            case STEP -> "item.pipe_connector.gui.button.stepPath";
             default -> "item.pipe_connector.gui.button.defaultPathfinding";
         };
     }
