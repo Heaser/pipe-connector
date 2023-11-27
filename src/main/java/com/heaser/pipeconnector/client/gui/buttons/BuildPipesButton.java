@@ -21,7 +21,7 @@ public class BuildPipesButton extends BaseButton {
     }
 
     @Override
-    public void onClick(Button clickedButton) {
+    public void onClick(Button clickedButton, ItemStack itemStack) {
         NetworkHandler.CHANNEL.sendToServer(new BuildPipesPacket());
     }
 

@@ -9,7 +9,6 @@ import net.minecraft.world.level.Level;
 import java.util.*;
 
 public class PathfindingAStarAlgorithm {
-    public final BridgeType bridgeType = BridgeType.A_STAR;
 
     public static List<BlockPos> findPathAStar(BlockPos start, BlockPos end, Level level) {
 

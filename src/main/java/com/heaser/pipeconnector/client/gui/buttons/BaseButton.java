@@ -27,7 +27,7 @@ public abstract class BaseButton  {
     }
     public void bindButton(Button button) {this.button = button;}
 
-    abstract public void onClick(Button clickedButton);
+    abstract public void onClick(Button clickedButton, ItemStack itemStack);
 
     public boolean shouldClose() {
         return false;
