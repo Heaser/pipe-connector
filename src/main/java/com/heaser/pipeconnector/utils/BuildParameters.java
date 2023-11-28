@@ -1,5 +1,6 @@
 package com.heaser.pipeconnector.utils;
 
+import com.heaser.pipeconnector.constants.BridgeType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
@@ -12,6 +13,7 @@ public class BuildParameters {
     public Direction startDirection;
     public Direction endDirection;
     public String dimension;
+    public BridgeType bridgeType;
 
     public BuildParameters() {
         this.depth = -1;
@@ -20,6 +22,7 @@ public class BuildParameters {
         this.startDirection = null;
         this.endDirection = null;
         this.dimension = "";
+        this.bridgeType = BridgeType.DEFAULT;
     }
 
     public BuildParameters(ItemStack pipeConnectorItem) {
@@ -29,6 +32,7 @@ public class BuildParameters {
         this.startDirection = PipeConnectorUtils.getStartDirection(pipeConnectorItem);
         this.endDirection = PipeConnectorUtils.getEndDirection(pipeConnectorItem);
         this.dimension = PipeConnectorUtils.getDimension(pipeConnectorItem);
+        this.bridgeType = PipeConnectorUtils.getBridgeType(pipeConnectorItem);
     }
 
     public BuildParameters(int depth,
@@ -49,7 +53,8 @@ public class BuildParameters {
         boolean depthEqual = other.depth == this.depth;
         boolean startDirEqual = other.startDirection == this.startDirection;
         boolean endDirEqual = other.endDirection == this.endDirection;
-        boolean isDimensionEqual = other.dimension == this.dimension;
+        boolean isDimensionEqual = other.dimension.equals(this.dimension);
+        boolean isBridgeTypeEqual = other.bridgeType == this.bridgeType;
         boolean startPosEqual;
         boolean endPosEqual;
         if (other.startPosition == null || this.startPosition == null) {
@@ -62,6 +67,6 @@ public class BuildParameters {
         } else {
             endPosEqual = other.endPosition.equals(this.endPosition);
         }
-        return depthEqual && startPosEqual && endPosEqual && startDirEqual && endDirEqual && isDimensionEqual;
+        return depthEqual && startPosEqual && endPosEqual && startDirEqual && endDirEqual && isDimensionEqual && isBridgeTypeEqual;
     }
 }
