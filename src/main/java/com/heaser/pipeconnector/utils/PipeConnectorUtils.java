@@ -4,6 +4,7 @@ package com.heaser.pipeconnector.utils;
 import com.heaser.pipeconnector.PipeConnector;
 import com.heaser.pipeconnector.constants.BridgeType;
 import com.heaser.pipeconnector.particles.ParticleHelper;
+import com.heaser.pipeconnector.utils.pathfinding.ManhattanAlgorithm;
 import com.heaser.pipeconnector.utils.pathfinding.PathfindingAStarAlgorithm;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -92,6 +93,7 @@ public class PipeConnectorUtils {
     // This Method returns a Map of BlockPos & And BlockStates which will eventually be used to bridge between the
     // two locations clicked by the Player.
     // -----------------------------------------------------------------------------------------------------------------
+
     public static Map<BlockPos, BlockState> getBlockPosMap(BlockPos start, BlockPos end, int depth, Level level, BridgeType bridgeType) {
         Map <BlockPos, BlockState> blockHashMap = new HashMap<>();
 
@@ -107,16 +109,16 @@ public class PipeConnectorUtils {
         start = moveAndStoreStates(start, startDepth, 0, -1, 0, level, blockHashMap);
         end = moveAndStoreStates(end, endDepth, 0, -1, 0, level, blockHashMap);
 
-        List<BlockPos> test = null;
+        List<BlockPos> blockPosPath = null;
         switch (bridgeType) {
-            case A_STAR -> test = PathfindingAStarAlgorithm.findPathAStar(start, end, level);
-//            case STEP -> test = PathfindingAStarAlgorithm.findPathAStar(start, end, level);
-            case DEFAULT -> test = PathfindingAStarAlgorithm.findPathAStar(start, end, level);
+            case A_STAR -> blockPosPath = PathfindingAStarAlgorithm.findPathAStar(start, end, level);
+            case DEFAULT -> blockPosPath = ManhattanAlgorithm.findPathManhattan(start, end, level);
+//          case STEP -> test = PathfindingAStarAlgorithm.findPathAStar(start, end, level);
         }
-        if(test == null) {
+        if(blockPosPath == null) {
             return blockHashMap;
         }
-        for(BlockPos pos : test) {
+        for(BlockPos pos : blockPosPath) {
             blockHashMap.putIfAbsent(pos, level.getBlockState(pos));
         }
 
@@ -129,6 +131,17 @@ public class PipeConnectorUtils {
         BlockPos currentPos = start;
         for (int i = 0; i < steps; i++) {
             map.putIfAbsent(currentPos, level.getBlockState(currentPos));
+            currentPos = currentPos.offset(xDirection, yDirection, zDirection);
+        }
+        return currentPos;
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    public static BlockPos moveAndStoreStates(BlockPos start, int steps, int xDirection, int yDirection, int zDirection, Level level, Set<BlockPos> set) {
+        BlockPos currentPos = start;
+        for (int i = 0; i < steps; i++) {
+            set.add(currentPos);
             currentPos = currentPos.offset(xDirection, yDirection, zDirection);
         }
         return currentPos;
