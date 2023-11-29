@@ -5,6 +5,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nullable;
+import java.util.List;
 
 public abstract class BaseButton  {
     private int buttonHeight;
@@ -39,6 +40,11 @@ public abstract class BaseButton  {
 
     @Nullable
     public Component getTooltip(ItemStack itemStack) {
+        return null;
+    }
+
+    @Nullable
+    public List<Component> getTooltipList(ItemStack itemStack) {
         return null;
     }
 

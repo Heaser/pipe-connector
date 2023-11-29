@@ -17,6 +17,8 @@ import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+
 import static com.heaser.pipeconnector.utils.GeneralUtils.isHoldingPipeConnector;
 
 public class PipeConnectorGui extends Screen {
@@ -59,7 +61,7 @@ public class PipeConnectorGui extends Screen {
         drawTooltip(guiGraphics, mouseX, mouseY, resetBaseButton);
         drawTooltip(guiGraphics, mouseX, mouseY, buildBasePipesButton);
         drawTooltip(guiGraphics, mouseX, mouseY, bridgeTypeButton);
-        drawTooltip(guiGraphics, mouseX, mouseY, bridgeTypeInfoButton);
+        drawTooltipList(guiGraphics, mouseX, mouseY, bridgeTypeInfoButton);
         guiGraphics.blit(PIPE_CONNECTOR_TEXTURE, drawStartX, drawStartY, 0, 0, imageWidth, imageHeight);
         super.render(guiGraphics, mouseX, mouseY, partialTick);
 
@@ -113,6 +115,16 @@ public class PipeConnectorGui extends Screen {
         Component tooltipText = baseButton.getTooltip(pipeConnectorStack);
         if(tooltipText != null && baseButton.button.isHovered()) {
             guiGraphics.renderTooltip(this.font, tooltipText, mouseX, mouseY);
+        }
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    private void drawTooltipList(GuiGraphics guiGraphics, int mouseX, int mouseY, BaseButton baseButton) {
+        List<Component> tooltipTextList = baseButton.getTooltipList(pipeConnectorStack);
+        if(tooltipTextList != null && baseButton.button.isHovered()) {
+            guiGraphics.renderTooltip(this.font, tooltipTextList,
+                    java.util.Optional.empty(),  mouseX, mouseY);
         }
     }
 
