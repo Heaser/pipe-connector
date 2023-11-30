@@ -76,7 +76,7 @@ public class PipeConnectorItem extends Item {
     // -----------------------------------------------------------------------------------------------------------------
     private void handleCommonUseOn(ItemStack interactedItem) {
         int depth = PipeConnectorUtils.getDepthFromStack(interactedItem);
-        if (depth == 0) {
+        if (depth == -1) {
             PipeConnectorUtils.setDepthToStack(interactedItem, 2);
         }
     }

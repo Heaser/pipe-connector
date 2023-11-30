@@ -23,6 +23,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.util.BlockSnapshot;
+import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 
 import java.util.*;
@@ -156,10 +159,19 @@ public class PipeConnectorUtils {
         if (!GeneralUtils.isVoidableBlock(level, pos)) {
             level.destroyBlock(pos, true, player);
             level.addDestroyBlockEffect(pos, level.getBlockState(pos));
-        }
+        };
 
         if (blockState != null) {
-            return level.setBlockAndUpdate(pos, blockState);
+            if(level.setBlockAndUpdate(pos, blockState)) {
+                BlockState state = level.getBlockState(pos);
+                BlockEvent.EntityPlaceEvent event = new BlockEvent.EntityPlaceEvent(BlockSnapshot.create(level.dimension(), level, pos), state, player);
+                MinecraftForge.EVENT_BUS.post(event);
+                level.updateNeighborsAt(pos, block);
+                if(event.isCanceled()) {
+                    return false;
+                }
+                return true;
+            }
         }
         return false;
     }
