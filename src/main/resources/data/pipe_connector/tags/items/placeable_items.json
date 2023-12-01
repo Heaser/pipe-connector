@@ -139,6 +139,22 @@
     {
       "id": "thermal:energy_duct",
       "required": false
+    },
+    {
+      "id": "pneumaticcraft:pressure_tube",
+      "required": false
+    },
+    {
+      "id": "pneumaticcraft:reinforced_pressure_tube",
+      "required": false
+    },
+    {
+      "id": "pneumaticcraft:advanced_pressure_tube",
+      "required": false
+    },
+    {
+      "id": "pneumaticcraft:heat_pipe",
+      "required": false
     }
   ]
 }
