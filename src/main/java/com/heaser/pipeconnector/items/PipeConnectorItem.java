@@ -21,6 +21,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.fml.DistExecutor;
 import org.jetbrains.annotations.NotNull;
 
@@ -40,18 +42,24 @@ public class PipeConnectorItem extends Item {
     @ParametersAreNonnullByDefault
     @NotNull
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand useHand) {
-        ItemStack interactedItem = player.getItemInHand(useHand);
-        if (level.isClientSide() && itemProxy != null) {
-            BlockPos playerLookingAt = player.blockPosition().relative(player.getDirection());
-            boolean isAir = level.getBlockState(playerLookingAt).isAir();
-            boolean isShiftKeyDown = player.isShiftKeyDown();
-
-            if (useHand == InteractionHand.MAIN_HAND && isShiftKeyDown && isAir) {
-                itemProxy.openPipeConnectorGui(interactedItem);
-            }
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+        ItemStack heldItem = player.getItemInHand(hand);
+        if (!level.isClientSide() || itemProxy == null) {
+            return InteractionResultHolder.pass(heldItem);
         }
-        return InteractionResultHolder.pass(player.getItemInHand(useHand));
+
+        HitResult targetHitResult = player.pick(player.getBlockReach() - 1, 0.0F, false);
+        Vec3 targetPosition = targetHitResult.getLocation();
+        BlockPos targetBlockPos = new BlockPos((int) targetPosition.x, (int) targetPosition.y, (int) targetPosition.z);
+
+        boolean isTargetBlockAir = level.getBlockState(targetBlockPos).isAir();
+        boolean isShiftKeyHeld = player.isShiftKeyDown();
+
+        if (hand == InteractionHand.MAIN_HAND && isShiftKeyHeld && isTargetBlockAir) {
+            itemProxy.openPipeConnectorGui(heldItem);
+        }
+
+        return InteractionResultHolder.pass(heldItem);
     }
 
     // -----------------------------------------------------------------------------------------------------------------
