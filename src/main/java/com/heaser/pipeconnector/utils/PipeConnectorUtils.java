@@ -22,11 +22,9 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.event.level.BlockEvent;
-import net.minecraftforge.fml.loading.FMLEnvironment;
 
 import java.util.*;
 
@@ -71,7 +69,7 @@ public class PipeConnectorUtils {
                 reduceNumberOfPipesInInventory(player);
             }
             ParticleHelper.serverSpawnMarkerParticle((ServerLevel) level, set.getKey());
-            boolean wasSet = breakAndSetBlock(level, set.getKey(), block, player, context);
+            breakAndSetBlock(level, set.getKey(), block, player, context);
         }
         return true;
     }
@@ -106,15 +104,26 @@ public class PipeConnectorUtils {
         if (start.getY() > end.getY()) {
             endDepth -= deltaY;
         } else {
-            startDepth -= deltaY;
+            if (bridgeType != BridgeType.A_STAR) {
+                startDepth -= deltaY;
+            }
         }
+        if (bridgeType == BridgeType.DEFAULT) {
+            start = moveAndStoreStates(start, startDepth, 0, -1, 0, level, blockHashMap);
+            end = moveAndStoreStates(end, endDepth, 0, -1, 0, level, blockHashMap);
 
-        start = moveAndStoreStates(start, startDepth, 0, -1, 0, level, blockHashMap);
-        end = moveAndStoreStates(end, endDepth, 0, -1, 0, level, blockHashMap);
-
+        } else {
+            PathfindingResult result = moveAndStoreStates(start, startDepth, level, blockHashMap, bridgeType);
+            blockHashMap = result.blockPosMap;
+            start = result.finalPosition;
+            result = moveAndStoreStates(end, endDepth, level, blockHashMap, bridgeType);
+            blockHashMap = result.blockPosMap;
+            end = result.finalPosition;
+        }
         List<BlockPos> blockPosPath = null;
         switch (bridgeType) {
-            case A_STAR -> blockPosPath = PathfindingAStarAlgorithm.findPathAStar(start, end, level);
+            case A_STAR -> blockPosPath = PathfindingAStarAlgorithm.findPathAStar(start, end, -1, level,
+                    new PathfindingAStarAlgorithm.PositionHeuristicChecker());
             case DEFAULT -> blockPosPath = ManhattanAlgorithm.findPathManhattan(start, end, level);
 //          case STEP -> test = PathfindingAStarAlgorithm.findPathAStar(start, end, level);
         }
@@ -139,6 +148,23 @@ public class PipeConnectorUtils {
         return currentPos;
     }
 
+    private static PathfindingResult moveAndStoreStates(BlockPos start, int steps, Level level, Map<BlockPos, BlockState> map, BridgeType bridgeType) {
+        List<BlockPos> blockPosPath = null;
+        BlockPos end = start.below(steps);
+        switch (bridgeType) {
+            case A_STAR -> blockPosPath = PathfindingAStarAlgorithm.findPathAStar(start, null, end.getY(), level,
+                    new PathfindingAStarAlgorithm.DepthHeuristicChecker());
+//          case STEP -> test = PathfindingAStarAlgorithm.findPathAStar(start, end, level);
+        }
+        if(blockPosPath == null) {
+            return new PathfindingResult(map, start, start.below(steps));
+        }
+        for(BlockPos pos : blockPosPath) {
+            map.putIfAbsent(pos, level.getBlockState(pos));
+        }
+        return new PathfindingResult(map, blockPosPath.get(0), blockPosPath.get(blockPosPath.size()-1));
+    }
+
     // -----------------------------------------------------------------------------------------------------------------
 
     public static BlockPos moveAndStoreStates(BlockPos start, int steps, int xDirection, int yDirection, int zDirection, Level level, Set<BlockPos> set) {
@@ -159,7 +185,7 @@ public class PipeConnectorUtils {
         if (!GeneralUtils.isVoidableBlock(level, pos)) {
             level.destroyBlock(pos, true, player);
             level.addDestroyBlockEffect(pos, level.getBlockState(pos));
-        };
+        }
 
         if (blockState != null) {
             if(level.setBlockAndUpdate(pos, blockState)) {
@@ -167,10 +193,7 @@ public class PipeConnectorUtils {
                 BlockEvent.EntityPlaceEvent event = new BlockEvent.EntityPlaceEvent(BlockSnapshot.create(level.dimension(), level, pos), state, player);
                 MinecraftForge.EVENT_BUS.post(event);
                 level.updateNeighborsAt(pos, block);
-                if(event.isCanceled()) {
-                    return false;
-                }
-                return true;
+                return !event.isCanceled();
             }
         }
         return false;
@@ -391,5 +414,17 @@ public class PipeConnectorUtils {
                 Block.byItem(player.getOffhandItem().getItem()),
                 context,
                 bridgeType);
+    }
+
+    static public class PathfindingResult {
+        BlockPos finalPosition;
+        BlockPos startPosition;
+        Map<BlockPos, BlockState> blockPosMap;
+
+        public PathfindingResult(Map<BlockPos, BlockState> blockPosMap, BlockPos startPosition, BlockPos finalPosition) {
+            this.startPosition = startPosition;
+            this.finalPosition = finalPosition;
+            this.blockPosMap = blockPosMap;
+        }
     }
 }

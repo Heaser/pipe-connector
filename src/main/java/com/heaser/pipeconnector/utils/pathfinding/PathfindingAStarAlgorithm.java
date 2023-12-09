@@ -1,33 +1,27 @@
 package com.heaser.pipeconnector.utils.pathfinding;
 
 import com.heaser.pipeconnector.PipeConnector;
-import com.heaser.pipeconnector.constants.BridgeType;
-import com.heaser.pipeconnector.utils.GeneralUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 
 import java.util.*;
 
+import static com.heaser.pipeconnector.utils.GeneralUtils.isVoidableBlock;
+
 public class PathfindingAStarAlgorithm {
 
-    public static List<BlockPos> findPathAStar(BlockPos start, BlockPos end, Level level) {
-
+    public static List<BlockPos> findPathAStar(BlockPos start, BlockPos end, int endY, Level level, HeuristicChecker checker) {
         Set<BlockPos> openSet = new HashSet<>();
         Set<BlockPos> closedSet = new HashSet<>();
         Map<BlockPos, Node> nodes = new HashMap<>();
 
         // Initializing the start node
-        Node startNode = new Node(start, null, 0, heuristic(start, end));
+        Node startNode = new Node(start, null, 0, checker.heuristic(start, end, endY));
         nodes.put(start, startNode);
         openSet.add(start);
 
         int iterationLimit = 20000;
         int iterationCount = 0;
-
-//        if(getNeighbors(start, level, start, end).isEmpty()) {
-//            PipeConnector.LOGGER.warn("{}: No neighbors found for start position", PipeConnector.MODID);
-//            return null;
-//        }
 
         // Main loop to process nodes.
         while (!openSet.isEmpty()) {
@@ -37,17 +31,17 @@ public class PathfindingAStarAlgorithm {
             }
             BlockPos currentPos = getLowestFCost(openSet, nodes);
 
-            if (currentPos.equals(end)) {
+            if (checker.isGoal(currentPos, end, endY)) {
                 return reconstructPath(nodes, nodes.get(currentPos));
             }
 
             openSet.remove(currentPos);
             closedSet.add(currentPos);
 
-            for (BlockPos neighbor : getNeighbors(currentPos, level, start, end)) {
+            for (BlockPos neighbor : getNeighbors(currentPos, level, start, end, endY)) {
                 if (closedSet.contains(neighbor)) continue;
 
-                Node neighborNode = nodes.getOrDefault(neighbor, new Node(neighbor, null, Integer.MAX_VALUE, heuristic(neighbor, end)));
+                Node neighborNode = nodes.getOrDefault(neighbor, new Node(neighbor, null, Integer.MAX_VALUE, checker.heuristic(neighbor, end, endY)));
                 nodes.put(neighbor, neighborNode);
 
                 int tentativeGCost = nodes.get(currentPos).gCost + 1;
@@ -67,10 +61,6 @@ public class PathfindingAStarAlgorithm {
     }
 
     // -----------------------------------------------------------------------------------------------------------------
-
-    private static int heuristic(BlockPos current, BlockPos end) {
-        return Math.abs(current.getX() - end.getX()) + Math.abs(current.getZ() - end.getZ());
-    }
 
     private static BlockPos getLowestFCost(Set<BlockPos> openSet, Map<BlockPos, Node> nodes) {
         BlockPos lowest = null;
@@ -100,21 +90,53 @@ public class PathfindingAStarAlgorithm {
     private static List<BlockPos> getNeighbors(BlockPos pos, Level level, BlockPos start, BlockPos end) {
         List<BlockPos> neighbors = new ArrayList<>();
 
-        BlockPos north = pos.north();
-        BlockPos south = pos.south();
-        BlockPos east = pos.east();
-        BlockPos west = pos.west();
-        BlockPos down = pos.below();
-        BlockPos up = pos.above();
+        BlockPos[] directions = {pos.north(), pos.south(), pos.east(), pos.west(), pos.below(), pos.above()};
+        for (BlockPos neighbor : directions) {
+            if (neighbor.equals(start) || neighbor.equals(end) || !isVoidableBlock(level, neighbor)) {
+                neighbors.add(neighbor);
+            }
+        }
 
-        if (north.equals(start) || north.equals(end) || !GeneralUtils.isVoidableBlock(level, north)) neighbors.add(north);
-        if (south.equals(start) || south.equals(end) || !GeneralUtils.isVoidableBlock(level, south)) neighbors.add(south);
-        if (east.equals(start) || east.equals(end) || !GeneralUtils.isVoidableBlock(level, east)) neighbors.add(east);
-        if (west.equals(start) || west.equals(end) || !GeneralUtils.isVoidableBlock(level, west)) neighbors.add(west);
-        if (down.equals(start) || down.equals(end) || !GeneralUtils.isVoidableBlock(level, down)) neighbors.add(down);
-        if (up.equals(start) || up.equals((end)) || (!GeneralUtils.isVoidableBlock(level, up) &&
-                !(up.getX() == start.getX() && up.getZ() == start.getZ()))) neighbors.add(up);
         return neighbors;
+        //        !(up.getX() == start.getX() && up.getZ() == start.getZ()))) neighbors.add(up);
+    }
+
+    private static List<BlockPos> getNeighbors(BlockPos pos, Level level, BlockPos start, BlockPos end, int endY) {
+        List<BlockPos> neighbors = new ArrayList<>();
+
+        BlockPos[] directions = {pos.north(), pos.south(), pos.east(), pos.west(), pos.below(), pos.above()};
+        for (BlockPos neighbor : directions) {
+            if (neighbor.equals(start) || neighbor.equals(end) || neighbor.getY() == endY || !isVoidableBlock(level, neighbor)) {
+                neighbors.add(neighbor);
+            }
+        }
+
+        return neighbors;
+    }
+
+    interface HeuristicChecker {
+        int heuristic(BlockPos current, BlockPos end,  int endY);
+        boolean isGoal(BlockPos current, BlockPos end,  int endY);
+    }
+
+    public static class PositionHeuristicChecker implements HeuristicChecker {
+        public int heuristic(BlockPos current, BlockPos end, int endY) {
+            return Math.abs(current.getX() - end.getX()) + Math.abs(current.getZ() - end.getZ()) + Math.abs(current.getY() - end.getY());
+        }
+
+        public boolean isGoal(BlockPos current, BlockPos end,  int endY) {
+            return current.equals(end);
+        }
+    }
+
+    public static class DepthHeuristicChecker implements HeuristicChecker {
+        public int heuristic(BlockPos current, BlockPos end, int endY) {
+            return Math.abs(current.getY() - endY);
+        }
+
+        public boolean isGoal(BlockPos current, BlockPos end,  int endY) {
+            return current.getY() == endY;
+        }
     }
 
     // -----------------------------------------------------------------------------------------------------------------
