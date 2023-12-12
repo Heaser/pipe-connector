@@ -17,7 +17,7 @@ public class PipeConnectorRenderType extends RenderType {
             false,
             RenderType.CompositeState.builder()
             .setShaderState(RENDERTYPE_LINES_SHADER)
-            .setLineState(new RenderStateShard.LineStateShard(OptionalDouble.empty()))
+            .setLineState(new RenderStateShard.LineStateShard(OptionalDouble.of(2.0)))
             .setLayeringState(VIEW_OFFSET_Z_LAYERING)
             .setTransparencyState(TRANSLUCENT_TRANSPARENCY)
             .setOutputState(ITEM_ENTITY_TARGET)
