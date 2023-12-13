@@ -14,6 +14,7 @@ public class BuildParameters {
     public Direction endDirection;
     public String dimension;
     public BridgeType bridgeType;
+    public boolean utilizeExistingPipes;
 
     public BuildParameters() {
         this.depth = -1;
@@ -23,6 +24,7 @@ public class BuildParameters {
         this.endDirection = null;
         this.dimension = "";
         this.bridgeType = BridgeType.DEFAULT;
+        this.utilizeExistingPipes = true;
     }
 
     public BuildParameters(ItemStack pipeConnectorItem) {
@@ -33,6 +35,7 @@ public class BuildParameters {
         this.endDirection = PipeConnectorUtils.getEndDirection(pipeConnectorItem);
         this.dimension = PipeConnectorUtils.getDimension(pipeConnectorItem);
         this.bridgeType = PipeConnectorUtils.getBridgeType(pipeConnectorItem);
+        this.utilizeExistingPipes = PipeConnectorUtils.getUtilizeExistingPipes(pipeConnectorItem);
     }
 
     public BuildParameters(int depth,
@@ -40,13 +43,17 @@ public class BuildParameters {
                            BlockPos endPosition,
                            Direction startDirection,
                            Direction endDirection,
-                           String dimension) {
+                           String dimension,
+                           BridgeType bridgeType,
+                           boolean utilizeExistingPipes) {
         this.depth = depth;
         this.startPosition = startPosition;
         this.endPosition = endPosition;
         this.startDirection = startDirection;
         this.endDirection = endDirection;
         this.dimension = dimension;
+        this.bridgeType = bridgeType;
+        this.utilizeExistingPipes = utilizeExistingPipes;
     }
 
     public boolean equals(BuildParameters other) {
@@ -55,6 +62,7 @@ public class BuildParameters {
         boolean endDirEqual = other.endDirection == this.endDirection;
         boolean isDimensionEqual = other.dimension.equals(this.dimension);
         boolean isBridgeTypeEqual = other.bridgeType == this.bridgeType;
+        boolean isUtilizeExistingPipesEqual = other.utilizeExistingPipes == this.utilizeExistingPipes;
         boolean startPosEqual;
         boolean endPosEqual;
         if (other.startPosition == null || this.startPosition == null) {
@@ -67,6 +75,7 @@ public class BuildParameters {
         } else {
             endPosEqual = other.endPosition.equals(this.endPosition);
         }
-        return depthEqual && startPosEqual && endPosEqual && startDirEqual && endDirEqual && isDimensionEqual && isBridgeTypeEqual;
+        return depthEqual && startPosEqual && endPosEqual && startDirEqual && endDirEqual && isDimensionEqual
+                && isBridgeTypeEqual && isUtilizeExistingPipesEqual;
     }
 }

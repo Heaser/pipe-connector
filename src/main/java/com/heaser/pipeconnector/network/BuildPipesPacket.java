@@ -45,6 +45,7 @@ public class BuildPipesPacket {
             Direction startDirection = PipeConnectorUtils.getStartDirection(interactedItem);
             Direction endDirection = PipeConnectorUtils.getEndDirection(interactedItem);
             BridgeType bridgeType = PipeConnectorUtils.getBridgeType(interactedItem);
+            boolean utilizeExistingPipes = PipeConnectorUtils.getUtilizeExistingPipes(interactedItem);
 
             if (startPosition == null || endPosition == null) {
                 return;
@@ -59,7 +60,8 @@ public class BuildPipesPacket {
                     endDirection,
                     depth,
                     new UseOnContext(sender, InteractionHand.MAIN_HAND, virtualHitResult),
-                    bridgeType);
+                    bridgeType,
+                    utilizeExistingPipes);
             PipeConnectorUtils.resetPositionAndDirectionTags(interactedItem, sender, wasSuccessful);
         });
         context.get().setPacketHandled(true);

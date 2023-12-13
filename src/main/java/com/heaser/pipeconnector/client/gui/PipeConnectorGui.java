@@ -2,10 +2,9 @@ package com.heaser.pipeconnector.client.gui;
 
 import com.heaser.pipeconnector.PipeConnector;
 import com.heaser.pipeconnector.client.gui.buttons.*;
-import com.heaser.pipeconnector.client.gui.labels.BaseLabel;
+import com.heaser.pipeconnector.client.gui.interfaces.ILabelable;
 import com.heaser.pipeconnector.client.gui.labels.DepthLabel;
-import com.heaser.pipeconnector.items.PipeConnectorItem;
-import com.heaser.pipeconnector.utils.GeneralUtils;
+import com.heaser.pipeconnector.client.gui.labels.UtilizeExistingPipesText;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
@@ -15,7 +14,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -30,6 +28,7 @@ public class PipeConnectorGui extends Screen {
     private BaseButton buildBasePipesButton;
     private BaseButton bridgeTypeButton;
     private BaseButton bridgeTypeInfoButton;
+    private BaseButton buildUtilizeExistingPipesButton;
 
     public PipeConnectorGui(ItemStack pipeConnectorStack) {
         super(Component.literal("PipeConnectorScreen"));
@@ -42,6 +41,7 @@ public class PipeConnectorGui extends Screen {
     protected void init() {
         bridgeTypeButton = createButton(0.05, 0.2, new BridgeTypeButton(pipeConnectorStack));
         bridgeTypeInfoButton = createButton(0.45, 0.2, new BridgeTypeInfoButton());
+        buildUtilizeExistingPipesButton = createButton(0.45, 0.3, new UtilizeExistingPipesButton(pipeConnectorStack));
         resetBaseButton = createButton(0.65, 0.7, new ResetButton());
         buildBasePipesButton = createButton(0.65, 0.8, new BuildPipesButton(this.getMinecraft().player));
     }
@@ -62,10 +62,12 @@ public class PipeConnectorGui extends Screen {
         drawTooltip(guiGraphics, mouseX, mouseY, buildBasePipesButton);
         drawTooltip(guiGraphics, mouseX, mouseY, bridgeTypeButton);
         drawTooltipList(guiGraphics, mouseX, mouseY, bridgeTypeInfoButton);
+        drawTooltipList(guiGraphics, mouseX, mouseY, buildUtilizeExistingPipesButton);
         guiGraphics.blit(PIPE_CONNECTOR_TEXTURE, drawStartX, drawStartY, 0, 0, imageWidth, imageHeight);
         super.render(guiGraphics, mouseX, mouseY, partialTick);
-
-        createLabel(guiGraphics, 0.65, 0.6, new DepthLabel());
+        buildUtilizeExistingPipesButton.button.active = buildUtilizeExistingPipesButton.isActive(pipeConnectorStack);
+        createLabel(guiGraphics, 0.12, 0.32 , new UtilizeExistingPipesText());
+        createLabel(guiGraphics, 0.65, 0.65, new DepthLabel());
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -100,13 +102,13 @@ public class PipeConnectorGui extends Screen {
 
     // -----------------------------------------------------------------------------------------------------------------
 
-    private void createLabel(GuiGraphics guiGraphics, double marginXPercent, double marginYPercent, BaseLabel label) {
+    private void createLabel(GuiGraphics guiGraphics, double marginXPercent, double marginYPercent, ILabelable label) {
         int marginX = (int) (imageWidth * marginXPercent);
         int marginY = (int) (imageHeight * marginYPercent);
         int drawStartX = this.getScreenX() + marginX;
         int drawStartY = this.getScreenY() + marginY;
 
-        guiGraphics.drawString(this.font, label.getLabel(pipeConnectorStack), drawStartX, drawStartY, 12181157);
+        guiGraphics.drawString(this.font, label.getLabel(pipeConnectorStack), drawStartX, drawStartY, 0xBFFFD700);
     }
 
     // -----------------------------------------------------------------------------------------------------------------

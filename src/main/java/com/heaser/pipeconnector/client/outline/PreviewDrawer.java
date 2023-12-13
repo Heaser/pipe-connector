@@ -14,6 +14,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
@@ -33,19 +34,20 @@ public class PreviewDrawer {
         }
         else if(shouldUpdatePreview(heldItem)) {
             Level currentLevel = player.level();
-            previewMap = getNewPreview(heldItem, currentLevel);
+            previewMap = getNewPreview(heldItem, currentLevel, player);
         }
 
         draw(pose, buffer, player, heldItem);
     }
 
-    private HashSet<PreviewInfo> getNewPreview(ItemStack pipeConnector, Level currentLevel) {
+    private HashSet<PreviewInfo> getNewPreview(ItemStack pipeConnector, Level currentLevel, Player player) {
         BlockPos startPos = PipeConnectorUtils.getStartPosition(pipeConnector);
         BlockPos endPos = PipeConnectorUtils.getEndPosition(pipeConnector);
         if (startPos == null || endPos == null) {
             return new HashSet<>();
         }
         int depth = PipeConnectorUtils.getDepthFromStack(pipeConnector);
+        boolean utilizeExitingPipes = PipeConnectorUtils.getUtilizeExistingPipes(pipeConnector);
         Direction startDirection = PipeConnectorUtils.getStartDirection(pipeConnector);
         Direction endDirection = PipeConnectorUtils.getEndDirection(pipeConnector);
         startPos = startPos.relative(startDirection);
@@ -56,7 +58,9 @@ public class PreviewDrawer {
                         endPos,
                         depth,
                         currentLevel,
-                        PipeConnectorUtils.getBridgeType(pipeConnector)));
+                        PipeConnectorUtils.getBridgeType(pipeConnector),
+                        Block.byItem(player.getOffhandItem().getItem()),
+                        utilizeExitingPipes));
     }
 
     private void draw(PoseStack pose, MultiBufferSource buffer, Player player, ItemStack pipeConnector) {

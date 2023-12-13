@@ -1,9 +1,11 @@
 package com.heaser.pipeconnector.utils.pathfinding;
 
 import com.heaser.pipeconnector.PipeConnector;
+import com.heaser.pipeconnector.utils.GeneralUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 
 import java.util.*;
 
@@ -89,8 +91,25 @@ public class PathfindingAStarAlgorithm {
     }
 
     public static class PositionHeuristicChecker implements HeuristicChecker {
+        private final boolean useExistingPipes;
+        private final Block placedBlock;
+        private final Level level;
+
+
+        public PositionHeuristicChecker(boolean useExistingPipes, Block placedBlock, Level level) {
+            this.useExistingPipes = useExistingPipes;
+            this.placedBlock = placedBlock;
+            this.level = level;
+        }
+
         public int heuristic(BlockPos current, BlockPos end, int endY) {
-            return Math.abs(current.getX() - end.getX()) + Math.abs(current.getZ() - end.getZ()) + Math.abs(current.getY() - end.getY());
+            int cost = Math.abs(current.getX() - end.getX()) + Math.abs(current.getZ() - end.getZ()) + Math.abs(current.getY() - end.getY());
+            if (useExistingPipes) {
+                if (GeneralUtils.isBlockStateSpecificBlock(level.getBlockState(current), placedBlock)) {
+                    cost = (int)((double)cost * 0.3);
+                }
+            }
+            return cost;
         }
 
 
@@ -100,8 +119,24 @@ public class PathfindingAStarAlgorithm {
     }
 
     public static class DepthHeuristicChecker implements HeuristicChecker {
+        private final boolean useExistingPipes;
+        private final Block placedBlock;
+        private final Level level;
+
+        public DepthHeuristicChecker(boolean useExistingPipes, Block placedBlock, Level level) {
+            this.useExistingPipes = useExistingPipes;
+            this.placedBlock = placedBlock;
+            this.level = level;
+        }
+
         public int heuristic(BlockPos current, BlockPos end, int endY) {
-            return Math.abs(current.getY() - endY);
+            int cost = Math.abs(current.getY() - endY);
+            if (useExistingPipes) {
+                if (GeneralUtils.isBlockStateSpecificBlock(level.getBlockState(current), placedBlock)) {
+                    cost = (int)((double)cost * 0.3);
+                }
+            }
+            return cost;
         }
 
         public boolean isGoal(BlockPos current, BlockPos end, int endY) {

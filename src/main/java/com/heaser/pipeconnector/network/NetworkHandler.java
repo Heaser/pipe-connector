@@ -44,6 +44,12 @@ public class NetworkHandler {
                 .consumerMainThread(UpdateBridgeTypePacket::handle)
                 .add();
 
+        CHANNEL.messageBuilder(UpdateUtilizeExistingPipes.class,packetId++)
+                .encoder(UpdateUtilizeExistingPipes::encode)
+                .decoder(UpdateUtilizeExistingPipes::new)
+                .consumerMainThread(UpdateUtilizeExistingPipes::handle)
+                .add();
+
         PipeConnector.LOGGER.debug("Registered {} Packets for {}", packetId, PipeConnector.MODID);
     }
 }

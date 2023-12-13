@@ -33,9 +33,9 @@ import static com.heaser.pipeconnector.utils.GeneralUtils.isBlockStateSpecificBl
 public class PipeConnectorUtils {
 
 
-    public static boolean connectPathWithSegments(Player player, BlockPos start, BlockPos end, int depth, Block block, UseOnContext context, BridgeType bridgeType) {
+    public static boolean connectPathWithSegments(Player player, BlockPos start, BlockPos end, int depth, Block block, UseOnContext context, BridgeType bridgeType, boolean utilizeExistingPipes) {
         Level level = player.level();
-        Map<BlockPos, BlockState> blockPosMap = getBlockPosMap(start, end, depth, level, bridgeType);
+        Map<BlockPos, BlockState> blockPosMap = getBlockPosMap(start, end, depth, level, bridgeType, block, utilizeExistingPipes);
 
         PipeConnector.LOGGER.debug(blockPosMap.toString());
 
@@ -88,7 +88,6 @@ public class PipeConnectorUtils {
             return PathSize - NumberOfPipesInInventory;
         }
     }
-
     public static int getMissingPipesInInventory(Player player, int NumberOfPipesInInventory, Map<BlockPos, BlockState> blockPosMap, Block block) {
         int existingPipesInPath = 0;
         for (Map.Entry<BlockPos, BlockState> set : blockPosMap.entrySet()) {
@@ -124,7 +123,7 @@ public class PipeConnectorUtils {
     // two locations clicked by the Player.
     // -----------------------------------------------------------------------------------------------------------------
 
-    public static Map<BlockPos, BlockState> getBlockPosMap(BlockPos start, BlockPos end, int depth, Level level, BridgeType bridgeType) {
+    public static Map<BlockPos, BlockState> getBlockPosMap(BlockPos start, BlockPos end, int depth, Level level, BridgeType bridgeType, Block placedBlock, boolean utilizeExistingPipes) {
         Map<BlockPos, BlockState> blockHashMap = new HashMap<>();
 
         int deltaY = Math.abs(start.getY() - end.getY());
@@ -140,17 +139,17 @@ public class PipeConnectorUtils {
             end = moveAndStoreStates(end, endDepth, 0, -1, 0, level, blockHashMap);
 
         } else {
-            PathfindingResult result = moveAndStoreStates(start, startDepth, level, blockHashMap, bridgeType);
+            PathfindingResult result = moveAndStoreStates(start, startDepth, level, blockHashMap, bridgeType, placedBlock, utilizeExistingPipes);
             blockHashMap = result.blockPosMap;
             start = result.finalPosition;
-            result = moveAndStoreStates(end, endDepth, level, blockHashMap, bridgeType);
+            result = moveAndStoreStates(end, endDepth, level, blockHashMap, bridgeType, placedBlock, utilizeExistingPipes);
             blockHashMap = result.blockPosMap;
             end = result.finalPosition;
         }
         List<BlockPos> blockPosPath = null;
         switch (bridgeType) {
             case A_STAR -> blockPosPath = PathfindingAStarAlgorithm.findPathAStar(start, end, -1, level,
-                    new PathfindingAStarAlgorithm.PositionHeuristicChecker());
+                    new PathfindingAStarAlgorithm.PositionHeuristicChecker(utilizeExistingPipes, placedBlock, level));
             case DEFAULT -> blockPosPath = ManhattanAlgorithm.findPathManhattan(start, end, level);
 //          case STEP -> test = PathfindingAStarAlgorithm.findPathAStar(start, end, level);
         }
@@ -175,12 +174,12 @@ public class PipeConnectorUtils {
         return currentPos;
     }
 
-    private static PathfindingResult moveAndStoreStates(BlockPos start, int steps, Level level, Map<BlockPos, BlockState> map, BridgeType bridgeType) {
+    private static PathfindingResult moveAndStoreStates(BlockPos start, int steps, Level level, Map<BlockPos, BlockState> map, BridgeType bridgeType, Block placedBlock, boolean utilizeExistingPipes) {
         List<BlockPos> blockPosPath = null;
         BlockPos end = start.below(steps);
         switch (bridgeType) {
             case A_STAR -> blockPosPath = PathfindingAStarAlgorithm.findPathAStar(start, null, end.getY(), level,
-                    new PathfindingAStarAlgorithm.DepthHeuristicChecker());
+                    new PathfindingAStarAlgorithm.DepthHeuristicChecker(utilizeExistingPipes, placedBlock, level));
 //          case STEP -> test = PathfindingAStarAlgorithm.findPathAStar(start, end, level);
         }
         if (blockPosPath == null) {
@@ -365,6 +364,23 @@ public class PipeConnectorUtils {
 
     // -----------------------------------------------------------------------------------------------------------------
 
+    public static boolean getUtilizeExistingPipes(ItemStack stack) {
+        CompoundTag tag = stack.getOrCreateTagElement(PipeConnector.MODID);
+        if (tag.contains("UtilizeExistingPipes", tag.TAG_BYTE)) {
+            return tag.getBoolean("UtilizeExistingPipes");
+        }
+        return false;
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    public static void setUtilizeExistingPipes(ItemStack stack, boolean utilizeExistingPipes) {
+        CompoundTag tag = stack.getOrCreateTagElement(PipeConnector.MODID);
+        tag.putBoolean("UtilizeExistingPipes", utilizeExistingPipes);
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
     public static void resetPositionAndDirectionTags(ItemStack stack, Player player, boolean shouldShowMessage) {
         CompoundTag tag = stack.getOrCreateTagElement(PipeConnector.MODID);
         tag.remove("StartDirection");
@@ -432,7 +448,8 @@ public class PipeConnectorUtils {
                                         Direction endDirection,
                                         int depth,
                                         UseOnContext context,
-                                        BridgeType bridgeType) {
+                                        BridgeType bridgeType,
+                                        boolean utilizeExistingPipes) {
 
         return PipeConnectorUtils.connectPathWithSegments(player,
                 startPos.relative(startDirection),
@@ -440,7 +457,8 @@ public class PipeConnectorUtils {
                 depth,
                 Block.byItem(player.getOffhandItem().getItem()),
                 context,
-                bridgeType);
+                bridgeType,
+                utilizeExistingPipes);
     }
 
     static public class PathfindingResult {
