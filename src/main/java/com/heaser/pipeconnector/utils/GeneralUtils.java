@@ -7,6 +7,8 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 
 public class GeneralUtils
 {
@@ -43,14 +45,20 @@ public class GeneralUtils
 
     // -----------------------------------------------------------------------------------------------------------------
 
+    public static boolean isAvoidableBlock(Level level, BlockPos pos) {
+        return level.getBlockState(pos).is(TagKeys.AVOIDABLE_BLOCKS);
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
     public static boolean isPlaceableBlock(Player player) {
         return player.getOffhandItem().is(TagKeys.PLACEABLE_ITEMS);
     }
 
     // -----------------------------------------------------------------------------------------------------------------
 
-    public static boolean isVoidableOrNotBreakable(Level level, BlockPos pos) {
-        return isVoidableBlock(level, pos) || isNotBreakable(level, pos);
+    public static boolean isBlockStateSpecificBlock(BlockState blockState, Block specificBlock) {
+        return blockState.getBlock().equals(specificBlock);
     }
 }
 

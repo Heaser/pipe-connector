@@ -1,0 +1,160 @@
+{
+  "values": [
+    {
+      "id": "pipez:energy_pipe",
+      "required": false
+    },
+    {
+      "id": "pipez:fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "pipez:item_pipe",
+      "required": false
+    },
+    {
+      "id": "pipez:gas_pipe",
+      "required": false
+    },
+    {
+      "id": "pipez:universal_pipe",
+      "required": false
+    },
+    {
+      "id": "sfm:cable",
+      "required": false
+    },
+    {
+      "id": "mekanism:basic_universal_cable",
+      "required": false
+    },
+    {
+      "id": "mekanism:advanced_universal_cable",
+      "required": false
+    },
+    {
+      "id": "mekanism:elite_universal_cable",
+      "required": false
+    },
+    {
+      "id": "mekanism:ultimate_universal_cable",
+      "required": false
+    },
+    {
+      "id": "mekanism:basic_mechanical_pipe",
+      "required": false
+    },
+    {
+      "id": "mekanism:advanced_mechanical_pipe",
+      "required": false
+    },
+    {
+      "id": "mekanism:elite_mechanical_pipe",
+      "required": false
+    },
+    {
+      "id": "mekanism:ultimate_mechanical_pipe",
+      "required": false
+    },
+    {
+      "id": "mekanism:basic_logistical_transporter",
+      "required": false
+    },
+    {
+      "id": "mekanism:advanced_logistical_transporter",
+      "required": false
+    },
+    {
+      "id": "mekanism:elite_logistical_transporter",
+      "required": false
+    },
+    {
+      "id": "mekanism:ultimate_logistical_transporter",
+      "required": false
+    },
+    {
+      "id": "mekanism:basic_thermodynamic_conductor",
+      "required": false
+    },
+    {
+      "id": "mekanism:advanced_thermodynamic_conductor",
+      "required": false
+    },
+    {
+      "id": "mekanism:elite_thermodynamic_conductor",
+      "required": false
+    },
+    {
+      "id": "mekanism:ultimate_thermodynamic_conductor",
+      "required": false
+    },
+    {
+      "id": "mekanism:basic_pressurized_tube",
+      "required": false
+    },
+    {
+      "id": "mekanism:advanced_pressurized_tube",
+      "required": false
+    },
+    {
+      "id": "mekanism:elite_pressurized_tube",
+      "required": false
+    },
+    {
+      "id": "mekanism:ultimate_pressurized_tube",
+      "required": false
+    },
+    {
+      "id": "mekanism:restrictive_transporter",
+      "required": false
+    },
+    {
+      "id": "mekanism:diversion_transporter",
+      "required": false
+    },
+    {
+      "id": "refinedstorage:cable",
+      "required": false
+    },
+    {
+      "id": "prettypipes:pipe",
+      "required": false
+    },
+    {
+      "id": "create:fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "storagenetwork:kabel",
+      "required": false
+    },
+    {
+      "id": "thermal:fluid_duct",
+      "required": false
+    },
+    {
+      "id": "thermal:fluid_duct_windowed",
+      "required": false
+    },
+    {
+      "id": "thermal:energy_duct",
+      "required": false
+    },
+    {
+      "id": "pneumaticcraft:pressure_tube",
+      "required": false
+    },
+    {
+      "id": "pneumaticcraft:reinforced_pressure_tube",
+      "required": false
+    },
+    {
+      "id": "pneumaticcraft:advanced_pressure_tube",
+      "required": false
+    },
+    {
+      "id": "pneumaticcraft:heat_pipe",
+      "required": false
+    }
+  ]
+}

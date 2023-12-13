@@ -10,6 +10,7 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -49,10 +50,10 @@ public class BuildPipesButton extends BaseButton {
             return Component.translatable("item.pipe_connector.gui.button.tooltip.disabledButtonHoldValidItem");
         }
         int existingPipes = PipeConnectorUtils.getNumberOfPipesInInventory(player);
-        int neededPipes = ClientSetup.PREVIEW_DRAWER.previewMap.size();
-        int missingPipes = neededPipes - existingPipes;
+        int missingPipes = PipeConnectorUtils.getMissingPipesInInventory(player, existingPipes, player.level(), ClientSetup.PREVIEW_DRAWER.previewMap,
+                Block.byItem(player.getOffhandItem().getItem()));
 
-        if (!PipeConnectorUtils.hasEnoughPipesInInventory(player, existingPipes, neededPipes)) {
+        if (missingPipes > 0) {
             return Component.translatable("item.pipe_connector.gui.button.tooltip.disabledNotEnoughPipes", missingPipes);
         }
         return null;

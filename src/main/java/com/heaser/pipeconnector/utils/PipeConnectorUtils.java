@@ -28,6 +28,8 @@ import net.minecraftforge.event.level.BlockEvent;
 
 import java.util.*;
 
+import static com.heaser.pipeconnector.utils.GeneralUtils.isBlockStateSpecificBlock;
+
 public class PipeConnectorUtils {
 
 
@@ -42,43 +44,70 @@ public class PipeConnectorUtils {
         int pipeLimit = 640;
 
         int numOfPipes = getNumberOfPipesInInventory(player);
-        if (!hasEnoughPipesInInventory(player, numOfPipes, blockPosMap.size())) {
-            int missingPipes = blockPosMap.size() - numOfPipes;
+        int missingPipes = getMissingPipesInInventory(player, numOfPipes, blockPosMap, block);
+        if (missingPipes > 0) {
             PipeConnector.LOGGER.debug("Not enough pipes in inventory, missing " + missingPipes + " pipes.");
             player.displayClientMessage(Component.translatable("item.pipe_connector.message.notEnoughPipes", missingPipes).withStyle(ChatFormatting.BOLD, ChatFormatting.YELLOW), true);
             return false;
         }
 
         // Checks if the pipe limit has been reached
-            if (pipeLimit < blockPosMap.size()) {
-                PipeConnector.LOGGER.debug("Unable to place more than " + pipeLimit + " at once");
-                player.displayClientMessage(Component.translatable("item.pipe_connector.message.reachedPipeLimit", pipeLimit).withStyle(ChatFormatting.BOLD, ChatFormatting.YELLOW), true);
-                return false;
-            }
+        if (pipeLimit < blockPosMap.size()) {
+            PipeConnector.LOGGER.debug("Unable to place more than " + pipeLimit + " at once");
+            player.displayClientMessage(Component.translatable("item.pipe_connector.message.reachedPipeLimit", pipeLimit).withStyle(ChatFormatting.BOLD, ChatFormatting.YELLOW), true);
+            return false;
+        }
         // Checks if the block is unbreakable
-        for(Map.Entry<BlockPos, BlockState> set: blockPosMap.entrySet()) {
+        for (Map.Entry<BlockPos, BlockState> set : blockPosMap.entrySet()) {
             if (GeneralUtils.isNotBreakable(level, set.getKey())) {
                 String invalidBlockName = set.getValue().getBlock().getName().getString();
-                player.displayClientMessage(Component.translatable("item.pipe_connector.message.unbreakableBlockReached",invalidBlockName).withStyle(ChatFormatting.BOLD, ChatFormatting.DARK_RED), true);
+                player.displayClientMessage(Component.translatable("item.pipe_connector.message.unbreakableBlockReached", invalidBlockName).withStyle(ChatFormatting.BOLD, ChatFormatting.DARK_RED), true);
                 return false;
             }
         }
 
         for (Map.Entry<BlockPos, BlockState> set : blockPosMap.entrySet()) {
-            if (!isCreativeMode) {
-                reduceNumberOfPipesInInventory(player);
+            if (!isBlockStateSpecificBlock(set.getValue(), block)) {
+                if (!isCreativeMode) {
+                    reduceNumberOfPipesInInventory(player);
+                }
+                ParticleHelper.serverSpawnMarkerParticle((ServerLevel) level, set.getKey());
+                breakAndSetBlock(level, set.getKey(), block, player, context);
             }
-            ParticleHelper.serverSpawnMarkerParticle((ServerLevel) level, set.getKey());
-            breakAndSetBlock(level, set.getKey(), block, player, context);
         }
         return true;
     }
 
     // -----------------------------------------------------------------------------------------------------------------
 
-    public static boolean hasEnoughPipesInInventory(Player player, int NumberOfPipesInInventory, int PathSize) {
+    public static int getMissingPipesInInventory(Player player, int NumberOfPipesInInventory, int PathSize) {
         boolean isCreativeMode = player.getAbilities().instabuild;
-        return isCreativeMode || NumberOfPipesInInventory >= PathSize;
+        if (isCreativeMode) {
+            return 0;
+        } else {
+            return PathSize - NumberOfPipesInInventory;
+        }
+    }
+
+    public static int getMissingPipesInInventory(Player player, int NumberOfPipesInInventory, Map<BlockPos, BlockState> blockPosMap, Block block) {
+        int existingPipesInPath = 0;
+        for (Map.Entry<BlockPos, BlockState> set : blockPosMap.entrySet()) {
+            if (isBlockStateSpecificBlock(set.getValue(), block)) {
+                existingPipesInPath++;
+            }
+        }
+        return getMissingPipesInInventory(player, NumberOfPipesInInventory, blockPosMap.size() - existingPipesInPath);
+    }
+
+    public static int getMissingPipesInInventory(Player player, int NumberOfPipesInInventory, Level level, HashSet<PreviewInfo> previewMap, Block block) {
+        int existingPipesInPath = 0;
+
+        for (PreviewInfo previewInfo : previewMap) {
+            if (isBlockStateSpecificBlock(level.getBlockState(previewInfo.pos), block)) {
+                existingPipesInPath++;
+            }
+        }
+        return getMissingPipesInInventory(player, NumberOfPipesInInventory, previewMap.size() - existingPipesInPath);
     }
     // -----------------------------------------------------------------------------------------------------------------
 
@@ -96,7 +125,7 @@ public class PipeConnectorUtils {
     // -----------------------------------------------------------------------------------------------------------------
 
     public static Map<BlockPos, BlockState> getBlockPosMap(BlockPos start, BlockPos end, int depth, Level level, BridgeType bridgeType) {
-        Map <BlockPos, BlockState> blockHashMap = new HashMap<>();
+        Map<BlockPos, BlockState> blockHashMap = new HashMap<>();
 
         int deltaY = Math.abs(start.getY() - end.getY());
         int startDepth = depth, endDepth = depth;
@@ -104,9 +133,7 @@ public class PipeConnectorUtils {
         if (start.getY() > end.getY()) {
             endDepth -= deltaY;
         } else {
-            if (bridgeType != BridgeType.A_STAR) {
-                startDepth -= deltaY;
-            }
+            startDepth -= deltaY;
         }
         if (bridgeType == BridgeType.DEFAULT) {
             start = moveAndStoreStates(start, startDepth, 0, -1, 0, level, blockHashMap);
@@ -127,10 +154,10 @@ public class PipeConnectorUtils {
             case DEFAULT -> blockPosPath = ManhattanAlgorithm.findPathManhattan(start, end, level);
 //          case STEP -> test = PathfindingAStarAlgorithm.findPathAStar(start, end, level);
         }
-        if(blockPosPath == null) {
+        if (blockPosPath == null) {
             return blockHashMap;
         }
-        for(BlockPos pos : blockPosPath) {
+        for (BlockPos pos : blockPosPath) {
             blockHashMap.putIfAbsent(pos, level.getBlockState(pos));
         }
 
@@ -156,13 +183,13 @@ public class PipeConnectorUtils {
                     new PathfindingAStarAlgorithm.DepthHeuristicChecker());
 //          case STEP -> test = PathfindingAStarAlgorithm.findPathAStar(start, end, level);
         }
-        if(blockPosPath == null) {
+        if (blockPosPath == null) {
             return new PathfindingResult(map, start, start.below(steps));
         }
-        for(BlockPos pos : blockPosPath) {
+        for (BlockPos pos : blockPosPath) {
             map.putIfAbsent(pos, level.getBlockState(pos));
         }
-        return new PathfindingResult(map, blockPosPath.get(0), blockPosPath.get(blockPosPath.size()-1));
+        return new PathfindingResult(map, blockPosPath.get(0), blockPosPath.get(blockPosPath.size() - 1));
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -188,7 +215,7 @@ public class PipeConnectorUtils {
         }
 
         if (blockState != null) {
-            if(level.setBlockAndUpdate(pos, blockState)) {
+            if (level.setBlockAndUpdate(pos, blockState)) {
                 BlockState state = level.getBlockState(pos);
                 BlockEvent.EntityPlaceEvent event = new BlockEvent.EntityPlaceEvent(BlockSnapshot.create(level.dimension(), level, pos), state, player);
                 MinecraftForge.EVENT_BUS.post(event);
@@ -204,7 +231,7 @@ public class PipeConnectorUtils {
 
     public static int getDepthFromStack(ItemStack stack) {
         CompoundTag tag = stack.getOrCreateTagElement(PipeConnector.MODID);
-        if(tag.contains("Depth",tag.TAG_INT)) {
+        if (tag.contains("Depth", tag.TAG_INT)) {
             return tag.getInt("Depth");
         }
 
@@ -237,7 +264,7 @@ public class PipeConnectorUtils {
 
     public static BlockPos getStartPosition(ItemStack stack) {
         CompoundTag tag = stack.getOrCreateTagElement(PipeConnector.MODID);
-        if(!tag.contains("StartX") || !tag.contains("StartY") || !tag.contains("StartZ")) {
+        if (!tag.contains("StartX") || !tag.contains("StartY") || !tag.contains("StartZ")) {
             return null;
         }
         int x = tag.getInt("StartX");
@@ -288,7 +315,7 @@ public class PipeConnectorUtils {
 
     public static BlockPos getEndPosition(ItemStack stack) {
         CompoundTag tag = stack.getOrCreateTagElement(PipeConnector.MODID);
-        if(!tag.contains("EndX") || !tag.contains("EndY") || !tag.contains("EndZ")) {
+        if (!tag.contains("EndX") || !tag.contains("EndY") || !tag.contains("EndZ")) {
             return null;
         }
         int x = tag.getInt("EndX");
@@ -323,7 +350,7 @@ public class PipeConnectorUtils {
 
     public static BridgeType getBridgeType(ItemStack stack) {
         CompoundTag tag = stack.getOrCreateTagElement(PipeConnector.MODID);
-        if(tag.contains("BridgeType",tag.TAG_STRING)) {
+        if (tag.contains("BridgeType", tag.TAG_STRING)) {
             return BridgeType.valueOf(tag.getString("BridgeType"));
         }
         return BridgeType.DEFAULT;
@@ -348,7 +375,7 @@ public class PipeConnectorUtils {
         tag.remove("EndX");
         tag.remove("EndY");
         tag.remove("EndZ");
-        if(shouldShowMessage) {
+        if (shouldShowMessage) {
             player.displayClientMessage(Component.translatable("item.pipe_connector.message.resettingPositions"), true);
         }
     }
@@ -399,13 +426,13 @@ public class PipeConnectorUtils {
     // -----------------------------------------------------------------------------------------------------------------
 
     public static boolean connectBlocks(Player player,
-                                  BlockPos startPos,
-                                  Direction startDirection,
-                                  BlockPos endPos,
-                                  Direction endDirection,
-                                  int depth,
-                                  UseOnContext context,
-                                  BridgeType bridgeType) {
+                                        BlockPos startPos,
+                                        Direction startDirection,
+                                        BlockPos endPos,
+                                        Direction endDirection,
+                                        int depth,
+                                        UseOnContext context,
+                                        BridgeType bridgeType) {
 
         return PipeConnectorUtils.connectPathWithSegments(player,
                 startPos.relative(startDirection),
