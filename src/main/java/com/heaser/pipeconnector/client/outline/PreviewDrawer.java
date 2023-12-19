@@ -78,6 +78,9 @@ public class PreviewDrawer {
                 LevelRenderer.renderLineBox(pose, builder, aabb, 1F, 0, 0, 1F);
             } else if (GeneralUtils.isVoidableBlock(player.level(), previewInfo.pos)) {
                 LevelRenderer.renderLineBox(pose, builder, aabb, 1F, 1F, 0, 1F);
+            } else if (GeneralUtils.isBlockStateSpecificBlock(player.level().getBlockState(previewInfo.pos),
+                                                                Block.byItem(player.getOffhandItem().getItem()))) {
+                LevelRenderer.renderLineBox(pose, builder, aabb, 0.87F, 0.25F, 0.87F, 0.5F);
             } else {
                 LevelRenderer.renderLineBox(pose, builder, aabb, 0, 1F, 0, 0.5F);
             }
