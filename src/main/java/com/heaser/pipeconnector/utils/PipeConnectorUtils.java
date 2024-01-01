@@ -2,6 +2,7 @@ package com.heaser.pipeconnector.utils;
 
 
 import com.heaser.pipeconnector.PipeConnector;
+import com.heaser.pipeconnector.config.PipeConnectorConfig;
 import com.heaser.pipeconnector.constants.BridgeType;
 import com.heaser.pipeconnector.particles.ParticleHelper;
 import com.heaser.pipeconnector.utils.pathfinding.ManhattanAlgorithm;
@@ -41,7 +42,7 @@ public class PipeConnectorUtils {
 
 
         boolean isCreativeMode = player.getAbilities().instabuild;
-        int pipeLimit = 640;
+        int pipeLimit = PipeConnectorConfig.MAX_ALLOWED_PIPES_TO_PLACE.get();
 
         int numOfPipes = getNumberOfPipesInInventory(player);
         int missingPipes = getMissingPipesInInventory(player, numOfPipes, blockPosMap, block);
@@ -242,8 +243,8 @@ public class PipeConnectorUtils {
     public static void setDepthToStack(ItemStack stack, int depth) {
         CompoundTag tag = stack.getOrCreateTagElement(PipeConnector.MODID);
         if (depth < 0) {
-            depth = 99;
-        } else if (depth > 99) {
+            depth = PipeConnectorConfig.MAX_DEPTH.get();
+        } else if (depth > PipeConnectorConfig.MAX_DEPTH.get()) {
             depth = 0;
         }
         tag.putInt("Depth", depth);

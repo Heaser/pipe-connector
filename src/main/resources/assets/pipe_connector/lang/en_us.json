@@ -21,6 +21,7 @@
   "item.pipe_connector.gui.button.PlacePipes": "Place Pipes",
   "item.pipe_connector.gui.button.tooltip.disabledResetPipePos": "You haven't chosen a any positions yet",
   "item.pipe_connector.gui.button.tooltip.disabledPlacePipes": "Please choose 2 positions first",
+  "item.pipe_connector.gui.button.toolTip.maxAllowedPipesReached": "Unable to place more than %s pipes at once",
   "item.pipe_connector.gui.label.depth": "Depth: %s",
   "item.pipe_connector.gui.label.requiredPipes": "Required Pipes: %s",
   "item.pipe_connector.gui.label.availablePipes": "Available Pipes: %s",
@@ -40,5 +41,4 @@
   "item.pipe_connector.gui.button.tooltip.inactiveUtilizeExistingPipes": "A* Pathfinding must be selected to use this feature",
   "item.pipe_connector.gui.button.tooltip.utilizeExistingPipesInfoPartOne": "This will try to use already placed",
   "item.pipe_connector.gui.button.tooltip.utilizeExistingPipesInfoPartTwo": "pipes to connect the two positions"
-
 }

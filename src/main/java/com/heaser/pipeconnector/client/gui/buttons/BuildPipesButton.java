@@ -1,6 +1,7 @@
 package com.heaser.pipeconnector.client.gui.buttons;
 
 import com.heaser.pipeconnector.client.ClientSetup;
+import com.heaser.pipeconnector.config.PipeConnectorConfig;
 import com.heaser.pipeconnector.network.BuildPipesPacket;
 import com.heaser.pipeconnector.network.NetworkHandler;
 import com.heaser.pipeconnector.utils.GeneralUtils;
@@ -43,6 +44,7 @@ public class BuildPipesButton extends BaseButton {
     }
 
     private Component getErrorMessage(ItemStack itemStack) {
+
         BlockPos blockPos = PipeConnectorUtils.getEndPosition(itemStack);
         if (blockPos == null) {
             return Component.translatable("item.pipe_connector.gui.button.tooltip.disabledPlacePipes");
@@ -52,10 +54,15 @@ public class BuildPipesButton extends BaseButton {
         int existingPipes = PipeConnectorUtils.getNumberOfPipesInInventory(player);
         int missingPipes = PipeConnectorUtils.getMissingPipesInInventory(player, existingPipes, player.level(), ClientSetup.PREVIEW_DRAWER.previewMap,
                 Block.byItem(player.getOffhandItem().getItem()));
+        int maxAllowedPipes = PipeConnectorConfig.MAX_ALLOWED_PIPES_TO_PLACE.get();
 
         if (missingPipes > 0) {
             return Component.translatable("item.pipe_connector.gui.button.tooltip.disabledNotEnoughPipes", missingPipes);
+        } else if (ClientSetup.PREVIEW_DRAWER.previewMap.size() >= maxAllowedPipes) {
+            return Component.translatable("item.pipe_connector.gui.button.toolTip.maxAllowedPipesReached", maxAllowedPipes);
         }
         return null;
     }
 }
+
+//

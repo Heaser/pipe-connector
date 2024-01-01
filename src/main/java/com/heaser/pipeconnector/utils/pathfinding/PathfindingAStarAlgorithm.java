@@ -1,6 +1,7 @@
 package com.heaser.pipeconnector.utils.pathfinding;
 
 import com.heaser.pipeconnector.PipeConnector;
+import com.heaser.pipeconnector.config.PipeConnectorConfig;
 import com.heaser.pipeconnector.utils.GeneralUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
@@ -22,7 +23,7 @@ public class PathfindingAStarAlgorithm {
         nodes.put(start, startNode);
         openSet.add(startNode);
 
-        int iterationLimit = 20000;
+        int iterationLimit = PipeConnectorConfig.MAX_ASTAR_ITERATIONS.get();
         int iterationCount = 0;
 
         while (!openSet.isEmpty()) {
