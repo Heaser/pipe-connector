@@ -382,6 +382,23 @@ public class PipeConnectorUtils {
 
     // -----------------------------------------------------------------------------------------------------------------
 
+    public static boolean getPreventInventoryBlockBreaking(ItemStack stack) {
+        CompoundTag tag = stack.getOrCreateTagElement(PipeConnector.MODID);
+        if (tag.contains("PreventInventoryBlockBreaking", tag.TAG_BYTE)) {
+            return tag.getBoolean("PreventInventoryBlockBreaking");
+        }
+        return false;
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    public static void setPreventInventoryBlockBreaking(ItemStack stack, boolean shouldBreakInventoryBlocks) {
+        CompoundTag tag = stack.getOrCreateTagElement(PipeConnector.MODID);
+        tag.putBoolean("PreventInventoryBlockBreaking", shouldBreakInventoryBlocks);
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
     public static void resetPositionAndDirectionTags(ItemStack stack, Player player, boolean shouldShowMessage) {
         CompoundTag tag = stack.getOrCreateTagElement(PipeConnector.MODID);
         tag.remove("StartDirection");

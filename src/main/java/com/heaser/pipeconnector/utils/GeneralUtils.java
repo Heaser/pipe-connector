@@ -10,6 +10,10 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
+import java.util.Objects;
+
+import static net.minecraftforge.common.capabilities.ForgeCapabilities.ITEM_HANDLER;
+
 public class GeneralUtils
 {
     public static boolean isServerSide(Level level) {
@@ -59,6 +63,12 @@ public class GeneralUtils
 
     public static boolean isBlockStateSpecificBlock(BlockState blockState, Block specificBlock) {
         return blockState.getBlock().equals(specificBlock);
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    public static boolean hasInventoryCapabilities(Level level, BlockPos pos) {
+        return level.getBlockEntity(pos) != null && Objects.requireNonNull(level.getBlockEntity(pos)).getCapability(ITEM_HANDLER).isPresent();
     }
 }
 

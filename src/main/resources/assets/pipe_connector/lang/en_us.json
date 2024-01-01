@@ -17,6 +17,7 @@
   "item.pipe_connector.gui.button.tooltip.disabledNotEnoughPipes": "Not enough pipes in inventory, missing %s pipes",
   "item.pipe_connector.message.reachedPipeLimit": "Unable to place more than %s pipes at once",
   "item.pipe_connector.message.unbreakableBlockReached": "Pipes cannot replace %s blocks",
+  "item.pipe_connector.gui.button.tooltip.disabledInventoryInPath": "Cannot break inventory blocks, %s is in path.",
   "item.pipe_connector.gui.button.ResetPipePos": "Reset Positions",
   "item.pipe_connector.gui.button.PlacePipes": "Place Pipes",
   "item.pipe_connector.gui.button.tooltip.disabledResetPipePos": "You haven't chosen a any positions yet",

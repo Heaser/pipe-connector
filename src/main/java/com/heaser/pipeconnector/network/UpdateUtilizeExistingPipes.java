@@ -13,8 +13,8 @@ import java.util.function.Supplier;
 public class UpdateUtilizeExistingPipes {
     public boolean utilizeExistingPipes;
 
-    public UpdateUtilizeExistingPipes(boolean depth) {
-        this.utilizeExistingPipes = depth;
+    public UpdateUtilizeExistingPipes(boolean ShouldUtilizeExistingPipes) {
+        this.utilizeExistingPipes = ShouldUtilizeExistingPipes;
     }
 
     public UpdateUtilizeExistingPipes(FriendlyByteBuf buf) {
