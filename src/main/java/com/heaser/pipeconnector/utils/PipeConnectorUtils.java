@@ -29,7 +29,7 @@ import net.minecraftforge.event.level.BlockEvent;
 
 import java.util.*;
 
-import static com.heaser.pipeconnector.utils.GeneralUtils.isBlockStateSpecificBlock;
+import static com.heaser.pipeconnector.utils.GeneralUtils.*;
 
 public class PipeConnectorUtils {
 
@@ -60,9 +60,13 @@ public class PipeConnectorUtils {
         }
         // Checks if the block is unbreakable
         for (Map.Entry<BlockPos, BlockState> set : blockPosMap.entrySet()) {
-            if (GeneralUtils.isNotBreakable(level, set.getKey())) {
-                String invalidBlockName = set.getValue().getBlock().getName().getString();
-                player.displayClientMessage(Component.translatable("item.pipe_connector.message.unbreakableBlockReached", invalidBlockName).withStyle(ChatFormatting.BOLD, ChatFormatting.DARK_RED), true);
+            String blockName = set.getValue().getBlock().getName().getString();
+            if (isNotBreakable(level, set.getKey())) {
+                player.displayClientMessage(Component.translatable("item.pipe_connector.message.unbreakableBlockReached", blockName).withStyle(ChatFormatting.BOLD, ChatFormatting.DARK_RED), true);
+                return false;
+            }
+            if (hasInventoryCapabilities(level, set.getKey()) && getPreventInventoryBlockBreaking(context.getItemInHand())) {
+                player.displayClientMessage(Component.translatable("item.pipe_connector.gui.button.tooltip.disabledInventoryInPath", blockName).withStyle(ChatFormatting.BOLD, ChatFormatting.DARK_RED), true);
                 return false;
             }
         }
@@ -387,7 +391,7 @@ public class PipeConnectorUtils {
         if (tag.contains("PreventInventoryBlockBreaking", tag.TAG_BYTE)) {
             return tag.getBoolean("PreventInventoryBlockBreaking");
         }
-        return false;
+        return true;
     }
 
     // -----------------------------------------------------------------------------------------------------------------

@@ -10,19 +10,19 @@ import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-public class UpdatePreventInventoryBlockBreaking {
-    public boolean preventInventoryBlockBreaking;
+public class UpdateInventoryGuard {
+    public boolean inventoryGuard;
 
-    public UpdatePreventInventoryBlockBreaking(boolean shouldBreakInventoryBlocks) {
-        this.preventInventoryBlockBreaking = shouldBreakInventoryBlocks;
+    public UpdateInventoryGuard(boolean shouldInventoryGuard) {
+        this.inventoryGuard = shouldInventoryGuard;
     }
 
-    public UpdatePreventInventoryBlockBreaking(FriendlyByteBuf buf) {
-            this.preventInventoryBlockBreaking = buf.readBoolean();
+    public UpdateInventoryGuard(FriendlyByteBuf buf) {
+            this.inventoryGuard = buf.readBoolean();
         }
 
         public void encode(FriendlyByteBuf buf) {
-            buf.writeBoolean(this.preventInventoryBlockBreaking);
+            buf.writeBoolean(this.inventoryGuard);
         }
 
         public void handle(Supplier<NetworkEvent.Context> ctx) {
@@ -36,7 +36,7 @@ public class UpdatePreventInventoryBlockBreaking {
                 }
                 ItemStack item = sender.getMainHandItem();
                 CompoundTag tag = item.getOrCreateTagElement(PipeConnector.MODID);
-                tag.putBoolean("PreventInventoryBlockBreaking", this.preventInventoryBlockBreaking);
+                tag.putBoolean("PreventInventoryBlockBreaking", this.inventoryGuard);
             });
             ctx.get().setPacketHandled(true);
         }

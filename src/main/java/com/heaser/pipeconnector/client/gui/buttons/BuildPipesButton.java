@@ -18,6 +18,7 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.heaser.pipeconnector.utils.GeneralUtils.*;
+import static com.heaser.pipeconnector.utils.PipeConnectorUtils.getPreventInventoryBlockBreaking;
 
 public class BuildPipesButton extends BaseButton {
     private final LocalPlayer player;
@@ -44,8 +45,7 @@ public class BuildPipesButton extends BaseButton {
 
     @Override
     public Component getTooltip(ItemStack itemStack) {
-        Component errorMessage = getErrorMessage(itemStack);
-        return errorMessage;
+        return getErrorMessage(itemStack);
     }
 
     private Component getErrorMessage(ItemStack itemStack) {
@@ -62,7 +62,7 @@ public class BuildPipesButton extends BaseButton {
             return Component.translatable("item.pipe_connector.gui.button.tooltip.disabledPlacePipes");
         } else if (!GeneralUtils.isPlaceableBlock(player)) {
             return Component.translatable("item.pipe_connector.gui.button.tooltip.disabledButtonHoldValidItem");
-        } else if (inventoryBlockPos.isPresent()) {
+        } else if (inventoryBlockPos.isPresent() && getPreventInventoryBlockBreaking(itemStack)) {
             blockName = player.level().getBlockState(inventoryBlockPos.get()).getBlock().getName().getString();
             return Component.translatable("item.pipe_connector.gui.button.tooltip.disabledInventoryInPath", blockName);
         } else if (unbreakableBlockPos.isPresent()) {

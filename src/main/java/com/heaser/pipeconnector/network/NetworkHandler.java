@@ -50,6 +50,12 @@ public class NetworkHandler {
                 .consumerMainThread(UpdateUtilizeExistingPipes::handle)
                 .add();
 
+        CHANNEL.messageBuilder(UpdateInventoryGuard.class,packetId++)
+                .encoder(UpdateInventoryGuard::encode)
+                .decoder(UpdateInventoryGuard::new)
+                .consumerMainThread(UpdateInventoryGuard::handle)
+                .add();
+
         PipeConnector.LOGGER.debug("Registered {} Packets for {}", packetId, PipeConnector.MODID);
     }
 }
