@@ -117,7 +117,7 @@ public class PipeConnectorGui extends Screen {
         int drawStartX = this.getScreenX() + marginX;
         int drawStartY = this.getScreenY() + marginY;
 
-        guiGraphics.drawString(this.font, label.getLabel(pipeConnectorStack), drawStartX, drawStartY, 0xBFFFD700);
+        guiGraphics.drawString(this.font, label.getLabel(pipeConnectorStack), drawStartX, drawStartY, 0x00000000, false);
     }
 
     // -----------------------------------------------------------------------------------------------------------------
