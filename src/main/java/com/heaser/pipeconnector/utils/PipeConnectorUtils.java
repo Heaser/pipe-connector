@@ -210,20 +210,25 @@ public class PipeConnectorUtils {
     // -----------------------------------------------------------------------------------------------------------------
     private static boolean breakAndSetBlock(Level level, BlockPos pos, Block block, Player player, UseOnContext context) {
 
-        BlockPlaceContext blockPlaceContext = new BlockPlaceContext(context);
-        BlockState blockState = block.getStateForPlacement(blockPlaceContext);
+//        BlockPlaceContext blockPlaceContext = new BlockPlaceContext(context);
+        BlockState blockState = block.defaultBlockState();
 
         if (!GeneralUtils.isVoidableBlock(level, pos)) {
-            level.destroyBlock(pos, true, player);
             level.addDestroyBlockEffect(pos, level.getBlockState(pos));
+            level.destroyBlock(pos, true, player);
         }
 
         if (blockState != null) {
             if (level.setBlockAndUpdate(pos, blockState)) {
-                BlockState state = level.getBlockState(pos);
-                BlockEvent.EntityPlaceEvent event = new BlockEvent.EntityPlaceEvent(BlockSnapshot.create(level.dimension(), level, pos), state, player);
+                for(Direction direction : Direction.values()) {
+                    BlockPos neighborPos = pos.relative(direction);
+                    BlockState neighborState = level.getBlockState(neighborPos);
+                    neighborState.updateNeighbourShapes(level, neighborPos, 3);
+                }
+
+                BlockEvent.EntityPlaceEvent event = new BlockEvent.EntityPlaceEvent(BlockSnapshot.create(level.dimension(), level, pos), blockState, player);
                 MinecraftForge.EVENT_BUS.post(event);
-                level.updateNeighborsAt(pos, block);
+
                 return !event.isCanceled();
             }
         }
