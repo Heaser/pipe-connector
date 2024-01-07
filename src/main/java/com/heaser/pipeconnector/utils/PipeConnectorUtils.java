@@ -209,8 +209,6 @@ public class PipeConnectorUtils {
 
     // -----------------------------------------------------------------------------------------------------------------
     private static boolean breakAndSetBlock(Level level, BlockPos pos, Block block, Player player, UseOnContext context) {
-
-//        BlockPlaceContext blockPlaceContext = new BlockPlaceContext(context);
         BlockState blockState = block.defaultBlockState();
 
         if (!GeneralUtils.isVoidableBlock(level, pos)) {
