@@ -71,10 +71,10 @@ public class BuildPipesButton extends BaseButton {
         }
 
 
-        if (missingPipes > 0) {
-            return Component.translatable("item.pipe_connector.gui.button.tooltip.disabledNotEnoughPipes", missingPipes);
-        } else if (ClientSetup.PREVIEW_DRAWER.previewMap.size() >= maxAllowedPipes) {
+        if (ClientSetup.PREVIEW_DRAWER.previewMap.size() >= maxAllowedPipes) {
             return Component.translatable("item.pipe_connector.gui.button.toolTip.maxAllowedPipesReached", maxAllowedPipes);
+        } else if (missingPipes > 0) {
+            return Component.translatable("item.pipe_connector.gui.button.tooltip.disabledNotEnoughPipes", missingPipes);
         }
         return null;
     }
@@ -91,6 +91,6 @@ public class BuildPipesButton extends BaseButton {
                 .filter(block -> isNotBreakable(player.level(), block.pos))
                 .map(block -> block.pos)
                 .findFirst();
-}
+    }
 }
 
