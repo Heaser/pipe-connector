@@ -1,5 +1,6 @@
 package com.heaser.pipeconnector.client.gui.buttons;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
@@ -13,14 +14,17 @@ public abstract class BaseButton  {
     public Component label;
     public Button button;
 
-    public BaseButton(String name, int buttonHeight, int buttonWidth) {
-        this.label = Component.translatable(name);
+    public BaseButton(Component initTitle, int buttonHeight, int buttonWidth) {
+        this.label = initTitle;
         this.buttonHeight = buttonHeight;
         this.buttonWidth = buttonWidth;
     }
 
-    public void setLabel(String name) {
-        this.label = Component.translatable(name);
+    public void setLabel(String name, ChatFormatting chatFormatting) {
+        if(chatFormatting == null) {
+            chatFormatting = ChatFormatting.WHITE;
+        }
+        this.label = Component.translatable(name).withStyle(chatFormatting);
     }
 
     public Component getLabel() {

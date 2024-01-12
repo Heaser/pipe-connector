@@ -27,22 +27,22 @@ public class BridgeTypeButton extends BaseButton {
 
         if(bridgeType == BridgeType.DEFAULT) {
             bridgeType = BridgeType.A_STAR;
-            this.setLabel("item.pipe_connector.gui.button.aStarPathfinding");
+            this.setLabel("item.pipe_connector.gui.button.aStarPathfinding", null);
             this.button.setMessage(this.getLabel());
         } else if(bridgeType == BridgeType.A_STAR) {
             bridgeType = BridgeType.DEFAULT;
-            this.setLabel("item.pipe_connector.gui.button.defaultPathfinding");
+            this.setLabel("item.pipe_connector.gui.button.defaultPathfinding", null);
             this.button.setMessage(this.getLabel());
         }
         NetworkHandler.CHANNEL.sendToServer(new UpdateBridgeTypePacket(bridgeType));
     }
 
 
-    private static String getInitialLabel(ItemStack itemStack) {
+    private static Component getInitialLabel(ItemStack itemStack) {
         BridgeType bridgeType = PipeConnectorUtils.getBridgeType(itemStack);
         return switch (bridgeType) {
-            case A_STAR -> "item.pipe_connector.gui.button.aStarPathfinding";
-            default -> "item.pipe_connector.gui.button.defaultPathfinding";
+            case A_STAR -> Component.translatable("item.pipe_connector.gui.button.aStarPathfinding");
+            default -> Component.translatable("item.pipe_connector.gui.button.defaultPathfinding");
         };
     }
 

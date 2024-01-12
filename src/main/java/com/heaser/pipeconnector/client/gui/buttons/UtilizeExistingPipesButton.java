@@ -23,11 +23,11 @@ public class UtilizeExistingPipesButton extends BaseButton {
     @Override
     public void onClick(Button clickedButton, ItemStack itemStack) {
         if(getUtilizeExistingPipes(itemStack)) {
-            this.setLabel("item.pipe_connector.gui.button.off");
+            this.setLabel("item.pipe_connector.gui.button.off", ChatFormatting.RED);
             this.button.setMessage(this.getLabel());
             setUtilizeExistingPipes(itemStack, false);
         } else {
-            this.setLabel("item.pipe_connector.gui.button.on");
+            this.setLabel("item.pipe_connector.gui.button.on", ChatFormatting.GREEN);
             this.button.setMessage(this.getLabel());
             setUtilizeExistingPipes(itemStack, true);
         }
@@ -50,11 +50,13 @@ public class UtilizeExistingPipesButton extends BaseButton {
         return tooltipList;
     }
 
-    private static String getInitialLabel(ItemStack itemStack) {
+    private static Component getInitialLabel(ItemStack itemStack) {
     if(getUtilizeExistingPipes(itemStack)) {
-        return "item.pipe_connector.gui.button.on";
+        return Component.translatable("item.pipe_connector.gui.button.on").withStyle(ChatFormatting.GREEN);
+//        return "item.pipe_connector.gui.button.on";
     } else {
-        return "item.pipe_connector.gui.button.off";
+        return Component.translatable("item.pipe_connector.gui.button.off").withStyle(ChatFormatting.RED);
+//        return "item.pipe_connector.gui.button.off";
         }
     }
 }

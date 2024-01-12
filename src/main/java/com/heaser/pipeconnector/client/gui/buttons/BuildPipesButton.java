@@ -24,7 +24,7 @@ public class BuildPipesButton extends BaseButton {
     private final LocalPlayer player;
 
     public BuildPipesButton(LocalPlayer player) {
-        super("item.pipe_connector.gui.button.PlacePipes", 20, 80);
+        super(Component.translatable("item.pipe_connector.gui.button.PlacePipes"), 20, 80);
         this.player = player;
     }
 

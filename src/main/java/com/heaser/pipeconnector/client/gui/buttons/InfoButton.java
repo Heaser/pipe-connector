@@ -6,7 +6,7 @@ public abstract class InfoButton extends BaseButton {
 
 
     InfoButton() {
-        super("item.pipe_connector.gui.button.infoSign", 20, 20);
+        super(Component.translatable("item.pipe_connector.gui.button.infoSign"), 20, 20);
     }
 }
 
