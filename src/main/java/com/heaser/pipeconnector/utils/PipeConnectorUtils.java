@@ -211,28 +211,40 @@ public class PipeConnectorUtils {
     private static boolean breakAndSetBlock(Level level, BlockPos pos, Block block, Player player, UseOnContext context) {
         BlockState blockState = block.defaultBlockState();
 
-        if (!GeneralUtils.isVoidableBlock(level, pos)) {
+        if (!isVoidableBlock(level, pos)) {
             level.addDestroyBlockEffect(pos, level.getBlockState(pos));
             level.destroyBlock(pos, true, player);
         }
 
-        if (blockState != null) {
             if (level.setBlockAndUpdate(pos, blockState)) {
-                for(Direction direction : Direction.values()) {
-                    BlockPos neighborPos = pos.relative(direction);
-                    BlockState neighborState = level.getBlockState(neighborPos);
-                    neighborState.updateNeighbourShapes(level, neighborPos, 3);
-                }
+                // This is needed to update the blockstates of the blocks around the placed block
+                handleBlockUpdates(level, pos);
 
-                BlockEvent.EntityPlaceEvent event = new BlockEvent.EntityPlaceEvent(BlockSnapshot.create(level.dimension(), level, pos), blockState, player);
-                MinecraftForge.EVENT_BUS.post(event);
+                // This is required by some mods to recognize pipe placement
+                BlockEvent.EntityPlaceEvent event = handlePlaceEvent(level, pos, blockState, player);
 
                 return !event.isCanceled();
             }
-        }
         return false;
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
+
+    private static void handleBlockUpdates(Level level, BlockPos pos) {
+        for(Direction direction : Direction.values()) {
+            BlockPos neighborPos = pos.relative(direction);
+            BlockState neighborState = level.getBlockState(neighborPos);
+            neighborState.updateNeighbourShapes(level, neighborPos, 3);
+        }
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    private static BlockEvent.EntityPlaceEvent handlePlaceEvent(Level level, BlockPos pos, BlockState blockState, Player player) {
+        BlockEvent.EntityPlaceEvent event = new BlockEvent.EntityPlaceEvent(BlockSnapshot.create(level.dimension(), level, pos), blockState, player);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event;
+    }
 
     // -----------------------------------------------------------------------------------------------------------------
 
