@@ -124,7 +124,7 @@ public class PipeConnectorGui extends Screen {
     private void createLabel(GuiGraphics guiGraphics, double marginXPercent, double marginYPercent, ILabelable label, float scale) {
         int marginX = (int) (imageWidth * marginXPercent);
         int marginY = (int) (imageHeight * marginYPercent);
-        int drawStartX = (this.getScreenX() + marginX) / (int)scale;;
+        int drawStartX = (this.getScreenX() + marginX) / (int)scale;
         int drawStartY = (this.getScreenY() + marginY) / (int)scale;
 
         guiGraphics.pose().pushPose();

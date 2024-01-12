@@ -18,10 +18,10 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.BlockSnapshot;
@@ -217,11 +217,22 @@ public class PipeConnectorUtils {
         }
 
             if (level.setBlockAndUpdate(pos, blockState)) {
-                // This is needed to update the blockstates of the blocks around the placed block
+                // This is needed to update the blockStates of the blocks around the placed block
                 handleBlockUpdates(level, pos);
 
                 // This is required by some mods to recognize pipe placement
                 BlockEvent.EntityPlaceEvent event = handlePlaceEvent(level, pos, blockState, player);
+
+                // TODO: update client side
+                ItemStack offHandItem = player.getOffhandItem();
+                if (offHandItem.hasTag()) {
+                    CompoundTag nbtData = offHandItem.getTag();
+                    BlockEntity blockEntity = level.getBlockEntity(pos);
+                    if (blockEntity != null && nbtData != null) {
+                        blockEntity.load(nbtData);
+                        blockEntity.setChanged();
+                    }
+                }
 
                 return !event.isCanceled();
             }
