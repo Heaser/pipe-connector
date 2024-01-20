@@ -1,70 +1,30 @@
+
 plugins {
     id 'maven-publish'
-    id 'net.minecraftforge.gradle' version '[6.0,6.2)'
-    id 'org.parchmentmc.librarian.forgegradle' version '1.+'
+    id "xyz.wagyourtail.unimined" version "1.2.0-SNAPSHOT"
     // id 'org.gradle.toolchains.foojay-resolver-convention' version '0.5.0'
 }
 
 apply plugin: 'idea'
 
 version = mod_version
-group = mod_packagename
+group = "{minecraft_version}-{mod_id}"
 archivesBaseName = mod_id
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 println "Java: ${System.getProperty 'java.version'}, JVM: ${System.getProperty 'java.vm.version'} (${System.getProperty 'java.vendor'}), Arch: ${System.getProperty 'os.arch'}"
-minecraft {
-//    mappings channel: 'official', version: mod_minecraft_version
-    mappings channel: 'parchment', version: '2023.09.03-1.20.1'
-    runs {
-        client {
-            workingDirectory project.file('run')
-            property 'forge.logging.markers', 'REGISTRIES'
-            property 'forge.logging.console.level', 'debug'
-            property 'forge.enabledGameTestNamespaces', 'examplemod'
 
-            mods {
-                "${mod_id}" {
-                    source sourceSets.main
-                }
-            }
-        }
+unimined.minecraft {
+    version project.minecraft_version
 
-        server {
-            workingDirectory project.file('run')
-            property 'forge.logging.markers', 'REGISTRIES'
-            property 'forge.logging.console.level', 'debug'
-            property 'forge.enabledGameTestNamespaces', 'examplemod'
-            mods {
-                "${mod_id}" {
-                    source sourceSets.main
-                }
-            }
-        }
-        gameTestServer {
-            workingDirectory project.file('run')
-            property 'forge.logging.markers', 'REGISTRIES'
-            property 'forge.logging.console.level', 'debug'
-            property 'forge.enabledGameTestNamespaces', 'examplemod'
-            mods {
-                "${mod_id}" {
-                    source sourceSets.main
-                }
-            }
-        }
+    mappings {
+        mojmap()
+        parchment("2023.09.03")
+    }
 
-        data {
-            workingDirectory project.file('run')
-            property 'forge.logging.markers', 'REGISTRIES'
-            property 'forge.logging.console.level', 'debug'
-            args '--mod', 'examplemod', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
-            mods {
-                "${mod_id}" {
-                    source sourceSets.main
-                }
-            }
-        }
+    minecraftForge {
+        loader project.forge_version
     }
 }
 
@@ -79,27 +39,34 @@ repositories {
         }
     }
 
-     flatDir {
-         dir 'libs'
-     }
+    maven {
+        url "https://mcentral.firstdark.dev/releases"
+    }
+
+    flatDir {
+        dir 'libs'
+    }
 }
 
 dependencies {
-    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
-    runtimeOnly fg.deobf("curse.maven:pipez-443900:4713656")
-    runtimeOnly fg.deobf("curse.maven:refined-storage-${refinedstorage_mod_id}:4844585")
-    runtimeOnly fg.deobf("curse.maven:mekanism-${mekanism_mod_id}:4866575")
+    modImplementation ("curse.maven:pipez-443900:4713656")
+    modImplementation ("curse.maven:refined-storage-${refinedstorage_mod_id}:4844585")
+    modImplementation ("curse.maven:mekanism-${mekanism_mod_id}:4866575")
 
-    // runtimeOnly fg.deobf("curse.maven:applied-energistics2-223794:4857895")
-    runtimeOnly fg.deobf("curse.maven:storage-drawers-223852:4668552")
-    runtimeOnly fg.deobf("curse.maven:framed-compacting-drawers-376351:4777556")
-    runtimeOnly fg.deobf("curse.maven:cofh-core-69162:4970669")
-    runtimeOnly fg.deobf("curse.maven:thermal-dynamics-227443:4970699")
-    runtimeOnly fg.deobf("curse.maven:thermal-foundation-222880:4979840")
-    runtimeOnly fg.deobf("curse.maven:pretty-pipes-376737:4769646")
-    runtimeOnly fg.deobf("curse.maven:jei-238222:4712868")
-    runtimeOnly fg.deobf("curse.maven:mcjtylib-233105:4747680")
+    // Loves mixins
+    modImplementation ("curse.maven:applied-energistics2-223794:4857895")
+
+    modImplementation ("curse.maven:storage-drawers-223852:4668552")
+    modImplementation ("curse.maven:framed-compacting-drawers-376351:4777556")
+
+//    modImplementation ("curse.maven:cofh-core-69162:4970669")
+//    modImplementation ("curse.maven:thermal-dynamics-227443:4970699")
+//    modImplementation ("curse.maven:thermal-foundation-222880:4979840")
+
+    modImplementation ("curse.maven:pretty-pipes-376737:4769646")
+    modImplementation ("curse.maven:jei-238222:4712868")
+    modImplementation ("curse.maven:mcjtylib-233105:4747680")
 }
 
 jar {

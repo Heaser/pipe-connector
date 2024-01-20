@@ -25,9 +25,9 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.fml.DistExecutor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
+
 import java.util.List;
 
 public class PipeConnectorItem extends Item {
@@ -39,7 +39,7 @@ public class PipeConnectorItem extends Item {
         super(properties);
     }
 
-    @ParametersAreNonnullByDefault
+
     @NotNull
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
@@ -141,7 +141,7 @@ public class PipeConnectorItem extends Item {
 
     // -----------------------------------------------------------------------------------------------------------------
 
-    @ParametersAreNonnullByDefault
+    @Nullable
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> components, TooltipFlag tooltipFlag) {
         if (clientProxy != null) {
             if (clientProxy.hasShiftDown()) {

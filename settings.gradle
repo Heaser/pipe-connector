@@ -1,8 +1,13 @@
 pluginManagement {
     repositories {
-        gradlePluginPortal()
-        maven { url = "https://maven.parchmentmc.org" }
-        maven { url = 'https://maven.minecraftforge.net/'  }
-        maven { url = 'https://www.cursemaven.com/' }
+        mavenCentral()
+        maven {
+            url = "https://mcentral.firstdark.dev/releases"
+        }
+        gradlePluginPortal() {
+            content {
+                excludeGroup("org.apache.logging.log4j")
+            }
+        }
     }
 }
