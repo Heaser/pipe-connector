@@ -223,17 +223,6 @@ public class PipeConnectorUtils {
                 // This is required by some mods to recognize pipe placement
                 BlockEvent.EntityPlaceEvent event = handlePlaceEvent(level, pos, blockState, player);
 
-                // TODO: update client side
-                ItemStack offHandItem = player.getOffhandItem();
-                if (offHandItem.hasTag()) {
-                    CompoundTag nbtData = offHandItem.getTag();
-                    BlockEntity blockEntity = level.getBlockEntity(pos);
-                    if (blockEntity != null && nbtData != null) {
-                        blockEntity.load(nbtData);
-                        blockEntity.setChanged();
-                    }
-                }
-
                 return !event.isCanceled();
             }
         return false;

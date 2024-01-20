@@ -163,10 +163,6 @@
     {
       "id": "toms_storage:ts.inventory_cable_framed",
       "required": false
-    },
-    {
-      "id": "framedcompactdrawers:framed_trim",
-      "required": false
     }
   ]
 }
