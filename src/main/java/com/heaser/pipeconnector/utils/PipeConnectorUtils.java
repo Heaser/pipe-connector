@@ -2,6 +2,8 @@ package com.heaser.pipeconnector.utils;
 
 
 import com.heaser.pipeconnector.PipeConnector;
+import com.heaser.pipeconnector.compatibility.CompatibilityBlockGetter;
+import com.heaser.pipeconnector.compatibility.CompatibilityPlacer;
 import com.heaser.pipeconnector.config.PipeConnectorConfig;
 import com.heaser.pipeconnector.constants.BridgeType;
 import com.heaser.pipeconnector.particles.ParticleHelper;
@@ -34,10 +36,11 @@ import static com.heaser.pipeconnector.utils.GeneralUtils.*;
 public class PipeConnectorUtils {
 
 
-    public static boolean connectPathWithSegments(Player player, BlockPos start, BlockPos end, int depth, Block block, UseOnContext context, BridgeType bridgeType, boolean utilizeExistingPipes) {
+    public static boolean connectPathWithSegments(Player player, BlockPos start, BlockPos end, int depth, UseOnContext context, BridgeType bridgeType, boolean utilizeExistingPipes) {
         Level level = player.level();
-        Map<BlockPos, BlockState> blockPosMap = getBlockPosMap(start, end, depth, level, bridgeType, block, utilizeExistingPipes);
-
+        ItemStack itemToPlace = player.getOffhandItem();
+        Block blockToPlace = CompatibilityBlockGetter.getInstance().getBlock(itemToPlace);
+        Map<BlockPos, BlockState> blockPosMap = getBlockPosMap(start, end, depth, level, bridgeType, blockToPlace, utilizeExistingPipes);
         PipeConnector.LOGGER.debug(blockPosMap.toString());
 
 
@@ -45,7 +48,7 @@ public class PipeConnectorUtils {
         int pipeLimit = PipeConnectorConfig.MAX_ALLOWED_PIPES_TO_PLACE.get();
 
         int numOfPipes = getNumberOfPipesInInventory(player);
-        int missingPipes = getMissingPipesInInventory(player, numOfPipes, blockPosMap, block);
+        int missingPipes = getMissingPipesInInventory(player, numOfPipes, blockPosMap, blockToPlace);
         if (missingPipes > 0) {
             PipeConnector.LOGGER.debug("Not enough pipes in inventory, missing " + missingPipes + " pipes.");
             player.displayClientMessage(Component.translatable("item.pipe_connector.message.notEnoughPipes", missingPipes).withStyle(ChatFormatting.BOLD, ChatFormatting.YELLOW), true);
@@ -72,12 +75,12 @@ public class PipeConnectorUtils {
         }
 
         for (Map.Entry<BlockPos, BlockState> set : blockPosMap.entrySet()) {
-            if (!isBlockStateSpecificBlock(set.getValue(), block)) {
+            if (!isBlockStateSpecificBlock(set.getValue(), blockToPlace)) {
                 if (!isCreativeMode) {
                     reduceNumberOfPipesInInventory(player);
                 }
                 ParticleHelper.serverSpawnMarkerParticle((ServerLevel) level, set.getKey());
-                breakAndSetBlock(level, set.getKey(), block, player, context);
+                breakAndSetBlock(level, set.getKey(), blockToPlace, player, context);
             }
         }
         return true;
@@ -209,22 +212,20 @@ public class PipeConnectorUtils {
 
     // -----------------------------------------------------------------------------------------------------------------
     private static boolean breakAndSetBlock(Level level, BlockPos pos, Block block, Player player, UseOnContext context) {
-        BlockState blockState = block.defaultBlockState();
-
         if (!isVoidableBlock(level, pos)) {
             level.addDestroyBlockEffect(pos, level.getBlockState(pos));
             level.destroyBlock(pos, true, player);
         }
 
-            if (level.setBlockAndUpdate(pos, blockState)) {
-                // This is needed to update the blockStates of the blocks around the placed block
-                handleBlockUpdates(level, pos);
+        if (CompatibilityPlacer.getInstance().place(level, pos, player, player.getOffhandItem())) {
+            // This is needed to update the blockStates of the blocks around the placed block
+            handleBlockUpdates(level, pos);
 
-                // This is required by some mods to recognize pipe placement
-                BlockEvent.EntityPlaceEvent event = handlePlaceEvent(level, pos, blockState, player);
+            // This is required by some mods to recognize pipe placement
+            BlockEvent.EntityPlaceEvent event = handlePlaceEvent(level, pos, level.getBlockState(pos), player);
 
-                return !event.isCanceled();
-            }
+            return !event.isCanceled();
+        }
         return false;
     }
 
@@ -492,7 +493,6 @@ public class PipeConnectorUtils {
                 startPos.relative(startDirection),
                 endPos.relative(endDirection),
                 depth,
-                Block.byItem(player.getOffhandItem().getItem()),
                 context,
                 bridgeType,
                 utilizeExistingPipes);

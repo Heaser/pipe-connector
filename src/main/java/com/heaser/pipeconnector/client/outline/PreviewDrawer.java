@@ -1,5 +1,6 @@
 package com.heaser.pipeconnector.client.outline;
 
+import com.heaser.pipeconnector.compatibility.CompatibilityBlockGetter;
 import com.heaser.pipeconnector.utils.BuildParameters;
 import com.heaser.pipeconnector.utils.GeneralUtils;
 import com.heaser.pipeconnector.utils.PipeConnectorUtils;
@@ -61,7 +62,7 @@ public class PreviewDrawer {
                         depth,
                         currentLevel,
                         PipeConnectorUtils.getBridgeType(pipeConnector),
-                        Block.byItem(player.getOffhandItem().getItem()),
+                        CompatibilityBlockGetter.getInstance().getBlock(player.getOffhandItem()),
                         utilizeExitingPipes));
     }
 
@@ -81,7 +82,7 @@ public class PreviewDrawer {
             } else if (isVoidableBlock(player.level(), previewInfo.pos)) {
                 LevelRenderer.renderLineBox(pose, builder, aabb, 1F, 1F, 0, 1F);
             } else if (isBlockStateSpecificBlock(player.level().getBlockState(previewInfo.pos),
-                                                                Block.byItem(player.getOffhandItem().getItem()))) {
+                    CompatibilityBlockGetter.getInstance().getBlock(player.getOffhandItem()))) {
                 LevelRenderer.renderLineBox(pose, builder, aabb, 0.87F, 0.25F, 0.87F, 0.5F);
             } else {
                 LevelRenderer.renderLineBox(pose, builder, aabb, 0, 1F, 0, 0.5F);
