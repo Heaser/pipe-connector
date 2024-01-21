@@ -9,7 +9,7 @@ apply plugin: 'idea'
 
 version = mod_version
 group = "{minecraft_version}-{mod_id}"
-archivesBaseName = mod_id
+archivesBaseName = "${mod_id}-${minecraft_version}-${mod_version}"
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
@@ -97,8 +97,6 @@ tasks.named('processResources', ProcessResources).configure {
         expand replaceProperties + [project: project]
     }
 }
-
-jar.finalizedBy('reobfJar')
 
 publishing {
     publications {
