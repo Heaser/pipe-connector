@@ -4,6 +4,7 @@ import com.heaser.pipeconnector.client.proxy.GeneralClientProxy;
 import com.heaser.pipeconnector.client.proxy.IClientProxy;
 import com.heaser.pipeconnector.client.proxy.items.IPipeConnectorItemProxy;
 import com.heaser.pipeconnector.client.proxy.items.PipeConnectorItemProxy;
+import com.heaser.pipeconnector.compatibility.CompatibilityDirectionGetter;
 import com.heaser.pipeconnector.particles.ParticleHelper;
 import com.heaser.pipeconnector.utils.GeneralUtils;
 import com.heaser.pipeconnector.utils.PipeConnectorUtils;
@@ -96,12 +97,16 @@ public class PipeConnectorItem extends Item {
         Level level = context.getLevel();
         ItemStack interactedItem = context.getItemInHand();
         BlockPos clickedPosition = context.getClickedPos();
-        Direction clickedFace = context.getClickedFace();
+        Direction clickedFace = CompatibilityDirectionGetter.getInstance().getDirection(context);
 
         if(usingPlayer == null) {
             return InteractionResult.FAIL;
         }
         boolean isShiftKeyDown = usingPlayer.isShiftKeyDown();
+        BlockPos relativePosition = clickedPosition;
+        if (clickedFace != null) {
+            relativePosition = clickedPosition.relative(clickedFace);
+        }
 
         if (isShiftKeyDown) {
             if (!GeneralUtils.isPlaceableBlock(usingPlayer)) {
@@ -121,19 +126,18 @@ public class PipeConnectorItem extends Item {
             if(startPos == null) {
                 TagUtils.setStartPositionAndDirection(interactedItem, clickedFace, clickedPosition);
                 TagUtils.setDimension(interactedItem, level.dimensionTypeId().toString());
-                ParticleHelper.serverSpawnMarkerParticle((ServerLevel) level, clickedPosition.relative(clickedFace));
+                ParticleHelper.serverSpawnMarkerParticle((ServerLevel) level, relativePosition);
             } else {
                 if (!level.dimensionTypeId().toString().equals(TagUtils.getDimension(interactedItem))) {
                     TagUtils.resetPositionAndDirectionTags(interactedItem, usingPlayer, false);
                     return InteractionResult.FAIL;
                 }
-                else if (clickedPosition.equals(startPos) && clickedFace.equals(startDirection)) {
+                else if (clickedPosition.equals(startPos) && clickedFace == startDirection) {
                     TagUtils.resetPositionAndDirectionTags(interactedItem, usingPlayer, true);
                     return InteractionResult.FAIL;
                 }
                 TagUtils.setEndPositionAndDirection(interactedItem, clickedFace, clickedPosition);
-
-                ParticleHelper.serverSpawnMarkerParticle((ServerLevel) level, clickedPosition.relative(clickedFace));
+                ParticleHelper.serverSpawnMarkerParticle((ServerLevel) level, relativePosition);
             }
 
         }

@@ -9,6 +9,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.Nullable;
 
 public class TagUtils {
     public static int getDepthFromStack(ItemStack stack) {
@@ -36,7 +37,7 @@ public class TagUtils {
 
     public static void setStartPositionAndDirection(ItemStack stack, Direction direction, BlockPos startPos) {
         CompoundTag tag = stack.getOrCreateTagElement(PipeConnector.MODID);
-        tag.putByte("StartDirection", (byte) direction.get3DDataValue());
+        tag.putByte("StartDirection", direction != null ? (byte) direction.get3DDataValue() : -1);
         tag.putInt("StartX", startPos.getX());
         tag.putInt("StartY", startPos.getY());
         tag.putInt("StartZ", startPos.getZ());
@@ -62,7 +63,12 @@ public class TagUtils {
             return null;
         }
         Direction startDirection = getStartDirection(stack);
-        return startPos.relative(startDirection);
+        if (startDirection != null) {
+            return startPos.relative(startDirection);
+        }
+        else {
+            return startPos;
+        }
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -72,22 +78,33 @@ public class TagUtils {
             return null;
         }
         Direction endDirection = getEndDirection(stack);
-        return endPos.relative(endDirection);
+        if (endDirection != null) {
+            return endPos.relative(endDirection);
+        }
+        else {
+            return endPos;
+        }
     }
 
     // -----------------------------------------------------------------------------------------------------------------
 
+    @Nullable
     public static Direction getStartDirection(ItemStack stack) {
         CompoundTag tag = stack.getOrCreateTagElement(PipeConnector.MODID);
-        byte direction = tag.getByte("StartDirection");
-        return Direction.from3DDataValue(direction);
+        byte directionByte = tag.getByte("StartDirection");
+        if (directionByte != -1) {
+            return Direction.from3DDataValue(directionByte);
+        }
+        else {
+            return null;
+        }
     }
 
     // -----------------------------------------------------------------------------------------------------------------
 
     public static void setEndPositionAndDirection(ItemStack stack, Direction direction, BlockPos endPos) {
         CompoundTag tag = stack.getOrCreateTagElement(PipeConnector.MODID);
-        tag.putByte("EndDirection", (byte) direction.get3DDataValue());
+        tag.putByte("EndDirection", direction != null ? (byte) direction.get3DDataValue() : -1);
         tag.putInt("EndX", endPos.getX());
         tag.putInt("EndY", endPos.getY());
         tag.putInt("EndZ", endPos.getZ());
@@ -108,10 +125,16 @@ public class TagUtils {
 
     // -----------------------------------------------------------------------------------------------------------------
 
+    @Nullable
     public static Direction getEndDirection(ItemStack stack) {
         CompoundTag tag = stack.getOrCreateTagElement(PipeConnector.MODID);
-        byte direction = tag.getByte("EndDirection");
-        return Direction.from3DDataValue(direction);
+        byte directionByte = tag.getByte("EndDirection");
+        if (directionByte != -1) {
+            return Direction.from3DDataValue(directionByte);
+        }
+        else {
+            return null;
+        }
     }
 
     // -----------------------------------------------------------------------------------------------------------------

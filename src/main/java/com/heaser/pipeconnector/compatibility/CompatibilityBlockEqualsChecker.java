@@ -35,15 +35,15 @@ public class CompatibilityBlockEqualsChecker {
     }
 
     public boolean isBlockStateSpecificBlock(BlockPos pos, Block specificBlock, ItemStack placedItemStack, Level level) {
-        IBlockEqualsChecker getter = null;
+        IBlockEqualsChecker checker = null;
         for (Map.Entry<Class<? extends Block>, IBlockEqualsChecker> set : classToCheckerMap.entrySet()) {
             if (set.getKey().isAssignableFrom(specificBlock.getClass())) {
-                getter = set.getValue();
+                checker = set.getValue();
                 break;
             }
         }
-        if (getter != null) {
-            return getter.isBlockStateSpecificBlock(pos, specificBlock, placedItemStack, level);
+        if (checker != null) {
+            return checker.isBlockStateSpecificBlock(pos, specificBlock, placedItemStack, level);
         }
         else {
             return defaultIsBlockStateSpecificBlock(pos, specificBlock, placedItemStack, level);

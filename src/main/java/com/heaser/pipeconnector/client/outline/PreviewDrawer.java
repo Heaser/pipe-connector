@@ -51,12 +51,18 @@ public class PreviewDrawer {
         boolean utilizeExitingPipes = TagUtils.getUtilizeExistingPipes(pipeConnector);
         Direction startDirection = TagUtils.getStartDirection(pipeConnector);
         Direction endDirection = TagUtils.getEndDirection(pipeConnector);
-        startPos = startPos.relative(startDirection);
-        endPos = endPos.relative(endDirection);
+        BlockPos relativeStartPos = startPos;
+        BlockPos relativeEndPos = endPos;
+        if (startDirection != null) {
+            relativeStartPos = startPos.relative(startDirection);
+        }
+        if (endDirection != null) {
+            relativeEndPos = endPos.relative(endDirection);
+        }
         return PipeConnectorUtils.getBlockPosSet(
                 PipeConnectorUtils.getBlockPosMap(
-                        startPos,
-                        endPos,
+                        relativeStartPos,
+                        relativeEndPos,
                         depth,
                         currentLevel,
                         TagUtils.getBridgeType(pipeConnector),

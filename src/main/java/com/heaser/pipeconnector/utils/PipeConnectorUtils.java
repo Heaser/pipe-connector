@@ -295,10 +295,17 @@ public class PipeConnectorUtils {
                                         UseOnContext context,
                                         BridgeType bridgeType,
                                         boolean utilizeExistingPipes) {
-
+        BlockPos relativeStartPos = startPos;
+        BlockPos relativeEndPos = endPos;
+        if (startDirection != null) {
+            relativeStartPos = startPos.relative(startDirection);
+        }
+        if (endDirection != null) {
+            relativeEndPos = endPos.relative(endDirection);
+        }
         return PipeConnectorUtils.connectPathWithSegments(player,
-                startPos.relative(startDirection),
-                endPos.relative(endDirection),
+                relativeStartPos,
+                relativeEndPos,
                 depth,
                 context,
                 bridgeType,
