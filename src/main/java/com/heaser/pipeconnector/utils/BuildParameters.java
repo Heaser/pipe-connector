@@ -28,14 +28,14 @@ public class BuildParameters {
     }
 
     public BuildParameters(ItemStack pipeConnectorItem) {
-        this.startPosition = PipeConnectorUtils.getStartPosition(pipeConnectorItem);
-        this.endPosition = PipeConnectorUtils.getEndPosition(pipeConnectorItem);
-        this.depth = PipeConnectorUtils.getDepthFromStack(pipeConnectorItem);
-        this.startDirection = PipeConnectorUtils.getStartDirection(pipeConnectorItem);
-        this.endDirection = PipeConnectorUtils.getEndDirection(pipeConnectorItem);
-        this.dimension = PipeConnectorUtils.getDimension(pipeConnectorItem);
-        this.bridgeType = PipeConnectorUtils.getBridgeType(pipeConnectorItem);
-        this.utilizeExistingPipes = PipeConnectorUtils.getUtilizeExistingPipes(pipeConnectorItem);
+        this.startPosition = TagUtils.getStartPosition(pipeConnectorItem);
+        this.endPosition = TagUtils.getEndPosition(pipeConnectorItem);
+        this.depth = TagUtils.getDepthFromStack(pipeConnectorItem);
+        this.startDirection = TagUtils.getStartDirection(pipeConnectorItem);
+        this.endDirection = TagUtils.getEndDirection(pipeConnectorItem);
+        this.dimension = TagUtils.getDimension(pipeConnectorItem);
+        this.bridgeType = TagUtils.getBridgeType(pipeConnectorItem);
+        this.utilizeExistingPipes = TagUtils.getUtilizeExistingPipes(pipeConnectorItem);
     }
 
     public BuildParameters(int depth,

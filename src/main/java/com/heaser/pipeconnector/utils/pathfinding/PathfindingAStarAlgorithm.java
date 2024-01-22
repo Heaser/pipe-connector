@@ -1,6 +1,7 @@
 package com.heaser.pipeconnector.utils.pathfinding;
 
 import com.heaser.pipeconnector.PipeConnector;
+import com.heaser.pipeconnector.compatibility.CompatibilityBlockEqualsChecker;
 import com.heaser.pipeconnector.config.PipeConnectorConfig;
 import com.heaser.pipeconnector.utils.GeneralUtils;
 import net.minecraft.core.BlockPos;
@@ -94,19 +95,21 @@ public class PathfindingAStarAlgorithm {
     public static class PositionHeuristicChecker implements HeuristicChecker {
         private final boolean useExistingPipes;
         private final Block placedBlock;
+        private final ItemStack placedItemStack;
         private final Level level;
 
 
-        public PositionHeuristicChecker(boolean useExistingPipes, Block placedBlock, Level level) {
+        public PositionHeuristicChecker(boolean useExistingPipes, Block placedBlock, ItemStack placedItemStack, Level level) {
             this.useExistingPipes = useExistingPipes;
             this.placedBlock = placedBlock;
+            this.placedItemStack = placedItemStack;
             this.level = level;
         }
 
         public int heuristic(BlockPos current, BlockPos end, int endY) {
             int cost = Math.abs(current.getX() - end.getX()) + Math.abs(current.getZ() - end.getZ()) + Math.abs(current.getY() - end.getY());
             if (useExistingPipes) {
-                if (GeneralUtils.isBlockStateSpecificBlock(level.getBlockState(current), placedBlock)) {
+                if (CompatibilityBlockEqualsChecker.getInstance().isBlockStateSpecificBlock(current, placedBlock, placedItemStack, level)) {
                     cost = (int)((double)cost * 0.3);
                 }
             }
@@ -122,18 +125,21 @@ public class PathfindingAStarAlgorithm {
     public static class DepthHeuristicChecker implements HeuristicChecker {
         private final boolean useExistingPipes;
         private final Block placedBlock;
+        private final ItemStack placedItemStack;
+
         private final Level level;
 
-        public DepthHeuristicChecker(boolean useExistingPipes, Block placedBlock, Level level) {
+        public DepthHeuristicChecker(boolean useExistingPipes, Block placedBlock, ItemStack placedItemStack, Level level) {
             this.useExistingPipes = useExistingPipes;
             this.placedBlock = placedBlock;
+            this.placedItemStack = placedItemStack;
             this.level = level;
         }
 
         public int heuristic(BlockPos current, BlockPos end, int endY) {
             int cost = Math.abs(current.getY() - endY);
             if (useExistingPipes) {
-                if (GeneralUtils.isBlockStateSpecificBlock(level.getBlockState(current), placedBlock)) {
+                if (CompatibilityBlockEqualsChecker.getInstance().isBlockStateSpecificBlock(current, placedBlock, placedItemStack, level)) {
                     cost = (int)((double)cost * 0.3);
                 }
             }

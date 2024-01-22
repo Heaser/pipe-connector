@@ -61,12 +61,6 @@ public class GeneralUtils
 
     // -----------------------------------------------------------------------------------------------------------------
 
-    public static boolean isBlockStateSpecificBlock(BlockState blockState, Block specificBlock) {
-        return blockState.getBlock().equals(specificBlock);
-    }
-
-    // -----------------------------------------------------------------------------------------------------------------
-
     public static boolean hasInventoryCapabilities(Level level, BlockPos pos) {
         return level.getBlockEntity(pos) != null && Objects.requireNonNull(level.getBlockEntity(pos)).getCapability(ITEM_HANDLER).isPresent();
     }

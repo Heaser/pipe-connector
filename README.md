@@ -32,7 +32,3 @@ Supported Pipes:
 * Simple Storage Network Cable
 
 ### **Modpack makers can support additional pipes via tags.**
-
-
-**Known issues:**
-* AE2 cable are not being placed correctly and are not supported until we resolve the issue.

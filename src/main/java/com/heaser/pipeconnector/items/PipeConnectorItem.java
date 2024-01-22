@@ -7,6 +7,7 @@ import com.heaser.pipeconnector.client.proxy.items.PipeConnectorItemProxy;
 import com.heaser.pipeconnector.particles.ParticleHelper;
 import com.heaser.pipeconnector.utils.GeneralUtils;
 import com.heaser.pipeconnector.utils.PipeConnectorUtils;
+import com.heaser.pipeconnector.utils.TagUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -83,9 +84,9 @@ public class PipeConnectorItem extends Item {
 
     // -----------------------------------------------------------------------------------------------------------------
     private void handleCommonUseOn(ItemStack interactedItem) {
-        int depth = PipeConnectorUtils.getDepthFromStack(interactedItem);
+        int depth = TagUtils.getDepthFromStack(interactedItem);
         if (depth == -1) {
-            PipeConnectorUtils.setDepthToStack(interactedItem, 2);
+            TagUtils.setDepthToStack(interactedItem, 2);
         }
     }
 
@@ -114,23 +115,23 @@ public class PipeConnectorItem extends Item {
                 return InteractionResult.FAIL;
             }
 
-            BlockPos startPos = PipeConnectorUtils.getStartPosition(interactedItem);
-            Direction startDirection = PipeConnectorUtils.getStartDirection(interactedItem);
+            BlockPos startPos = TagUtils.getStartPosition(interactedItem);
+            Direction startDirection = TagUtils.getStartDirection(interactedItem);
 
             if(startPos == null) {
-                PipeConnectorUtils.setStartPositionAndDirection(interactedItem, clickedFace, clickedPosition);
-                PipeConnectorUtils.setDimension(interactedItem, level.dimensionTypeId().toString());
+                TagUtils.setStartPositionAndDirection(interactedItem, clickedFace, clickedPosition);
+                TagUtils.setDimension(interactedItem, level.dimensionTypeId().toString());
                 ParticleHelper.serverSpawnMarkerParticle((ServerLevel) level, clickedPosition.relative(clickedFace));
             } else {
-                if (!level.dimensionTypeId().toString().equals(PipeConnectorUtils.getDimension(interactedItem))) {
-                    PipeConnectorUtils.resetPositionAndDirectionTags(interactedItem, usingPlayer, false);
+                if (!level.dimensionTypeId().toString().equals(TagUtils.getDimension(interactedItem))) {
+                    TagUtils.resetPositionAndDirectionTags(interactedItem, usingPlayer, false);
                     return InteractionResult.FAIL;
                 }
                 else if (clickedPosition.equals(startPos) && clickedFace.equals(startDirection)) {
-                    PipeConnectorUtils.resetPositionAndDirectionTags(interactedItem, usingPlayer, true);
+                    TagUtils.resetPositionAndDirectionTags(interactedItem, usingPlayer, true);
                     return InteractionResult.FAIL;
                 }
-                PipeConnectorUtils.setEndPositionAndDirection(interactedItem, clickedFace, clickedPosition);
+                TagUtils.setEndPositionAndDirection(interactedItem, clickedFace, clickedPosition);
 
                 ParticleHelper.serverSpawnMarkerParticle((ServerLevel) level, clickedPosition.relative(clickedFace));
             }

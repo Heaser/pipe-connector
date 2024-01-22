@@ -10,9 +10,9 @@ public class PreviewInfo {
     }
 
     public boolean isRelativeStartPos(ItemStack pipeConnector) {
-        return pos.equals(PipeConnectorUtils.getRelativeStartPosition(pipeConnector));
+        return pos.equals(TagUtils.getRelativeStartPosition(pipeConnector));
     }
     public boolean isRelativeEndPos(ItemStack pipeConnector) {
-        return pos.equals(PipeConnectorUtils.getRelativeEndPosition(pipeConnector));
+        return pos.equals(TagUtils.getRelativeEndPosition(pipeConnector));
     }
 }

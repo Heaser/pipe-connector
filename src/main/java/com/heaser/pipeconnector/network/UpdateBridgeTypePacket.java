@@ -2,11 +2,14 @@ package com.heaser.pipeconnector.network;
 import com.heaser.pipeconnector.constants.BridgeType;
 import com.heaser.pipeconnector.utils.GeneralUtils;
 import com.heaser.pipeconnector.utils.PipeConnectorUtils;
+import com.heaser.pipeconnector.utils.TagUtils;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
+
+import static com.heaser.pipeconnector.utils.TagUtils.setBridgeType;
 
 
 public class UpdateBridgeTypePacket {
@@ -34,7 +37,7 @@ public class UpdateBridgeTypePacket {
                 return;
             }
 
-            PipeConnectorUtils.setBridgeType(sender.getMainHandItem(), BridgeType.valueOf(bridgeType));
+            setBridgeType(sender.getMainHandItem(), BridgeType.valueOf(bridgeType));
         });
         ctx.get().setPacketHandled(true);
     }

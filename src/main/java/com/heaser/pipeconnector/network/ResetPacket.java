@@ -2,6 +2,7 @@ package com.heaser.pipeconnector.network;
 
 import com.heaser.pipeconnector.utils.GeneralUtils;
 import com.heaser.pipeconnector.utils.PipeConnectorUtils;
+import com.heaser.pipeconnector.utils.TagUtils;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.network.NetworkEvent;
@@ -27,7 +28,7 @@ public class ResetPacket {
             if (!GeneralUtils.isHoldingPipeConnector(sender)) {
                 return;
             }
-            PipeConnectorUtils.resetPositionAndDirectionTags(sender.getMainHandItem(), sender, true);
+            TagUtils.resetPositionAndDirectionTags(sender.getMainHandItem(), sender, true);
         });
         ctx.get().setPacketHandled(true);
     }

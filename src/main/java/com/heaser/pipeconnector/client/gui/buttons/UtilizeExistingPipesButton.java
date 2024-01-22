@@ -5,6 +5,7 @@ import com.heaser.pipeconnector.network.NetworkHandler;
 import com.heaser.pipeconnector.network.UpdateBridgeTypePacket;
 import com.heaser.pipeconnector.network.UpdateUtilizeExistingPipes;
 import com.heaser.pipeconnector.utils.PipeConnectorUtils;
+import com.heaser.pipeconnector.utils.TagUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
@@ -22,21 +23,21 @@ public class UtilizeExistingPipesButton extends BaseButton {
 
     @Override
     public void onClick(Button clickedButton, ItemStack itemStack) {
-        if(getUtilizeExistingPipes(itemStack)) {
+        if(TagUtils.getUtilizeExistingPipes(itemStack)) {
             this.setLabel("item.pipe_connector.gui.button.off", ChatFormatting.RED);
             this.button.setMessage(this.getLabel());
-            setUtilizeExistingPipes(itemStack, false);
+            TagUtils.setUtilizeExistingPipes(itemStack, false);
         } else {
             this.setLabel("item.pipe_connector.gui.button.on", ChatFormatting.GREEN);
             this.button.setMessage(this.getLabel());
-            setUtilizeExistingPipes(itemStack, true);
+            TagUtils.setUtilizeExistingPipes(itemStack, true);
         }
-        NetworkHandler.CHANNEL.sendToServer(new UpdateUtilizeExistingPipes(getUtilizeExistingPipes(itemStack)));
+        NetworkHandler.CHANNEL.sendToServer(new UpdateUtilizeExistingPipes(TagUtils.getUtilizeExistingPipes(itemStack)));
     }
 
     @Override
     public boolean isActive(ItemStack itemStack) {
-        return PipeConnectorUtils.getBridgeType(itemStack).equals(BridgeType.A_STAR);
+        return TagUtils.getBridgeType(itemStack).equals(BridgeType.A_STAR);
     }
 
     public List<Component> getTooltipList(ItemStack itemStack) {
@@ -51,7 +52,7 @@ public class UtilizeExistingPipesButton extends BaseButton {
     }
 
     private static Component getInitialLabel(ItemStack itemStack) {
-    if(getUtilizeExistingPipes(itemStack)) {
+    if(TagUtils.getUtilizeExistingPipes(itemStack)) {
         return Component.translatable("item.pipe_connector.gui.button.on").withStyle(ChatFormatting.GREEN);
 //        return "item.pipe_connector.gui.button.on";
     } else {

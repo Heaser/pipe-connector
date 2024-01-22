@@ -4,6 +4,7 @@ import com.heaser.pipeconnector.client.gui.buttons.BridgeTypeButton;
 import com.heaser.pipeconnector.constants.BridgeType;
 import com.heaser.pipeconnector.utils.GeneralUtils;
 import com.heaser.pipeconnector.utils.PipeConnectorUtils;
+import com.heaser.pipeconnector.utils.TagUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.FriendlyByteBuf;
@@ -39,13 +40,13 @@ public class BuildPipesPacket {
                 return;
             }
             ItemStack interactedItem = sender.getMainHandItem();
-            int depth = PipeConnectorUtils.getDepthFromStack(interactedItem);
-            BlockPos startPosition = PipeConnectorUtils.getStartPosition(interactedItem);
-            BlockPos endPosition = PipeConnectorUtils.getEndPosition(interactedItem);
-            Direction startDirection = PipeConnectorUtils.getStartDirection(interactedItem);
-            Direction endDirection = PipeConnectorUtils.getEndDirection(interactedItem);
-            BridgeType bridgeType = PipeConnectorUtils.getBridgeType(interactedItem);
-            boolean utilizeExistingPipes = PipeConnectorUtils.getUtilizeExistingPipes(interactedItem);
+            int depth = TagUtils.getDepthFromStack(interactedItem);
+            BlockPos startPosition = TagUtils.getStartPosition(interactedItem);
+            BlockPos endPosition = TagUtils.getEndPosition(interactedItem);
+            Direction startDirection = TagUtils.getStartDirection(interactedItem);
+            Direction endDirection = TagUtils.getEndDirection(interactedItem);
+            BridgeType bridgeType = TagUtils.getBridgeType(interactedItem);
+            boolean utilizeExistingPipes = TagUtils.getUtilizeExistingPipes(interactedItem);
 
             if (startPosition == null || endPosition == null) {
                 return;
@@ -62,7 +63,7 @@ public class BuildPipesPacket {
                     new UseOnContext(sender, InteractionHand.MAIN_HAND, virtualHitResult),
                     bridgeType,
                     utilizeExistingPipes);
-            PipeConnectorUtils.resetPositionAndDirectionTags(interactedItem, sender, wasSuccessful);
+            TagUtils.resetPositionAndDirectionTags(interactedItem, sender, wasSuccessful);
         });
         context.get().setPacketHandled(true);
     }

@@ -9,7 +9,7 @@ import java.util.Map;
 
 public class CompatibilityBlockGetter {
     private static CompatibilityBlockGetter INSTANCE;
-    private HashMap<Class<? extends Item>, IBlockGetter> classToGetterMap = new HashMap<>();
+    private final HashMap<Class<? extends Item>, IBlockGetter> classToGetterMap = new HashMap<>();
     private CompatibilityBlockGetter() {
         if (isModLoaded("ae2")) {
             classToGetterMap.put(AE2Compatiblity.getItemStackClassToRegister(), new AE2Compatiblity());

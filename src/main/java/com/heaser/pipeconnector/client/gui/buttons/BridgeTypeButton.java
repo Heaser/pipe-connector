@@ -3,7 +3,7 @@ package com.heaser.pipeconnector.client.gui.buttons;
 import com.heaser.pipeconnector.constants.BridgeType;
 import com.heaser.pipeconnector.network.NetworkHandler;
 import com.heaser.pipeconnector.network.UpdateBridgeTypePacket;
-import com.heaser.pipeconnector.utils.PipeConnectorUtils;
+import com.heaser.pipeconnector.utils.TagUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
@@ -11,8 +11,6 @@ import net.minecraft.world.item.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.heaser.pipeconnector.utils.PipeConnectorUtils.getBridgeType;
 
 public class BridgeTypeButton extends BaseButton {
 
@@ -23,7 +21,7 @@ public class BridgeTypeButton extends BaseButton {
 
     @Override
     public void onClick(Button clickedButton, ItemStack itemStack) {
-        BridgeType bridgeType = PipeConnectorUtils.getBridgeType(itemStack);
+        BridgeType bridgeType = TagUtils.getBridgeType(itemStack);
 
         if(bridgeType == BridgeType.DEFAULT) {
             bridgeType = BridgeType.A_STAR;
@@ -39,7 +37,7 @@ public class BridgeTypeButton extends BaseButton {
 
 
     private static Component getInitialLabel(ItemStack itemStack) {
-        BridgeType bridgeType = PipeConnectorUtils.getBridgeType(itemStack);
+        BridgeType bridgeType = TagUtils.getBridgeType(itemStack);
         return switch (bridgeType) {
             case A_STAR -> Component.translatable("item.pipe_connector.gui.button.aStarPathfinding");
             default -> Component.translatable("item.pipe_connector.gui.button.defaultPathfinding");
@@ -51,12 +49,12 @@ public class BridgeTypeButton extends BaseButton {
         List<Component> tooltipList = new ArrayList<>();
         tooltipList.add(Component.translatable("item.pipe_connector.gui.tooltip.Pathfinding"));
 
-        if(getBridgeType(itemStack) == BridgeType.DEFAULT) {
+        if(TagUtils.getBridgeType(itemStack) == BridgeType.DEFAULT) {
             tooltipList.add(Component.translatable("item.pipe_connector.gui.tooltip.defaultPathfindingImportantInfo").withStyle(ChatFormatting.GOLD));
             tooltipList.add(Component.translatable("item.pipe_connector.gui.tooltip.performanceImpact").withStyle(ChatFormatting.GRAY));
             tooltipList.add(Component.translatable("item.pipe_connector.gui.tooltip.performanceImpactLow").withStyle(ChatFormatting.YELLOW));
             return tooltipList;
-        } else if(getBridgeType(itemStack) == BridgeType.A_STAR) {
+        } else if(TagUtils.getBridgeType(itemStack) == BridgeType.A_STAR) {
             tooltipList.add(Component.translatable("item.pipe_connector.gui.tooltip.aStarPathfindingImportantInfo").withStyle(ChatFormatting.GOLD));
             tooltipList.add(Component.translatable("item.pipe_connector.gui.tooltip.performanceImpact").withStyle(ChatFormatting.GRAY));
             tooltipList.add(Component.translatable("item.pipe_connector.gui.tooltip.performanceImpactMediumHigh").withStyle(ChatFormatting.YELLOW));

@@ -5,6 +5,7 @@ import com.heaser.pipeconnector.utils.GeneralUtils;
 import com.heaser.pipeconnector.utils.PipeConnectorUtils;
 import com.heaser.pipeconnector.network.NetworkHandler;
 import com.heaser.pipeconnector.network.UpdateDepthPacket;
+import com.heaser.pipeconnector.utils.TagUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
@@ -15,6 +16,9 @@ import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+
+import static com.heaser.pipeconnector.utils.TagUtils.getDepthFromStack;
+import static com.heaser.pipeconnector.utils.TagUtils.setDepthToStack;
 
 @Mod.EventBusSubscriber(modid = PipeConnector.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public class DepthSetterEvent {
@@ -32,9 +36,9 @@ public class DepthSetterEvent {
             return;
         }
 
-        int depth = PipeConnectorUtils.getDepthFromStack(pipeConnectorStack);
-        PipeConnectorUtils.setDepthToStack(pipeConnectorStack, depth + scroll);
-        depth = PipeConnectorUtils.getDepthFromStack(pipeConnectorStack);
+        int depth = getDepthFromStack(pipeConnectorStack);
+        setDepthToStack(pipeConnectorStack, depth + scroll);
+        depth = getDepthFromStack(pipeConnectorStack);
 
         // Syncs with server to prevent cases where the client and server are out of sync
         NetworkHandler.CHANNEL.sendToServer(new UpdateDepthPacket(depth));

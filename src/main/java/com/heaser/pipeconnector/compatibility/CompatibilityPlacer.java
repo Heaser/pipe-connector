@@ -12,9 +12,11 @@ import net.minecraftforge.fml.ModList;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.heaser.pipeconnector.utils.GeneralUtils.isVoidableBlock;
+
 public class CompatibilityPlacer {
     private static CompatibilityPlacer INSTANCE;
-    private HashMap<Class<? extends Item>, IPlacer> classToPlacerMap = new HashMap<>();
+    private final HashMap<Class<? extends Item>, IPlacer> classToPlacerMap = new HashMap<>();
     private CompatibilityPlacer() {
         if (isModLoaded("ae2")) {
             classToPlacerMap.put(AE2Compatiblity.getItemStackClassToRegister(), new AE2Compatiblity());
@@ -34,6 +36,11 @@ public class CompatibilityPlacer {
     }
 
     public boolean defaultPlace(Level level, BlockPos pos, Player player, Item item) {
+        if (!isVoidableBlock(level, pos)) {
+            level.addDestroyBlockEffect(pos, level.getBlockState(pos));
+            level.destroyBlock(pos, true, player);
+        }
+
         BlockState blockState = Block.byItem(item).defaultBlockState();
         return level.setBlockAndUpdate(pos, blockState);
     }

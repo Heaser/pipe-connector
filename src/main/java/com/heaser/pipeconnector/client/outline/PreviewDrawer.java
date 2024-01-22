@@ -1,10 +1,8 @@
 package com.heaser.pipeconnector.client.outline;
 
+import com.heaser.pipeconnector.compatibility.CompatibilityBlockEqualsChecker;
 import com.heaser.pipeconnector.compatibility.CompatibilityBlockGetter;
-import com.heaser.pipeconnector.utils.BuildParameters;
-import com.heaser.pipeconnector.utils.GeneralUtils;
-import com.heaser.pipeconnector.utils.PipeConnectorUtils;
-import com.heaser.pipeconnector.utils.PreviewInfo;
+import com.heaser.pipeconnector.utils.*;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
@@ -44,15 +42,15 @@ public class PreviewDrawer {
     }
 
     private HashSet<PreviewInfo> getNewPreview(ItemStack pipeConnector, Level currentLevel, Player player) {
-        BlockPos startPos = PipeConnectorUtils.getStartPosition(pipeConnector);
-        BlockPos endPos = PipeConnectorUtils.getEndPosition(pipeConnector);
+        BlockPos startPos = TagUtils.getStartPosition(pipeConnector);
+        BlockPos endPos = TagUtils.getEndPosition(pipeConnector);
         if (startPos == null || endPos == null) {
             return new HashSet<>();
         }
-        int depth = PipeConnectorUtils.getDepthFromStack(pipeConnector);
-        boolean utilizeExitingPipes = PipeConnectorUtils.getUtilizeExistingPipes(pipeConnector);
-        Direction startDirection = PipeConnectorUtils.getStartDirection(pipeConnector);
-        Direction endDirection = PipeConnectorUtils.getEndDirection(pipeConnector);
+        int depth = TagUtils.getDepthFromStack(pipeConnector);
+        boolean utilizeExitingPipes = TagUtils.getUtilizeExistingPipes(pipeConnector);
+        Direction startDirection = TagUtils.getStartDirection(pipeConnector);
+        Direction endDirection = TagUtils.getEndDirection(pipeConnector);
         startPos = startPos.relative(startDirection);
         endPos = endPos.relative(endDirection);
         return PipeConnectorUtils.getBlockPosSet(
@@ -61,8 +59,9 @@ public class PreviewDrawer {
                         endPos,
                         depth,
                         currentLevel,
-                        PipeConnectorUtils.getBridgeType(pipeConnector),
+                        TagUtils.getBridgeType(pipeConnector),
                         CompatibilityBlockGetter.getInstance().getBlock(player.getOffhandItem()),
+                        player.getOffhandItem(),
                         utilizeExitingPipes));
     }
 
@@ -81,8 +80,9 @@ public class PreviewDrawer {
                 LevelRenderer.renderLineBox(pose, builder, aabb, 1F, 0, 0, 1F);
             } else if (isVoidableBlock(player.level(), previewInfo.pos)) {
                 LevelRenderer.renderLineBox(pose, builder, aabb, 1F, 1F, 0, 1F);
-            } else if (isBlockStateSpecificBlock(player.level().getBlockState(previewInfo.pos),
-                    CompatibilityBlockGetter.getInstance().getBlock(player.getOffhandItem()))) {
+            } else if (CompatibilityBlockEqualsChecker.getInstance().isBlockStateSpecificBlock(previewInfo.pos,
+                    CompatibilityBlockGetter.getInstance().getBlock(player.getOffhandItem()),
+                    player.getOffhandItem(), player.level())) {
                 LevelRenderer.renderLineBox(pose, builder, aabb, 0.87F, 0.25F, 0.87F, 0.5F);
             } else {
                 LevelRenderer.renderLineBox(pose, builder, aabb, 0, 1F, 0, 0.5F);
