@@ -502,14 +502,6 @@
     {
       "id": "ae2:fluix_smart_dense_cable",
       "required": false
-    },
-    {
-      "id": "thermal:energy_duct",
-      "required": false
-    },
-    {
-      "id": "thermal:fluid_duct",
-      "required": false
     }
   ]
 }
