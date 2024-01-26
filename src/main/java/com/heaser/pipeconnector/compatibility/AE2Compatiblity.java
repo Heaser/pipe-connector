@@ -6,6 +6,7 @@ import appeng.api.parts.IPartItem;
 import appeng.api.parts.PartHelper;
 import appeng.block.networking.CableBusBlock;
 import appeng.core.definitions.AEBlocks;
+import appeng.items.parts.ColoredPartItem;
 import appeng.items.parts.PartItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -55,9 +56,13 @@ public class AE2Compatiblity implements IBlockGetter, IPlacer, IBlockEqualsCheck
                 return false;
             }
             IPartItem<?> partItem = part.getPartItem();
+            boolean colorsEqual = true;
+            if (partItem instanceof ColoredPartItem<?> coloredPartItem && placedItem instanceof ColoredPartItem<?> coloredPlacedItem) {
+                colorsEqual = coloredPartItem.getColor().equals(coloredPlacedItem.getColor());
+            }
             Class<?> ownClass = ((IPartItem<?>) placedItem).getPartClass();
             Class<?> targetClass = partItem.getPartClass();
-            return targetClass == ownClass;
+            return colorsEqual && targetClass == ownClass;
         } else {
             return false;
         }
