@@ -1,6 +1,7 @@
 package com.heaser.pipeconnector.compatibility.jei;
 
 import com.heaser.pipeconnector.PipeConnector;
+import com.heaser.pipeconnector.constants.TagKeys;
 import com.heaser.pipeconnector.items.ModItems;
 import com.heaser.pipeconnector.items.PipeConnectorItem;
 import com.heaser.pipeconnector.recipe.SupportedPipesRecipe;
@@ -9,13 +10,14 @@ import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.IFocusGroup;
+import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.crafting.Recipe;
+
+import java.util.List;
 
 
 public class SupportedPipesCategory implements IRecipeCategory<SupportedPipesRecipe> {
@@ -27,8 +29,9 @@ public class SupportedPipesCategory implements IRecipeCategory<SupportedPipesRec
     private final IDrawable background;
     private final IDrawable icon;
 
+
     public SupportedPipesCategory(IGuiHelper helper) {
-        this.background = helper.createDrawable(TEXTURE, 0, 0, 160, 160);
+        this.background = helper.createDrawable(TEXTURE, 0, 0, 173, 229);
         this.icon = helper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(ModItems.PIPE_CONNECTOR.get()));
     }
 
@@ -54,6 +57,8 @@ public class SupportedPipesCategory implements IRecipeCategory<SupportedPipesRec
 
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, SupportedPipesRecipe recipe, IFocusGroup group) {
+
+        builder.addSlot(RecipeIngredientRole.RENDER_ONLY, 1,1);
 
     }
 }
