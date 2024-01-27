@@ -1,4 +1,4 @@
-package com.heaser.pipeconnector.compatibility;
+package com.heaser.pipeconnector.compatibility.ae2;
 
 import appeng.api.parts.IPart;
 import appeng.api.parts.IPartHost;
@@ -8,6 +8,10 @@ import appeng.block.networking.CableBusBlock;
 import appeng.core.definitions.AEBlocks;
 import appeng.items.parts.ColoredPartItem;
 import appeng.items.parts.PartItem;
+import com.heaser.pipeconnector.compatibility.interfaces.IBlockEqualsChecker;
+import com.heaser.pipeconnector.compatibility.interfaces.IBlockGetter;
+import com.heaser.pipeconnector.compatibility.interfaces.IDirectionGetter;
+import com.heaser.pipeconnector.compatibility.interfaces.IPlacer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;

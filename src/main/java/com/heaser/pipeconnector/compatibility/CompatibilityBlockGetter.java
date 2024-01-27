@@ -1,5 +1,7 @@
 package com.heaser.pipeconnector.compatibility;
 
+import com.heaser.pipeconnector.compatibility.ae2.AE2Compatiblity;
+import com.heaser.pipeconnector.compatibility.interfaces.IBlockGetter;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;

@@ -1,4 +1,4 @@
-package com.heaser.pipeconnector.compatibility;
+package com.heaser.pipeconnector.compatibility.interfaces;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;

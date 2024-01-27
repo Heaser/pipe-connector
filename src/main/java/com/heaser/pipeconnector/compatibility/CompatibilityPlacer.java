@@ -1,5 +1,7 @@
 package com.heaser.pipeconnector.compatibility;
 
+import com.heaser.pipeconnector.compatibility.ae2.AE2Compatiblity;
+import com.heaser.pipeconnector.compatibility.interfaces.IPlacer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;

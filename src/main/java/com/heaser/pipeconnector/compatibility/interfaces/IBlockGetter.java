@@ -1,4 +1,4 @@
-package com.heaser.pipeconnector.compatibility;
+package com.heaser.pipeconnector.compatibility.interfaces;
 
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
