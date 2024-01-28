@@ -47,8 +47,8 @@
   "item.pipe_connector.gui.button.tooltip.utilizeExistingPipesInfoPartOne": "This will try to use already placed",
   "item.pipe_connector.gui.button.tooltip.utilizeExistingPipesInfoPartTwo": "pipes to connect the two positions",
   "item.pipe_connector.gui.button.tooltip.InventoryGuard": "This will prevent the destruction of blocks with inventories",
+  "item.pipe_connector.jei.supportedPipesInfo": "Supported Pipes",
   "item.pipe_connector.jei.description": "The Pipe Connector allows you to choose two positions by Shift+Right-Clicking, once both positions are chosen, a preview of the path will be shown.\n You can change the depth of the pipe by Shift+Scrolling.\n Once you are happy with the path, you can Shift+Right-Click to open the GUI and click on 'Place Pipes' to place the pipes.\n 'Reset Positions' to reset the positions if you are unhappy with the first position.\n A list of supported pipes that can be placed can be found in JEI."
-
 
 
 

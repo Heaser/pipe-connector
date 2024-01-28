@@ -56,9 +56,6 @@ dependencies {
 
     // Loves mixins
     modImplementation ("curse.maven:applied-energistics2-223794:4857895")
-    //
-    modImplementation("curse.maven:storage-drawers-223852:4668552")
-    modImplementation("curse.maven:framed-compacting-drawers-376351:4777556")
 
 //    modImplementation ("curse.maven:cofh-core-69162:4970669")
 //    modImplementation ("curse.maven:thermal-dynamics-227443:4970699")
