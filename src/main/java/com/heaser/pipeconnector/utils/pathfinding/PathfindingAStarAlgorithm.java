@@ -3,7 +3,6 @@ package com.heaser.pipeconnector.utils.pathfinding;
 import com.heaser.pipeconnector.PipeConnector;
 import com.heaser.pipeconnector.compatibility.CompatibilityBlockEqualsChecker;
 import com.heaser.pipeconnector.config.PipeConnectorConfig;
-import com.heaser.pipeconnector.utils.GeneralUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
@@ -13,6 +12,7 @@ import net.minecraft.world.level.block.Block;
 
 import java.util.*;
 
+import static com.heaser.pipeconnector.compatibility.CompatibilityBlockEqualsChecker.isBlockStateSpecificBlock;
 import static com.heaser.pipeconnector.utils.GeneralUtils.*;
 
 public class
@@ -92,15 +92,16 @@ PathfindingAStarAlgorithm {
 
     private static boolean shouldAddNeighbor(BlockPos neighbor, BlockPos start, BlockPos end, int endY, Level level) {
         Player player = Minecraft.getInstance().player;
+        ItemStack offhandItem = player.getOffhandItem();
+        Block block = level.getBlockState(neighbor).getBlock();
 
         boolean isStartOrEnd = isStartOrEnd(neighbor, start, end);
         boolean isAtRequiredLevel = neighbor.getY() == endY;
         boolean isNotVoidable = !isVoidableBlock(level, neighbor);
-        boolean canAvoid = !isAvoidableBlock(level, neighbor) || isOffhandItemAvoidable(level, neighbor, player);
+        boolean canAvoid = !isPipeBlock(level, neighbor) || isOffhandItemAvoidable(level, neighbor, player);
+        boolean isBlockSpecificBlock = isBlockStateSpecificBlock(neighbor, block, offhandItem, level);
 
-
-
-        return (isStartOrEnd || isAtRequiredLevel || isNotVoidable) && canAvoid;
+        return (isStartOrEnd || isAtRequiredLevel || isNotVoidable) && canAvoid && isBlockSpecificBlock;
     }
 
     private static boolean isStartOrEnd(BlockPos pos, BlockPos start, BlockPos end) {

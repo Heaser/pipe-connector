@@ -13,7 +13,7 @@ import java.util.Map;
 
 public class CompatibilityBlockEqualsChecker {
     private static CompatibilityBlockEqualsChecker INSTANCE;
-    private final HashMap<Class<? extends Block>, IBlockEqualsChecker> classToCheckerMap = new HashMap<>();
+    private static final HashMap<Class<? extends Block>, IBlockEqualsChecker> classToCheckerMap = new HashMap<>();
     private CompatibilityBlockEqualsChecker() {
         if (isModLoaded("ae2")) {
             classToCheckerMap.put(AE2Compatiblity.getBlockToRegister(), new AE2Compatiblity());
@@ -32,11 +32,11 @@ public class CompatibilityBlockEqualsChecker {
         return INSTANCE;
     }
 
-    public boolean defaultIsBlockStateSpecificBlock(BlockPos pos, Block specificBlock, ItemStack placedItemStack, Level level) {
+    public static boolean defaultIsBlockStateSpecificBlock(BlockPos pos, Block specificBlock, ItemStack placedItemStack, Level level) {
         return level.getBlockState(pos).getBlock().equals(specificBlock);
     }
 
-    public boolean isBlockStateSpecificBlock(BlockPos pos, Block specificBlock, ItemStack placedItemStack, Level level) {
+    public static boolean isBlockStateSpecificBlock(BlockPos pos, Block specificBlock, ItemStack placedItemStack, Level level) {
         IBlockEqualsChecker checker = null;
         for (Map.Entry<Class<? extends Block>, IBlockEqualsChecker> set : classToCheckerMap.entrySet()) {
             if (set.getKey().isAssignableFrom(specificBlock.getClass())) {
