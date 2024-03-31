@@ -1,0 +1,7 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "pipe_connector:item/april_fools_pipe_connector"
+  },
+  "overrides": []
+}

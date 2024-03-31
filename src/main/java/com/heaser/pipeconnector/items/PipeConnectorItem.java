@@ -12,6 +12,7 @@ import com.heaser.pipeconnector.utils.TagUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
@@ -41,6 +42,10 @@ public class PipeConnectorItem extends Item {
         super(properties);
     }
 
+    @Override
+    public void verifyTagAfterLoad(CompoundTag tag) {
+        TagUtils.setCustomModelData(tag, GeneralUtils.isAprilFoolsDay());
+    }
 
     @NotNull
     @Override

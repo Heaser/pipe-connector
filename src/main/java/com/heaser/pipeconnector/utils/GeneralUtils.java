@@ -8,6 +8,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 import static net.minecraftforge.common.capabilities.ForgeCapabilities.ITEM_HANDLER;
@@ -66,6 +67,15 @@ public class GeneralUtils
     public static boolean hasInventoryCapabilities(Level level, BlockPos pos) {
         return level.getBlockEntity(pos) != null && Objects.requireNonNull(level.getBlockEntity(pos)).getCapability(ITEM_HANDLER).isPresent();
     }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    public static boolean isAprilFoolsDay() {
+        LocalDateTime now = LocalDateTime.now();
+        return now.getMonthValue() == 4 && now.getDayOfMonth() == 1;
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
 }
 
 

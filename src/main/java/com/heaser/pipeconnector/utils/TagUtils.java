@@ -218,4 +218,37 @@ public class TagUtils {
             player.displayClientMessage(Component.translatable("item.pipe_connector.message.resettingPositions"), true);
         }
     }
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // Sets the custom model data tag to the item stack, which is used to determine if the item should use custom model
+    // data. If useCustomModelData is true, the custom model will load, otherwise the default model will load.
+    // -----------------------------------------------------------------------------------------------------------------
+    public static void setCustomModelData(ItemStack stack, boolean useCustomModelData) {
+        if (useCustomModelData) {
+            CompoundTag tag = stack.getOrCreateTagElement(PipeConnector.MODID);
+            tag.putInt("CustomModelData", 1);
+        } else {
+            CompoundTag tag = stack.getOrCreateTagElement(PipeConnector.MODID);
+            tag.putInt("CustomModelData", 0);
+        }
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    public static void setCustomModelData(CompoundTag tag, boolean useCustomModelData) {
+        if (useCustomModelData) {
+            tag.putInt("CustomModelData", 1);
+        } else {
+            tag.putInt("CustomModelData", 0);
+        }
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+    public static int getCustomModelData(ItemStack stack) {
+        CompoundTag tag = stack.getOrCreateTagElement(PipeConnector.MODID);
+        if (tag.contains("CustomModelData", tag.TAG_INT)) {
+            return tag.getInt("CustomModelData");
+        }
+        return 0;
+    }
 }
