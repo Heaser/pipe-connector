@@ -2,8 +2,11 @@ package com.heaser.pipeconnector.compatibility;
 
 import com.heaser.pipeconnector.compatibility.ae2.AE2Compatiblity;
 import com.heaser.pipeconnector.compatibility.interfaces.IPlacer;
+import com.heaser.pipeconnector.compatibility.prettypipes.PrettyPipesCompatibility;
+import com.heaser.pipeconnector.compatibility.prettypipes.PrettyPipesFluidsCompatibility;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -18,10 +21,17 @@ import static com.heaser.pipeconnector.utils.GeneralUtils.isVoidableBlock;
 
 public class CompatibilityPlacer {
     private static CompatibilityPlacer INSTANCE;
-    private final HashMap<Class<? extends Item>, IPlacer> classToPlacerMap = new HashMap<>();
+    private final HashMap<Class<? extends Item>, IPlacer> itemClassToPlacerMap = new HashMap<>();
+    private final HashMap<Class<? extends Block>, IPlacer> blockClassToPlacerMap = new HashMap<>();
     private CompatibilityPlacer() {
         if (isModLoaded("ae2")) {
-            classToPlacerMap.put(AE2Compatiblity.getItemStackClassToRegister(), new AE2Compatiblity());
+            itemClassToPlacerMap.put(AE2Compatiblity.getItemStackClassToRegister(), new AE2Compatiblity());
+        }
+        if(isModLoaded("prettypipes")) {
+            blockClassToPlacerMap.put(PrettyPipesCompatibility.getBlockToRegister(), new PrettyPipesCompatibility());
+        }
+        if(isModLoaded("ppfluids")) {
+            blockClassToPlacerMap.put(PrettyPipesFluidsCompatibility.getBlockToRegister(), new PrettyPipesCompatibility());
         }
     }
 
@@ -49,10 +59,21 @@ public class CompatibilityPlacer {
 
     public boolean place(Level level, BlockPos pos, Player player, ItemStack stack) {
         IPlacer placer = null;
-        for (Map.Entry<Class<? extends Item>, IPlacer> set : classToPlacerMap.entrySet()) {
-            if (set.getKey().isAssignableFrom(stack.getItem().getClass())) {
+        Item item = stack.getItem();
+        for (Map.Entry<Class<? extends Item>, IPlacer> set : itemClassToPlacerMap.entrySet()) {
+            if (set.getKey().isAssignableFrom(item.getClass())) {
+
                 placer = set.getValue();
                 break;
+            }
+        }
+        if (placer == null && item instanceof BlockItem) {
+            for (Map.Entry<Class<? extends Block>, IPlacer> set : blockClassToPlacerMap.entrySet()) {
+                if (((BlockItem) item).getBlock().getClass().isAssignableFrom(set.getKey())) {
+
+                    placer = set.getValue();
+                    break;
+                }
             }
         }
         if (placer != null) {

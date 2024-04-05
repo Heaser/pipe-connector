@@ -502,6 +502,10 @@
     {
       "id": "ae2:fluix_smart_dense_cable",
       "required": false
+    },
+    {
+      "id": "ppfluids:fluid_pipe",
+      "required": false
     }
   ]
 }

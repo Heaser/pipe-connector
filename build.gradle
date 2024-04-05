@@ -62,6 +62,7 @@ dependencies {
 //    modImplementation ("curse.maven:thermal-foundation-222880:4979840")
 
     modImplementation ("curse.maven:pretty-pipes-376737:4769646")
+    modImplementation ("curse.maven:pretty-pipes-fluids-479142:4729229")
     modImplementation ("curse.maven:jei-238222:4712868")
     modImplementation ("curse.maven:mcjtylib-233105:4747680")
 }
