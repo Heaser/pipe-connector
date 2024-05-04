@@ -3,7 +3,6 @@ package com.heaser.pipeconnector.utils.pathfinding;
 import com.heaser.pipeconnector.PipeConnector;
 import com.heaser.pipeconnector.compatibility.CompatibilityBlockEqualsChecker;
 import com.heaser.pipeconnector.config.PipeConnectorConfig;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -18,7 +17,7 @@ import static com.heaser.pipeconnector.utils.GeneralUtils.*;
 public class
 PathfindingAStarAlgorithm {
 
-    public static List<BlockPos> findPathAStar(BlockPos start, BlockPos end, int endY, Level level, HeuristicChecker checker) {
+    public static List<BlockPos> findPathAStar(BlockPos start, BlockPos end, int endY, Level level, Player player, HeuristicChecker checker) {
         PriorityQueue<Node> openSet = new PriorityQueue<>();
         Set<BlockPos> closedSet = new HashSet<>();
         Map<BlockPos, Node> nodes = new HashMap<>();
@@ -45,7 +44,7 @@ PathfindingAStarAlgorithm {
 
             closedSet.add(currentPos);
 
-            for (BlockPos neighbor : getNeighbors(currentPos, level, start, end, endY)) {
+            for (BlockPos neighbor : getNeighbors(currentPos, level, start, end, endY, player)) {
                 if (closedSet.contains(neighbor)) continue;
 
                 Node neighborNode = nodes.getOrDefault(neighbor, new Node(neighbor, null, Integer.MAX_VALUE, checker.heuristic(neighbor, end, endY)));
@@ -77,12 +76,12 @@ PathfindingAStarAlgorithm {
         return path;
     }
 
-    private static List<BlockPos> getNeighbors(BlockPos pos, Level level, BlockPos start, BlockPos end, int endY) {
+    private static List<BlockPos> getNeighbors(BlockPos pos, Level level, BlockPos start, BlockPos end, int endY, Player player) {
         List<BlockPos> neighbors = new ArrayList<>();
         BlockPos[] directions = {pos.north(), pos.south(), pos.east(), pos.west(), pos.below(), pos.above()};
 
         for (BlockPos neighbor : directions) {
-            if (shouldAddNeighbor(neighbor, start, end, endY, level)) {
+            if (shouldAddNeighbor(neighbor, start, end, endY, level, player)) {
                 neighbors.add(neighbor);
             }
         }
@@ -90,8 +89,7 @@ PathfindingAStarAlgorithm {
         return neighbors;
     }
 
-    private static boolean shouldAddNeighbor(BlockPos neighbor, BlockPos start, BlockPos end, int endY, Level level) {
-        Player player = Minecraft.getInstance().player;
+    private static boolean shouldAddNeighbor(BlockPos neighbor, BlockPos start, BlockPos end, int endY, Level level, Player player) {
         ItemStack offhandItem = player.getOffhandItem();
         Block block = level.getBlockState(neighbor).getBlock();
 

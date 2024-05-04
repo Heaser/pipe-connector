@@ -68,7 +68,8 @@ public class PreviewDrawer {
                         TagUtils.getBridgeType(pipeConnector),
                         CompatibilityBlockGetter.getInstance().getBlock(player.getOffhandItem()),
                         player.getOffhandItem(),
-                        utilizeExitingPipes));
+                        utilizeExitingPipes,
+                        player));
     }
 
     private void draw(PoseStack pose, MultiBufferSource buffer, Player player, ItemStack pipeConnector) {

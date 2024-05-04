@@ -39,7 +39,7 @@ public class PipeConnectorUtils {
         Level level = player.level();
         ItemStack itemToPlace = player.getOffhandItem();
         Block blockToPlace = CompatibilityBlockGetter.getInstance().getBlock(itemToPlace);
-        Map<BlockPos, BlockState> blockPosMap = getBlockPosMap(start, end, depth, level, bridgeType, blockToPlace, itemToPlace, utilizeExistingPipes);
+        Map<BlockPos, BlockState> blockPosMap = getBlockPosMap(start, end, depth, level, bridgeType, blockToPlace, itemToPlace, utilizeExistingPipes, player);
         PipeConnector.LOGGER.debug(blockPosMap.toString());
 
 
@@ -130,7 +130,7 @@ public class PipeConnectorUtils {
     // two locations clicked by the Player.
     // -----------------------------------------------------------------------------------------------------------------
 
-    public static Map<BlockPos, BlockState> getBlockPosMap(BlockPos start, BlockPos end, int depth, Level level, BridgeType bridgeType, Block placedBlock, ItemStack placedItemStack, boolean utilizeExistingPipes) {
+    public static Map<BlockPos, BlockState> getBlockPosMap(BlockPos start, BlockPos end, int depth, Level level, BridgeType bridgeType, Block placedBlock, ItemStack placedItemStack, boolean utilizeExistingPipes, Player player) {
         Map<BlockPos, BlockState> blockHashMap = new HashMap<>();
 
         int deltaY = Math.abs(start.getY() - end.getY());
@@ -146,16 +146,16 @@ public class PipeConnectorUtils {
             end = moveAndStoreStates(end, endDepth, 0, -1, 0, level, blockHashMap);
 
         } else {
-            PathfindingResult result = moveAndStoreStates(start, startDepth, level, blockHashMap, bridgeType, placedBlock, placedItemStack, utilizeExistingPipes);
+            PathfindingResult result = moveAndStoreStates(start, startDepth, level, blockHashMap, bridgeType, placedBlock, placedItemStack, utilizeExistingPipes, player);
             blockHashMap = result.blockPosMap;
             start = result.finalPosition;
-            result = moveAndStoreStates(end, endDepth, level, blockHashMap, bridgeType, placedBlock, placedItemStack, utilizeExistingPipes);
+            result = moveAndStoreStates(end, endDepth, level, blockHashMap, bridgeType, placedBlock, placedItemStack, utilizeExistingPipes, player);
             blockHashMap = result.blockPosMap;
             end = result.finalPosition;
         }
         List<BlockPos> blockPosPath = null;
         switch (bridgeType) {
-            case A_STAR -> blockPosPath = PathfindingAStarAlgorithm.findPathAStar(start, end, -1, level,
+            case A_STAR -> blockPosPath = PathfindingAStarAlgorithm.findPathAStar(start, end, -1, level, player,
                     new PathfindingAStarAlgorithm.PositionHeuristicChecker(utilizeExistingPipes, placedBlock, placedItemStack, level));
             case DEFAULT -> blockPosPath = ManhattanAlgorithm.findPathManhattan(start, end, level);
 //          case STEP -> test = PathfindingAStarAlgorithm.findPathAStar(start, end, level);
@@ -181,11 +181,11 @@ public class PipeConnectorUtils {
         return currentPos;
     }
 
-    private static PathfindingResult moveAndStoreStates(BlockPos start, int steps, Level level, Map<BlockPos, BlockState> map, BridgeType bridgeType, Block placedBlock, ItemStack placedItemStack, boolean utilizeExistingPipes) {
+    private static PathfindingResult moveAndStoreStates(BlockPos start, int steps, Level level, Map<BlockPos, BlockState> map, BridgeType bridgeType, Block placedBlock, ItemStack placedItemStack, boolean utilizeExistingPipes, Player player) {
         List<BlockPos> blockPosPath = null;
         BlockPos end = start.below(steps);
         switch (bridgeType) {
-            case A_STAR -> blockPosPath = PathfindingAStarAlgorithm.findPathAStar(start, null, end.getY(), level,
+            case A_STAR -> blockPosPath = PathfindingAStarAlgorithm.findPathAStar(start, null, end.getY(), level, player,
                     new PathfindingAStarAlgorithm.DepthHeuristicChecker(utilizeExistingPipes, placedBlock, placedItemStack, level));
 //          case STEP -> test = PathfindingAStarAlgorithm.findPathAStar(start, end, level);
         }
