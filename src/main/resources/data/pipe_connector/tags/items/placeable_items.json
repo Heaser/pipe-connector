@@ -506,6 +506,14 @@
     {
       "id": "ppfluids:fluid_pipe",
       "required": false
+    },
+    {
+      "id": "quark:pipe",
+      "required": false
+    },
+    {
+      "id": "quark:encased_pipe",
+      "required": false
     }
   ]
 }
