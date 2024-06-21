@@ -2,15 +2,20 @@ package com.heaser.pipeconnector.network;
 
 
 import com.heaser.pipeconnector.PipeConnector;
+import com.heaser.pipeconnector.constants.ComponentDataTags;
 import com.heaser.pipeconnector.utils.GeneralUtils;
 import com.heaser.pipeconnector.utils.PipeConnectorUtils;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.NetworkEvent;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.item.component.CustomData;
 
 import java.util.function.Supplier;
+
+import static com.heaser.pipeconnector.utils.TagUtils.handleUniqueIdentifier;
 
 public class UpdateDepthPacket {
     public int depth;
@@ -36,9 +41,12 @@ public class UpdateDepthPacket {
             if (!GeneralUtils.isHoldingPipeConnector(sender)) {
                 return;
             }
+
             ItemStack item = sender.getMainHandItem();
-            CompoundTag tag = item.getOrCreateTagElement(PipeConnector.MODID);
-            tag.putInt("Depth", this.depth);
+            CustomData.update(DataComponents.CUSTOM_DATA, item, tag -> {
+                    tag.putInt(ComponentDataTags.kPipeConnectorDepth, this.depth);
+                });
+            });
         });
         ctx.get().setPacketHandled(true);
     }
