@@ -5,7 +5,7 @@ import com.heaser.pipeconnector.compatibility.interfaces.IBlockGetter;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
-import net.minecraftforge.fml.ModList;
+import net.neoforged.fml.ModList;
 import java.util.HashMap;
 import java.util.Map;
 

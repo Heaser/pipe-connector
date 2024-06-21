@@ -4,7 +4,7 @@ import com.heaser.pipeconnector.constants.TagKeys;
 import com.heaser.pipeconnector.items.ModItems;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.neoforge.registries.ForgeRegistries;
 
 import java.util.ArrayList;
 import java.util.Comparator;

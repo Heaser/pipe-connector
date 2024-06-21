@@ -2,11 +2,11 @@ package com.heaser.pipeconnector.items;
 
 import com.heaser.pipeconnector.PipeConnector;
 import net.minecraft.world.item.CreativeModeTabs;
-import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
 
-@Mod.EventBusSubscriber(modid = PipeConnector.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = PipeConnector.MODID, bus = EventBusSubscriber.Bus.MOD)
 public class CreativeTabAdder {
     @SubscribeEvent
     public static void buildContents(BuildCreativeModeTabContentsEvent event) {

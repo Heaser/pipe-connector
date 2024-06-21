@@ -3,41 +3,42 @@ package com.heaser.pipeconnector.network;
 import com.heaser.pipeconnector.PipeConnector;
 import com.heaser.pipeconnector.utils.GeneralUtils;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.network.NetworkEvent;
 
-import java.util.function.Supplier;
 
-public class UpdateUtilizeExistingPipes {
-    public boolean utilizeExistingPipes;
+public record UpdateUtilizeExistingPipes(boolean utilizeExistingPipes) implements ServerboundPacket {
 
-    public UpdateUtilizeExistingPipes(boolean ShouldUtilizeExistingPipes) {
-        this.utilizeExistingPipes = ShouldUtilizeExistingPipes;
+    public static final StreamCodec<RegistryFriendlyByteBuf, UpdateUtilizeExistingPipes> STREAM_CODEC = StreamCodec
+            .ofMember(
+                    UpdateUtilizeExistingPipes::write,
+                    UpdateUtilizeExistingPipes::decode);
+
+    public static final Type<UpdateUtilizeExistingPipes> TYPE = CustomPipeconnectorPayload.createType("update_utilize_existing_pipes");
+    @Override
+    public Type<UpdateUtilizeExistingPipes> type() {
+        return TYPE;
     }
 
-    public UpdateUtilizeExistingPipes(FriendlyByteBuf buf) {
-        this.utilizeExistingPipes = buf.readBoolean();
+    public static UpdateUtilizeExistingPipes decode(RegistryFriendlyByteBuf buf) {
+        return new UpdateUtilizeExistingPipes(buf.readBoolean());
     }
 
-    public void encode(FriendlyByteBuf buf) {
+    public void write(RegistryFriendlyByteBuf buf) {
         buf.writeBoolean(this.utilizeExistingPipes);
     }
 
-    public void handle(Supplier<NetworkEvent.Context> ctx) {
-        ctx.get().enqueueWork(() -> {
-            ServerPlayer sender = ctx.get().getSender();
-            if(sender == null)
-                return;
+    public void handleOnServer(ServerPlayer player) {;
+        if(player == null)
+            return;
 
-            if (!GeneralUtils.isHoldingPipeConnector(sender)) {
-                return;
-            }
-            ItemStack item = sender.getMainHandItem();
-            CompoundTag tag = item.getOrCreateTagElement(PipeConnector.MODID);
-            tag.putBoolean("UtilizeExistingPipes", this.utilizeExistingPipes);
-        });
-        ctx.get().setPacketHandled(true);
+        if (!GeneralUtils.isHoldingPipeConnector(player)) {
+            return;
+        }
+        ItemStack item = player.getMainHandItem();
+        CompoundTag tag = item.getOrCreateTagElement(PipeConnector.MODID);
+        tag.putBoolean("UtilizeExistingPipes", this.utilizeExistingPipes);
     }
 }

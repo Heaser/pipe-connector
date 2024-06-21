@@ -11,16 +11,16 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.InputEvent;
-import net.minecraftforge.eventbus.api.EventPriority;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.neoforge.client.event.InputEvent;
+import net.neoforged.bus.api.EventPriority;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
 
 import static com.heaser.pipeconnector.utils.TagUtils.getDepthFromStack;
 import static com.heaser.pipeconnector.utils.TagUtils.setDepthToStack;
 
-@Mod.EventBusSubscriber(modid = PipeConnector.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
+@EventBusSubscriber(modid = PipeConnector.MODID, bus = EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public class DepthSetterEvent {
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void MouseScrollEvent(InputEvent.MouseScrollingEvent event) {

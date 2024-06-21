@@ -7,11 +7,14 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.capabilities.BlockCapability;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-import static net.minecraftforge.common.capabilities.ForgeCapabilities.ITEM_HANDLER;
+import static net.neoforged.neoforge.capabilities.Capabilities.ItemHandler;
 
 public class GeneralUtils
 {
@@ -65,7 +68,12 @@ public class GeneralUtils
     // -----------------------------------------------------------------------------------------------------------------
 
     public static boolean hasInventoryCapabilities(Level level, BlockPos pos) {
-        return level.getBlockEntity(pos) != null && Objects.requireNonNull(level.getBlockEntity(pos)).getCapability(ITEM_HANDLER).isPresent();
+        if (level.getBlockEntity(pos) != null) {
+            // TODO: double check this works with testing the inventory guard feature
+            int slotNum = level.getCapability(ItemHandler.BLOCK, pos, null).getSlots();
+            return slotNum != 0;
+        }
+        return false;
     }
 
     // -----------------------------------------------------------------------------------------------------------------

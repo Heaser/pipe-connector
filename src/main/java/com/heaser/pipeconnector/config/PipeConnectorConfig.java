@@ -1,15 +1,15 @@
 package com.heaser.pipeconnector.config;
 
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.fml.common.Mod;
-@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
+import net.neoforged.neoforge.common.ModConfigSpec;
+import net.neoforged.fml.common.EventBusSubscriber;
+@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
 public class PipeConnectorConfig {
-    private static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
-    public static final ForgeConfigSpec SPEC;
+    private static final ModConfigSpec.Builder BUILDER = new ModConfigSpec.Builder();
+    public static final ModConfigSpec SPEC;
 
-    public static final ForgeConfigSpec.IntValue MAX_DEPTH;
-    public static final ForgeConfigSpec.IntValue MAX_ASTAR_ITERATIONS;
-    public static final ForgeConfigSpec.IntValue MAX_ALLOWED_PIPES_TO_PLACE;
+    public static final ModConfigSpec.IntValue MAX_DEPTH;
+    public static final ModConfigSpec.IntValue MAX_ASTAR_ITERATIONS;
+    public static final ModConfigSpec.IntValue MAX_ALLOWED_PIPES_TO_PLACE;
 
     static {
         MAX_DEPTH = BUILDER.comment("Maximum depth of the pipe connector")
