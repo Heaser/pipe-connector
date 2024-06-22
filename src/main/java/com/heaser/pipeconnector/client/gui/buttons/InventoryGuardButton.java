@@ -7,6 +7,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 import static com.heaser.pipeconnector.utils.PipeConnectorUtils.*;
 
@@ -26,7 +27,7 @@ public class InventoryGuardButton extends BaseButton {
             this.button.setMessage(this.getLabel());
             TagUtils.setPreventInventoryBlockBreaking(itemStack, true);
         }
-        NetworkHandler.CHANNEL.sendToServer(new UpdateInventoryGuard(TagUtils.getPreventInventoryBlockBreaking(itemStack)));
+        PacketDistributor.sendToServer(new UpdateInventoryGuard(TagUtils.getPreventInventoryBlockBreaking(itemStack)));
     }
 
     public Component getTooltip(ItemStack itemStack) {

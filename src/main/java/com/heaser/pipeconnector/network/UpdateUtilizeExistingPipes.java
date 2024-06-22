@@ -1,12 +1,15 @@
 package com.heaser.pipeconnector.network;
 
 import com.heaser.pipeconnector.PipeConnector;
+import com.heaser.pipeconnector.constants.ComponentDataTags;
 import com.heaser.pipeconnector.utils.GeneralUtils;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomData;
 
 
 public record UpdateUtilizeExistingPipes(boolean utilizeExistingPipes) implements ServerboundPacket {
@@ -38,7 +41,7 @@ public record UpdateUtilizeExistingPipes(boolean utilizeExistingPipes) implement
             return;
         }
         ItemStack item = player.getMainHandItem();
-        CompoundTag tag = item.getOrCreateTagElement(PipeConnector.MODID);
-        tag.putBoolean("UtilizeExistingPipes", this.utilizeExistingPipes);
+        CompoundTag tag = item.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+        tag.putBoolean(ComponentDataTags.kPipeConnectorUtilizeExistingPipes, this.utilizeExistingPipes);
     }
 }

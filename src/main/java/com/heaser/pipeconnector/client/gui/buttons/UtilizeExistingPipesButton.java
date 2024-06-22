@@ -10,6 +10,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +33,7 @@ public class UtilizeExistingPipesButton extends BaseButton {
             this.button.setMessage(this.getLabel());
             TagUtils.setUtilizeExistingPipes(itemStack, true);
         }
-        NetworkHandler.CHANNEL.sendToServer(new UpdateUtilizeExistingPipes(TagUtils.getUtilizeExistingPipes(itemStack)));
+        PacketDistributor.sendToServer(new UpdateUtilizeExistingPipes(TagUtils.getUtilizeExistingPipes(itemStack)));
     }
 
     @Override

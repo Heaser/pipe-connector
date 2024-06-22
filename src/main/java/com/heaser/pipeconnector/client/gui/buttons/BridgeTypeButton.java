@@ -8,6 +8,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +33,8 @@ public class BridgeTypeButton extends BaseButton {
             this.setLabel("item.pipe_connector.gui.button.defaultPathfinding", null);
             this.button.setMessage(this.getLabel());
         }
-        NetworkHandler.CHANNEL.sendToServer(new UpdateBridgeTypePacket(bridgeType));
+
+        PacketDistributor.sendToServer(new UpdateBridgeTypePacket(bridgeType.toString()));
     }
 
 

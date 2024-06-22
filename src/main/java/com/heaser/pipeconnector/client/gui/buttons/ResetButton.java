@@ -8,6 +8,7 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 public class ResetButton extends BaseButton {
     public ResetButton() {
@@ -16,7 +17,7 @@ public class ResetButton extends BaseButton {
 
     @Override
     public void onClick(Button clickedButton, ItemStack itemStack) {
-        NetworkHandler.CHANNEL.sendToServer(new ResetPacket());
+        PacketDistributor.sendToServer(new ResetPacket());
     }
 
     @Override

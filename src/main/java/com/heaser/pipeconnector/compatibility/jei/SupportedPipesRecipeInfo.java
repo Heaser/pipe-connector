@@ -2,13 +2,19 @@ package com.heaser.pipeconnector.compatibility.jei;
 
 import com.heaser.pipeconnector.constants.TagKeys;
 import com.heaser.pipeconnector.items.ModItems;
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderSet;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.registries.ForgeRegistries;
+import net.minecraft.world.item.Items;
+import net.neoforged.neoforge.registries.NeoForgeRegistries;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 
 public class SupportedPipesRecipeInfo {
@@ -26,10 +32,9 @@ public class SupportedPipesRecipeInfo {
         int maxSlotsPerRow = 9;
         int maxRows = 6;
         int slotsPerPage = maxSlotsPerRow * maxRows;
-        List<Item> supportedPipes = ForgeRegistries.ITEMS.tags().getTag(TagKeys.PLACEABLE_ITEMS)
-                .stream()
-                .sorted(Comparator.comparing(item -> item.getDescriptionId()))
-                .toList();
+        HolderSet.Named<Item> supportedPipesHolderSet = BuiltInRegistries.ITEM.getTag(TagKeys.PLACEABLE_ITEMS).get();
+        List<Holder<Item>> supportedPipes =  supportedPipesHolderSet.stream().sorted(Comparator.comparing((Holder<Item> item) ->
+                item.value().getDescriptionId())).toList();
 
         int pagesNum = (int)Math.ceil((float) supportedPipes.size() / (float) slotsPerPage);
 

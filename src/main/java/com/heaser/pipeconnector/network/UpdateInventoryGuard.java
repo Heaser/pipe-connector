@@ -1,44 +1,44 @@
 package com.heaser.pipeconnector.network;
-
-import com.heaser.pipeconnector.PipeConnector;
+import com.heaser.pipeconnector.constants.ComponentDataTags;
 import com.heaser.pipeconnector.utils.GeneralUtils;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.network.NetworkEvent;
+import net.minecraft.world.item.component.CustomData;
 
-import java.util.function.Supplier;
+public record UpdateInventoryGuard(boolean inventoryGuard) implements ServerboundPacket {
+    public static final StreamCodec<RegistryFriendlyByteBuf, UpdateInventoryGuard> STREAM_CODEC = StreamCodec
+            .ofMember(
+                    UpdateInventoryGuard::write,
+                    UpdateInventoryGuard::decode);
 
-public class UpdateInventoryGuard {
-    public boolean inventoryGuard;
-
-    public UpdateInventoryGuard(boolean shouldInventoryGuard) {
-        this.inventoryGuard = shouldInventoryGuard;
+    public static final Type<UpdateInventoryGuard> TYPE = CustomPipeconnectorPayload.createType("update_inventory_guard");
+    @Override
+    public Type<UpdateInventoryGuard> type() {
+        return TYPE;
     }
 
-    public UpdateInventoryGuard(FriendlyByteBuf buf) {
-            this.inventoryGuard = buf.readBoolean();
-        }
+    public static UpdateInventoryGuard decode(RegistryFriendlyByteBuf buf) {
+        return new UpdateInventoryGuard(buf.readBoolean());
+    }
 
-        public void encode(FriendlyByteBuf buf) {
-            buf.writeBoolean(this.inventoryGuard);
-        }
+    public void write(RegistryFriendlyByteBuf buf) {
+        buf.writeBoolean(this.inventoryGuard);
+    }
 
-        public void handle(Supplier<NetworkEvent.Context> ctx) {
-            ctx.get().enqueueWork(() -> {
-                ServerPlayer sender = ctx.get().getSender();
-                if(sender == null)
-                    return;
+    public void handleOnServer(ServerPlayer sender) {
+        if(sender == null)
+            return;
 
-                if (!GeneralUtils.isHoldingPipeConnector(sender)) {
-                    return;
-                }
-                ItemStack item = sender.getMainHandItem();
-                CompoundTag tag = item.getOrCreateTagElement(PipeConnector.MODID);
-                tag.putBoolean("PreventInventoryBlockBreaking", this.inventoryGuard);
-            });
-            ctx.get().setPacketHandled(true);
+        if (!GeneralUtils.isHoldingPipeConnector(sender)) {
+            return;
         }
+        ItemStack item = sender.getMainHandItem();
+        CompoundTag tag = item.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+        tag.putBoolean(ComponentDataTags.kPipeConnectorInventoryGuard, this.inventoryGuard);
+    }
 
 }

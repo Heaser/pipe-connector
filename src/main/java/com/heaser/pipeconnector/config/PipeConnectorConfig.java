@@ -1,8 +1,12 @@
 package com.heaser.pipeconnector.config;
 
+import com.heaser.pipeconnector.PipeConnector;
+import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.common.ModConfigSpec;
 import net.neoforged.fml.common.EventBusSubscriber;
-@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
+
+@EventBusSubscriber(modid = PipeConnector.MODID, bus = EventBusSubscriber.Bus.MOD)
+
 public class PipeConnectorConfig {
     private static final ModConfigSpec.Builder BUILDER = new ModConfigSpec.Builder();
     public static final ModConfigSpec SPEC;

@@ -12,6 +12,7 @@ import com.heaser.pipeconnector.utils.TagUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -22,28 +23,34 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.fml.DistExecutor;
+import net.neoforged.api.distmarker.Dist;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import net.neoforged.fml.loading.FMLLoader;
 
 
 import java.util.List;
 
 public class PipeConnectorItem extends Item {
-    private final IPipeConnectorItemProxy itemProxy = DistExecutor.unsafeRunForDist(() -> PipeConnectorItemProxy::new,
-        () -> () -> null);
-    private final IClientProxy clientProxy = DistExecutor.unsafeRunForDist(() -> GeneralClientProxy::new, () -> () -> null);
+    private IPipeConnectorItemProxy itemProxy = null;
+    private IClientProxy clientProxy = null;
 
     public PipeConnectorItem(Properties properties) {
         super(properties);
+        if (FMLLoader.getDist() == Dist.CLIENT) {
+            itemProxy = new PipeConnectorItemProxy();
+            clientProxy = new GeneralClientProxy();
+        }
     }
 
     @Override
-    public void verifyTagAfterLoad(CompoundTag tag) {
+    public void verifyComponentsAfterLoad(ItemStack itemStack) {
+        CompoundTag tag = itemStack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
         TagUtils.setCustomModelData(tag, GeneralUtils.isAprilFoolsDay());
     }
 
@@ -55,7 +62,7 @@ public class PipeConnectorItem extends Item {
             return InteractionResultHolder.pass(heldItem);
         }
 
-        HitResult targetHitResult = player.pick(player.getBlockReach() - 1, 0.0F, false);
+        HitResult targetHitResult = player.pick(player.blockInteractionRange() - 1, 0.0F, false);
         Vec3 targetPosition = targetHitResult.getLocation();
         BlockPos targetBlockPos = new BlockPos((int) targetPosition.x, (int) targetPosition.y, (int) targetPosition.z);
 
@@ -130,10 +137,10 @@ public class PipeConnectorItem extends Item {
 
             if(startPos == null) {
                 TagUtils.setStartPositionAndDirection(interactedItem, clickedFace, clickedPosition);
-                TagUtils.setDimension(interactedItem, level.dimensionTypeId().toString());
+                TagUtils.setDimension(interactedItem, level.dimensionTypeRegistration().getRegisteredName());
                 ParticleHelper.serverSpawnMarkerParticle((ServerLevel) level, relativePosition);
             } else {
-                if (!level.dimensionTypeId().toString().equals(TagUtils.getDimension(interactedItem))) {
+                if (!level.dimensionTypeRegistration().getRegisteredName().equals(TagUtils.getDimension(interactedItem))) {
                     TagUtils.resetPositionAndDirectionTags(interactedItem, usingPlayer, false);
                     return InteractionResult.FAIL;
                 }
@@ -162,7 +169,7 @@ public class PipeConnectorItem extends Item {
                 components.add(Component.translatable("item.pipe_connector.tooltip.shiftForMoreInfo").withStyle(ChatFormatting.GOLD));
             }
         }
-        super.appendHoverText(stack, level, components, tooltipFlag);
+        super.appendHoverText(stack, TooltipContext.of(level), components, tooltipFlag);
     }
 
     // -----------------------------------------------------------------------------------------------------------------

@@ -3,42 +3,45 @@ import com.heaser.pipeconnector.constants.BridgeType;
 import com.heaser.pipeconnector.utils.GeneralUtils;
 import com.heaser.pipeconnector.utils.PipeConnectorUtils;
 import com.heaser.pipeconnector.utils.TagUtils;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
-import net.neoforged.neoforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
 import static com.heaser.pipeconnector.utils.TagUtils.setBridgeType;
 
 
-public class UpdateBridgeTypePacket {
-    public String bridgeType;
+public record UpdateBridgeTypePacket(String bridgeType) implements ServerboundPacket {
 
-    public UpdateBridgeTypePacket(BridgeType bridgeType) {
-        this.bridgeType = bridgeType.toString();
+    public static final StreamCodec<RegistryFriendlyByteBuf, UpdateBridgeTypePacket> STREAM_CODEC = StreamCodec
+            .ofMember(
+                    UpdateBridgeTypePacket::write,
+                    UpdateBridgeTypePacket::decode);
+
+    public static final CustomPacketPayload.Type<UpdateBridgeTypePacket> TYPE = CustomPipeconnectorPayload.createType("update_bridge_type");
+
+    @Override
+    public CustomPacketPayload.Type<UpdateBridgeTypePacket> type() {
+        return TYPE;
     }
 
-    public UpdateBridgeTypePacket(FriendlyByteBuf buf) {
-        bridgeType = buf.readUtf();
+    public static UpdateBridgeTypePacket decode(RegistryFriendlyByteBuf buf) {
+        return new UpdateBridgeTypePacket(buf.readUtf());
     }
-
-    public void encode(FriendlyByteBuf buf) {
+    public void write(RegistryFriendlyByteBuf buf) {
         buf.writeUtf(bridgeType);
     }
 
-    public void handle(Supplier<NetworkEvent.Context> ctx) {
-        ctx.get().enqueueWork(() -> {
-            ServerPlayer sender = ctx.get().getSender();
-            if(sender == null)
-                return;
+    public void handleOnServer(ServerPlayer sender) {
+        if(sender == null)
+            return;
 
-            if (!GeneralUtils.isHoldingPipeConnector(sender)) {
-                return;
-            }
+        if (!GeneralUtils.isHoldingPipeConnector(sender)) {
+            return;
+        }
 
-            setBridgeType(sender.getMainHandItem(), BridgeType.valueOf(bridgeType));
-        });
-        ctx.get().setPacketHandled(true);
+        setBridgeType(sender.getMainHandItem(), BridgeType.valueOf(bridgeType));
     }
 }

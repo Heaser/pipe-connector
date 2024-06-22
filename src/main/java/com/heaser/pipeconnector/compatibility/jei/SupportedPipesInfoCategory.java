@@ -18,14 +18,13 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.registries.ForgeRegistries;
 
 import java.util.Comparator;
 import java.util.List;
 
 public class SupportedPipesInfoCategory implements IRecipeCategory<SupportedPipesRecipeInfo> {
-    public final static ResourceLocation UID = new ResourceLocation(PipeConnector.MODID, "supported_pipes");
-    public final static ResourceLocation TEXTURE = new ResourceLocation(PipeConnector.MODID, "textures/gui/jei_supported_pipes.png");
+    public final static ResourceLocation UID = ResourceLocation.fromNamespaceAndPath(PipeConnector.MODID, "supported_pipes");
+    public final static ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(PipeConnector.MODID, "textures/gui/jei_supported_pipes.png");
 
     static final RecipeType<SupportedPipesRecipeInfo> RECIPE_TYPE = RecipeType.create(PipeConnector.MODID, "supported_pipes", SupportedPipesRecipeInfo.class);
 

@@ -1,35 +1,41 @@
 package com.heaser.pipeconnector.network;
 
 import com.heaser.pipeconnector.utils.GeneralUtils;
-import com.heaser.pipeconnector.utils.PipeConnectorUtils;
 import com.heaser.pipeconnector.utils.TagUtils;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
-import net.neoforged.neoforge.network.NetworkEvent;
 
-import java.util.function.Supplier;
+public record ResetPacket() implements ServerboundPacket {
+    public static final StreamCodec<RegistryFriendlyByteBuf, ResetPacket> STREAM_CODEC = StreamCodec
+            .ofMember(
+                    ResetPacket::write,
+                    ResetPacket::decode);
 
-public class ResetPacket {
-    public ResetPacket() {
+    public static final CustomPacketPayload.Type<ResetPacket> TYPE = CustomPipeconnectorPayload.createType("reset");
+
+    @Override
+    public CustomPacketPayload.Type<ResetPacket> type() {
+        return TYPE;
     }
 
-    public ResetPacket(FriendlyByteBuf buf) {
+    public static ResetPacket decode(RegistryFriendlyByteBuf buf) {
+        return new ResetPacket();
     }
 
-    public void encode(FriendlyByteBuf buf) {
+    public void write(FriendlyByteBuf buf) {
 
     }
-    public void handle(Supplier<NetworkEvent.Context> ctx) {
-        ctx.get().enqueueWork(() -> {
-            ServerPlayer sender = ctx.get().getSender();
-            if(sender == null)
-                return;
 
-            if (!GeneralUtils.isHoldingPipeConnector(sender)) {
-                return;
-            }
-            TagUtils.resetPositionAndDirectionTags(sender.getMainHandItem(), sender, true);
-        });
-        ctx.get().setPacketHandled(true);
+    public void handleOnServer(ServerPlayer sender) {
+        if(sender == null)
+            return;
+
+        if (!GeneralUtils.isHoldingPipeConnector(sender)) {
+            return;
+        }
+        TagUtils.resetPositionAndDirectionTags(sender.getMainHandItem(), sender, true);
     }
 }

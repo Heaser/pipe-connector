@@ -16,16 +16,17 @@ import net.neoforged.neoforge.client.event.InputEvent;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 import static com.heaser.pipeconnector.utils.TagUtils.getDepthFromStack;
 import static com.heaser.pipeconnector.utils.TagUtils.setDepthToStack;
 
-@EventBusSubscriber(modid = PipeConnector.MODID, bus = EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
+@EventBusSubscriber(modid = PipeConnector.MODID, bus = EventBusSubscriber.Bus.GAME, value = Dist.CLIENT)
 public class DepthSetterEvent {
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void MouseScrollEvent(InputEvent.MouseScrollingEvent event) {
         Player player = Minecraft.getInstance().player;
-        int scroll = (int) event.getScrollDelta();
+        int scroll = (int) event.getScrollDeltaY();
 
         if (player == null || !player.isShiftKeyDown() || scroll == 0) {
             return;
@@ -41,7 +42,7 @@ public class DepthSetterEvent {
         depth = getDepthFromStack(pipeConnectorStack);
 
         // Syncs with server to prevent cases where the client and server are out of sync
-        NetworkHandler.CHANNEL.sendToServer(new UpdateDepthPacket(depth));
+        PacketDistributor.sendToServer(new UpdateDepthPacket(depth));
         player.displayClientMessage(Component.translatable("item.pipe_connector.message.newDepth", depth).withStyle(ChatFormatting.YELLOW), true);
 
         event.setCanceled(true);

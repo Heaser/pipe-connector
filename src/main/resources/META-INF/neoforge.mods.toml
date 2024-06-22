@@ -12,11 +12,10 @@ This tries to solve a long lasting issue of digging some blocks to put your pipe
 '''
 
 
-
 [[dependencies.${mod_id}]]
     modId="neoforge"
     type="required"
-    versionRange="${neoforge_version_range}
+    versionRange="${neo_version_range}"
     ordering="NONE"
     side="BOTH"
 

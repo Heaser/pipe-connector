@@ -22,7 +22,7 @@ import java.util.List;
 import static com.heaser.pipeconnector.utils.GeneralUtils.isHoldingPipeConnector;
 
 public class PipeConnectorGui extends Screen {
-    public static final ResourceLocation PIPE_CONNECTOR_TEXTURE = new ResourceLocation(PipeConnector.MODID, "textures/gui/settings.png");
+    public static final ResourceLocation PIPE_CONNECTOR_TEXTURE = ResourceLocation.fromNamespaceAndPath(PipeConnector.MODID, "textures/gui/settings.png");
     protected static final Integer imageWidth = 256;
     protected static final Integer imageHeight = 256;
     private ItemStack pipeConnectorStack;

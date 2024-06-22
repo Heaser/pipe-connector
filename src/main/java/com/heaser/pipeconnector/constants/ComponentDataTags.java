@@ -15,7 +15,7 @@ public class ComponentDataTags {
     public static String kPipeConnectorDimensionName = PipeConnector.MODID + "_DimensionName";
     public static String kPipeConnectorBridgeType = PipeConnector.MODID + "_BridgeType";
     public static String kPipeConnectorUtilizeExistingPipes = PipeConnector.MODID + "_UtilizeExistingPipes";
-    public static String kPipeConnectorPreventInventoryBlockBreaking = PipeConnector.MODID + "_PreventInventoryBlockBreaking";
+    public static String kPipeConnectorInventoryGuard = PipeConnector.MODID + "_InventoryGuard";
     public static String kPipeConnectorCustomModelData = PipeConnector.MODID + "_CustomModelData";
 
 }

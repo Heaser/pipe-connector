@@ -1,6 +1,5 @@
 package com.heaser.pipeconnector.utils;
 
-import com.heaser.pipeconnector.PipeConnector;
 import com.heaser.pipeconnector.config.PipeConnectorConfig;
 import com.heaser.pipeconnector.constants.BridgeType;
 import com.heaser.pipeconnector.constants.ComponentDataTags;
@@ -212,8 +211,8 @@ public class TagUtils {
     public static boolean getPreventInventoryBlockBreaking(ItemStack stack) {
         CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
 
-        if (tag.contains(ComponentDataTags.kPipeConnectorPreventInventoryBlockBreaking, tag.TAG_BYTE)) {
-            return tag.getBoolean(ComponentDataTags.kPipeConnectorPreventInventoryBlockBreaking);
+        if (tag.contains(ComponentDataTags.kPipeConnectorInventoryGuard, tag.TAG_BYTE)) {
+            return tag.getBoolean(ComponentDataTags.kPipeConnectorInventoryGuard);
         }
         return true;
     }
@@ -223,7 +222,7 @@ public class TagUtils {
     public static void setPreventInventoryBlockBreaking(ItemStack stack, boolean shouldBreakInventoryBlocks) {
         CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
 
-        tag.putBoolean(ComponentDataTags.kPipeConnectorPreventInventoryBlockBreaking, shouldBreakInventoryBlocks);
+        tag.putBoolean(ComponentDataTags.kPipeConnectorInventoryGuard, shouldBreakInventoryBlocks);
     }
 
     // -----------------------------------------------------------------------------------------------------------------

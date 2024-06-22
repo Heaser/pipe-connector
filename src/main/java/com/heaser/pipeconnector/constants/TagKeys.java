@@ -12,8 +12,9 @@ import static com.heaser.pipeconnector.PipeConnector.MODID;
 
 public class TagKeys {
 
-    public static final TagKey<Item> PLACEABLE_ITEMS = ItemTags.create(new ResourceLocation(MODID, "placeable_items"));
-    public static final TagKey<Block> VOIDABLE_BLOCKS = BlockTags.create(new ResourceLocation(MODID, "voidable_blocks"));
-    public static final TagKey<Block> PIPE_BLOCK = BlockTags.create(new ResourceLocation(MODID, "pipe_block"));
-    public static final TagKey<Block> UNBREAKABLE_BLOCKS = BlockTags.create(new ResourceLocation(MODID, "unbreakable_blocks"));
+    public static final TagKey<Item> PLACEABLE_ITEMS = ItemTags.create(ResourceLocation.fromNamespaceAndPath(MODID, "placeable_items"));
+    public static final TagKey<Block> VOIDABLE_BLOCKS = BlockTags.create(ResourceLocation.fromNamespaceAndPath(MODID, "voidable_blocks"));
+    public static final TagKey<Block> PIPE_BLOCK = BlockTags.create(ResourceLocation.fromNamespaceAndPath(MODID, "pipe_block"));
+    public static final TagKey<Block> UNBREAKABLE_BLOCKS = BlockTags.create(ResourceLocation.fromNamespaceAndPath(MODID, "unbreakable_blocks"));
 }
+

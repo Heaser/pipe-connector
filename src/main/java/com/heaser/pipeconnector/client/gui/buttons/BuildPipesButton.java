@@ -15,6 +15,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -31,7 +32,7 @@ public class BuildPipesButton extends BaseButton {
 
     @Override
     public void onClick(Button clickedButton, ItemStack itemStack) {
-        NetworkHandler.CHANNEL.sendToServer(new BuildPipesPacket());
+        PacketDistributor.sendToServer(new BuildPipesPacket());
     }
 
     @Override

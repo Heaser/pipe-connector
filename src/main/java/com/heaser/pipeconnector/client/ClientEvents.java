@@ -13,7 +13,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 
 
-@EventBusSubscriber(modid = PipeConnector.MODID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+@EventBusSubscriber(modid = PipeConnector.MODID, bus = EventBusSubscriber.Bus.GAME, value = Dist.CLIENT)
 public class ClientEvents {
     @SubscribeEvent(priority = EventPriority.LOW)
     public static void onRenderWorld(RenderLevelStageEvent event) {

@@ -21,7 +21,7 @@ public class JEIPipeConnectorPlugin implements IModPlugin {
     private SupportedPipesInfoCategory category;
     @Override
     public ResourceLocation getPluginUid() {
-        return new ResourceLocation(PipeConnector.MODID, "jei_plugin");
+        return ResourceLocation.fromNamespaceAndPath(PipeConnector.MODID, "jei_plugin");
     }
 
     @Override

@@ -122,7 +122,7 @@ configurations {
 
 dependencies {
 
-//    modImplementation ("curse.maven:pipez-443900:4713656")
+      implementation ("curse.maven:pipez-443900:4713656")
 //    modImplementation ("curse.maven:refined-storage-${refinedstorage_mod_id}:4844585")
 //    modImplementation ("curse.maven:mekanism-${mekanism_mod_id}:4866575")
 
@@ -135,7 +135,7 @@ dependencies {
 
     compileOnly ("curse.maven:pretty-pipes-376737:4769646")
     compileOnly ("curse.maven:pretty-pipes-fluids-479142:4729229")
-    implementation ("curse.maven:jei-238222:5447446")
+    implementation ("curse.maven:jei-238222:5447367")
 //    modImplementation ("curse.maven:mcjtylib-233105:4747680")
 }
 

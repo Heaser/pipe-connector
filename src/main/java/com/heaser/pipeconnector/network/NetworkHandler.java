@@ -3,62 +3,21 @@ package com.heaser.pipeconnector.network;
 import com.heaser.pipeconnector.PipeConnector;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.codec.StreamCodec;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
-import net.neoforged.neoforge.network.registration.NetworkRegistry;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
 
 public class NetworkHandler {
-    private static final String PROTOCOL_VERSION = "1";
-    /*public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
-            new ResourceLocation(PipeConnector.MODID, "main"),
-            () -> PROTOCOL_VERSION,
-            PROTOCOL_VERSION::equals,
-            PROTOCOL_VERSION::equals
-    );*/
-
     public static void register(RegisterPayloadHandlersEvent event) {
         int packetId = 0;
         var registrar = event.registrar(PipeConnector.MODID);
-
-        /*CHANNEL.messageBuilder(UpdateDepthPacket.class, packetId++)
-                .encoder(UpdateDepthPacket::encode)
-                .decoder(UpdateDepthPacket::new)
-                .consumerMainThread(UpdateDepthPacket::handle)
-                .add();*/
-
-
-        /*CHANNEL.messageBuilder(ResetPacket.class, packetId++)
-                .encoder(ResetPacket::encode)
-                .decoder(ResetPacket::new)
-                .consumerMainThread(ResetPacket::handle)
-                .add();*/
-
-        /*CHANNEL.messageBuilder(BuildPipesPacket.class, packetId++)
-                .encoder(BuildPipesPacket::encode)
-                .decoder(BuildPipesPacket::new)
-                .consumerMainThread(BuildPipesPacket::handle)
-                .add();*/
-
-        /*CHANNEL.messageBuilder(UpdateBridgeTypePacket.class, packetId++)
-                .encoder(UpdateBridgeTypePacket::encode)
-                .decoder(UpdateBridgeTypePacket::new)
-                .consumerMainThread(UpdateBridgeTypePacket::handle)
-                .add();*/
-
-        /*CHANNEL.messageBuilder(UpdateUtilizeExistingPipes.class,packetId++)
-                .encoder(UpdateUtilizeExistingPipes::encode)
-                .decoder(UpdateUtilizeExistingPipes::new)
-                .consumerMainThread(UpdateUtilizeExistingPipes::handle)
-                .add();*/
-
-        /*CHANNEL.messageBuilder(UpdateInventoryGuard.class,packetId++)
-                .encoder(UpdateInventoryGuard::encode)
-                .decoder(UpdateInventoryGuard::new)
-                .consumerMainThread(UpdateInventoryGuard::handle)
-                .add();*/
+        serverbound(registrar, UpdateUtilizeExistingPipes.TYPE, UpdateUtilizeExistingPipes.STREAM_CODEC);
+        serverbound(registrar, UpdateInventoryGuard.TYPE, UpdateInventoryGuard.STREAM_CODEC);
+        serverbound(registrar, UpdateDepthPacket.TYPE, UpdateDepthPacket.STREAM_CODEC);
+        serverbound(registrar, UpdateBridgeTypePacket.TYPE, UpdateBridgeTypePacket.STREAM_CODEC);
+        serverbound(registrar, ResetPacket.TYPE, ResetPacket.STREAM_CODEC);
+        serverbound(registrar, BuildPipesPacket.TYPE, BuildPipesPacket.STREAM_CODEC);
 
         PipeConnector.LOGGER.debug("Registered {} Packets for {}", packetId, PipeConnector.MODID);
     }
