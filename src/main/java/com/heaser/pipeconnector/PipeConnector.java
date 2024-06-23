@@ -22,17 +22,17 @@ public class PipeConnector {
     public PipeConnector(IEventBus modEventBus) {
         ModItems.ITEMS.register(modEventBus);
 
-        ModLoadingContext.get().getActiveContainer().registerConfig(ModConfig.Type.COMMON, PipeConnectorConfig.SPEC);
+        ModLoadingContext.get().getActiveContainer().registerConfig(ModConfig.Type.COMMON, PipeConnectorConfig.SPEC, "pipe-connector.toml");
         modEventBus.addListener(NetworkHandler::register);
         modEventBus.addListener(this::commonSetup);
         modEventBus.addListener(this::clientSetup);
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {
-        NeoForge.EVENT_BUS.register(new ModItems());
+//        NeoForge.EVENT_BUS.register(new ModItems());
     }
 
     private void clientSetup(final FMLClientSetupEvent event) {
-        NeoForge.EVENT_BUS.register(new ClientEvents());
+        NeoForge.EVENT_BUS.register(ClientEvents.class);
     }
 }

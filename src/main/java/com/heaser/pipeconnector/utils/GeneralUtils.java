@@ -1,5 +1,6 @@
 package com.heaser.pipeconnector.utils;
 
+import com.heaser.pipeconnector.PipeConnector;
 import com.heaser.pipeconnector.constants.TagKeys;
 import com.heaser.pipeconnector.items.PipeConnectorItem;
 import net.minecraft.core.BlockPos;
@@ -13,6 +14,7 @@ import net.neoforged.neoforge.capabilities.BlockCapability;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.function.Predicate;
 
 import static net.neoforged.neoforge.capabilities.Capabilities.ItemHandler;
 

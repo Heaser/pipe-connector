@@ -1,11 +1,6 @@
 package com.heaser.pipeconnector.config;
 
-import com.heaser.pipeconnector.PipeConnector;
-import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.common.ModConfigSpec;
-import net.neoforged.fml.common.EventBusSubscriber;
-
-@EventBusSubscriber(modid = PipeConnector.MODID, bus = EventBusSubscriber.Bus.MOD)
 
 public class PipeConnectorConfig {
     private static final ModConfigSpec.Builder BUILDER = new ModConfigSpec.Builder();
@@ -16,6 +11,8 @@ public class PipeConnectorConfig {
     public static final ModConfigSpec.IntValue MAX_ALLOWED_PIPES_TO_PLACE;
 
     static {
+        BUILDER.push("Pipe Connector Configurations");
+
         MAX_DEPTH = BUILDER.comment("Maximum depth of the pipe connector")
                 .defineInRange("maxDepth", 50, 10, 100);
 
@@ -25,6 +22,7 @@ public class PipeConnectorConfig {
         MAX_ALLOWED_PIPES_TO_PLACE = BUILDER.comment("Maximum number of pipes allowed to be placed at once")
                 .defineInRange("maxPipeAllowed", 640, 100, 1280);
 
+        BUILDER.pop();
         SPEC = BUILDER.build();
     }
 }
