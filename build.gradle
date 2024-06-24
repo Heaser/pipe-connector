@@ -5,6 +5,7 @@ plugins {
     id 'idea'
 //    id "xyz.wagyourtail.unimined" version "1.2.6"
     id 'net.neoforged.moddev' version '0.1.99'
+//    id 'org.parchmentmc.librarian.neoforgegradle' version '1.+'
 }
 
 tasks.named('wrapper', Wrapper).configure {
@@ -34,10 +35,10 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 neoForge {
     version = project.neo_version
 
-    //parchment {
-    //    mappingsVersion = project.parchment_mappings_version
-    //    minecraftVersion = project.parchment_minecraft_version
-    //}
+    parchment {
+        mappingsVersion = project.parchment_mappings_version
+        minecraftVersion = project.parchment_minecraft_version
+    }
 
     runs {
         client {
@@ -122,7 +123,7 @@ configurations {
 
 dependencies {
 
-      implementation ("curse.maven:pipez-443900:5448324")
+      implementation ("curse.maven:pipez-443900:5465392")
 //    modImplementation ("curse.maven:refined-storage-${refinedstorage_mod_id}:4844585")
 //    modImplementation ("curse.maven:mekanism-${mekanism_mod_id}:4866575")
 
