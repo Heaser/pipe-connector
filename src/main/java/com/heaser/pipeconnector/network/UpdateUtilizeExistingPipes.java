@@ -3,6 +3,7 @@ package com.heaser.pipeconnector.network;
 import com.heaser.pipeconnector.PipeConnector;
 import com.heaser.pipeconnector.constants.ComponentDataTags;
 import com.heaser.pipeconnector.utils.GeneralUtils;
+import com.heaser.pipeconnector.utils.TagUtils;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -41,7 +42,6 @@ public record UpdateUtilizeExistingPipes(boolean utilizeExistingPipes) implement
             return;
         }
         ItemStack item = player.getMainHandItem();
-        CompoundTag tag = item.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
-        tag.putBoolean(ComponentDataTags.kPipeConnectorUtilizeExistingPipes, this.utilizeExistingPipes);
+        TagUtils.setUtilizeExistingPipes(item, this.utilizeExistingPipes);
     }
 }

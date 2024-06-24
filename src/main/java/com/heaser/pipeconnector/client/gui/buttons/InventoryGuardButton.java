@@ -1,6 +1,5 @@
 package com.heaser.pipeconnector.client.gui.buttons;
 
-import com.heaser.pipeconnector.network.NetworkHandler;
 import com.heaser.pipeconnector.network.UpdateInventoryGuard;
 import com.heaser.pipeconnector.utils.TagUtils;
 import net.minecraft.ChatFormatting;
@@ -8,8 +7,6 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.PacketDistributor;
-
-import static com.heaser.pipeconnector.utils.PipeConnectorUtils.*;
 
 public class InventoryGuardButton extends BaseButton {
 
@@ -21,11 +18,11 @@ public class InventoryGuardButton extends BaseButton {
         if(TagUtils.getPreventInventoryBlockBreaking(itemStack)) {
             this.setLabel("item.pipe_connector.gui.button.off", ChatFormatting.RED );
             this.button.setMessage(this.getLabel());
-            TagUtils.setPreventInventoryBlockBreaking(itemStack, false);
+            TagUtils.setInventoryGuard(itemStack, false);
         } else {
             this.setLabel("item.pipe_connector.gui.button.on", ChatFormatting.GREEN);
             this.button.setMessage(this.getLabel());
-            TagUtils.setPreventInventoryBlockBreaking(itemStack, true);
+            TagUtils.setInventoryGuard(itemStack, true);
         }
         PacketDistributor.sendToServer(new UpdateInventoryGuard(TagUtils.getPreventInventoryBlockBreaking(itemStack)));
     }

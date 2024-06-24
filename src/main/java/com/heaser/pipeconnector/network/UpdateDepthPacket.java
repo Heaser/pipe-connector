@@ -46,8 +46,6 @@ public record UpdateDepthPacket(int depth) implements ServerboundPacket {
 
         ItemStack item = sender.getMainHandItem();
         TagUtils.setDepthToStack(item, this.depth);
-//        CustomData.update(DataComponents.CUSTOM_DATA, item, tag -> {
-//                tag.putInt(ComponentDataTags.kPipeConnectorDepth, this.depth);
-//            });
+
     }
 }

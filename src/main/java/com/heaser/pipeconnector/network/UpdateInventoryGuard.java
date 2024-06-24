@@ -1,13 +1,10 @@
 package com.heaser.pipeconnector.network;
-import com.heaser.pipeconnector.constants.ComponentDataTags;
 import com.heaser.pipeconnector.utils.GeneralUtils;
-import net.minecraft.core.component.DataComponents;
-import net.minecraft.nbt.CompoundTag;
+import com.heaser.pipeconnector.utils.TagUtils;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.component.CustomData;
 
 public record UpdateInventoryGuard(boolean inventoryGuard) implements ServerboundPacket {
     public static final StreamCodec<RegistryFriendlyByteBuf, UpdateInventoryGuard> STREAM_CODEC = StreamCodec
@@ -37,8 +34,7 @@ public record UpdateInventoryGuard(boolean inventoryGuard) implements Serverboun
             return;
         }
         ItemStack item = sender.getMainHandItem();
-        CompoundTag tag = item.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
-        tag.putBoolean(ComponentDataTags.kPipeConnectorInventoryGuard, this.inventoryGuard);
+        TagUtils.setInventoryGuard(item, this.inventoryGuard);
     }
 
 }

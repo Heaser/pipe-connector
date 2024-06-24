@@ -4,7 +4,7 @@ import com.heaser.pipeconnector.PipeConnector;
 
 public class ComponentDataTags {
     public static String kPipeConnectorDepth = PipeConnector.MODID + "_Depth";
-    public static String kPipeConnectorStartDirection = PipeConnector.MODID + "StartDirection";
+    public static String kPipeConnectorStartDirection = PipeConnector.MODID + "_StartDirection";
     public static String kPipeConnectorStartX = PipeConnector.MODID + "_StartX";
     public static String kPipeConnectorStartY = PipeConnector.MODID + "_StartY";
     public static String kPipeConnectorStartZ = PipeConnector.MODID + "_StartZ";

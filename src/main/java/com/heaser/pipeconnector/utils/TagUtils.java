@@ -10,11 +10,15 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+
 import net.minecraft.world.item.component.CustomData;
 import org.jetbrains.annotations.Nullable;
 
 public class TagUtils {
     public static int getDepthFromStack(ItemStack stack) {
+
+
+
         CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
 
         if (tag.contains(ComponentDataTags.kPipeConnectorDepth, tag.TAG_INT)) {
@@ -27,26 +31,29 @@ public class TagUtils {
     // -----------------------------------------------------------------------------------------------------------------
 
     public static void setDepthToStack(ItemStack stack, int depth) {
-        CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+        CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> {
+            int finalDepth;
+            if (depth < 0) {
+                finalDepth = PipeConnectorConfig.MAX_DEPTH.get();
+            } else if (depth > PipeConnectorConfig.MAX_DEPTH.get()) {
+                finalDepth = 0;
+            } else {
+                finalDepth = depth;
+            }
 
-        if (depth < 0) {
-            depth = PipeConnectorConfig.MAX_DEPTH.get();
-        } else if (depth > PipeConnectorConfig.MAX_DEPTH.get()) {
-            depth = 0;
-        }
-        tag.putInt(ComponentDataTags.kPipeConnectorDepth, depth);
-
+            tag.putInt(ComponentDataTags.kPipeConnectorDepth, finalDepth);
+        });
     }
 
     // -----------------------------------------------------------------------------------------------------------------
 
     public static void setStartPositionAndDirection(ItemStack stack, Direction direction, BlockPos startPos) {
-        CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
-
-        tag.putByte(ComponentDataTags.kPipeConnectorStartDirection, direction != null ? (byte) direction.get3DDataValue() : -1);
-        tag.putInt(ComponentDataTags.kPipeConnectorStartX, startPos.getX());
-        tag.putInt(ComponentDataTags.kPipeConnectorStartY, startPos.getY());
-        tag.putInt(ComponentDataTags.kPipeConnectorStartZ, startPos.getZ());
+        CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> {
+            tag.putByte(ComponentDataTags.kPipeConnectorStartDirection, direction != null ? (byte) direction.get3DDataValue() : -1);
+            tag.putInt(ComponentDataTags.kPipeConnectorStartX, startPos.getX());
+            tag.putInt(ComponentDataTags.kPipeConnectorStartY, startPos.getY());
+            tag.putInt(ComponentDataTags.kPipeConnectorStartZ, startPos.getZ());
+        });
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -55,8 +62,8 @@ public class TagUtils {
         CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
 
         if (!tag.contains(ComponentDataTags.kPipeConnectorStartX) ||
-            !tag.contains(ComponentDataTags.kPipeConnectorStartY) ||
-            !tag.contains(ComponentDataTags.kPipeConnectorStartZ)) {
+                !tag.contains(ComponentDataTags.kPipeConnectorStartY) ||
+                !tag.contains(ComponentDataTags.kPipeConnectorStartZ)) {
             return null;
         }
         int x = tag.getInt(ComponentDataTags.kPipeConnectorStartX);
@@ -113,12 +120,13 @@ public class TagUtils {
     // -----------------------------------------------------------------------------------------------------------------
 
     public static void setEndPositionAndDirection(ItemStack stack, Direction direction, BlockPos endPos) {
-        CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
 
-        tag.putByte(ComponentDataTags.kPipeConnectorEndDirection, direction != null ? (byte) direction.get3DDataValue() : -1);
-        tag.putInt(ComponentDataTags.kPipeConnectorEndX, endPos.getX());
-        tag.putInt(ComponentDataTags.kPipeConnectorEndY , endPos.getY());
-        tag.putInt(ComponentDataTags.kPipeConnectorEndZ, endPos.getZ());
+        CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> {
+            tag.putByte(ComponentDataTags.kPipeConnectorEndDirection, direction != null ? (byte) direction.get3DDataValue() : -1);
+            tag.putInt(ComponentDataTags.kPipeConnectorEndX, endPos.getX());
+            tag.putInt(ComponentDataTags.kPipeConnectorEndY, endPos.getY());
+            tag.putInt(ComponentDataTags.kPipeConnectorEndZ, endPos.getZ());
+        });
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -127,8 +135,8 @@ public class TagUtils {
         CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
 
         if (!tag.contains(ComponentDataTags.kPipeConnectorEndX) ||
-            !tag.contains(ComponentDataTags.kPipeConnectorEndY) ||
-            !tag.contains(ComponentDataTags.kPipeConnectorEndZ)) {
+                !tag.contains(ComponentDataTags.kPipeConnectorEndY) ||
+                !tag.contains(ComponentDataTags.kPipeConnectorEndZ)) {
             return null;
         }
         int x = tag.getInt(ComponentDataTags.kPipeConnectorEndX);
@@ -163,9 +171,9 @@ public class TagUtils {
     // -----------------------------------------------------------------------------------------------------------------
 
     public static void setDimension(ItemStack stack, String dimensionName) {
-        CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
-
-        tag.putString(ComponentDataTags.kPipeConnectorDimensionName, dimensionName);
+        CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> {
+            tag.putString(ComponentDataTags.kPipeConnectorDimensionName, dimensionName);
+        });
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -173,7 +181,7 @@ public class TagUtils {
     public static BridgeType getBridgeType(ItemStack stack) {
         CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
 
-        if (tag.contains("BridgeType", tag.TAG_STRING)) {
+        if (tag.contains(ComponentDataTags.kPipeConnectorBridgeType, tag.TAG_STRING)) {
             return BridgeType.valueOf(tag.getString(ComponentDataTags.kPipeConnectorBridgeType));
         }
         return BridgeType.DEFAULT;
@@ -182,9 +190,9 @@ public class TagUtils {
     // -----------------------------------------------------------------------------------------------------------------
 
     public static void setBridgeType(ItemStack stack, BridgeType bridgeType) {
-        CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
-
-        tag.putString(ComponentDataTags.kPipeConnectorBridgeType, bridgeType.toString());
+        CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> {
+            tag.putString(ComponentDataTags.kPipeConnectorBridgeType, bridgeType.toString());
+        });
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -201,9 +209,9 @@ public class TagUtils {
     // -----------------------------------------------------------------------------------------------------------------
 
     public static void setUtilizeExistingPipes(ItemStack stack, boolean utilizeExistingPipes) {
-        CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
-
-        tag.putBoolean(ComponentDataTags.kPipeConnectorUtilizeExistingPipes, utilizeExistingPipes);
+        CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> {
+            tag.putBoolean(ComponentDataTags.kPipeConnectorUtilizeExistingPipes, utilizeExistingPipes);
+        });
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -219,25 +227,25 @@ public class TagUtils {
 
     // -----------------------------------------------------------------------------------------------------------------
 
-    public static void setPreventInventoryBlockBreaking(ItemStack stack, boolean shouldBreakInventoryBlocks) {
-        CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
-
-        tag.putBoolean(ComponentDataTags.kPipeConnectorInventoryGuard, shouldBreakInventoryBlocks);
+    public static void setInventoryGuard(ItemStack stack, boolean shouldBreakInventoryBlocks) {
+        CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> {
+            tag.putBoolean(ComponentDataTags.kPipeConnectorInventoryGuard, shouldBreakInventoryBlocks);
+        });
     }
 
     // -----------------------------------------------------------------------------------------------------------------
 
     public static void resetPositionAndDirectionTags(ItemStack stack, Player player, boolean shouldShowMessage) {
-        CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
-
-        tag.remove(ComponentDataTags.kPipeConnectorStartDirection);
-        tag.remove(ComponentDataTags.kPipeConnectorStartX);
-        tag.remove(ComponentDataTags.kPipeConnectorStartY);
-        tag.remove(ComponentDataTags.kPipeConnectorStartZ);
-        tag.remove(ComponentDataTags.kPipeConnectorEndDirection);
-        tag.remove(ComponentDataTags.kPipeConnectorEndX);
-        tag.remove(ComponentDataTags.kPipeConnectorEndY);
-        tag.remove(ComponentDataTags.kPipeConnectorEndZ);
+        CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> {
+            tag.remove(ComponentDataTags.kPipeConnectorStartDirection);
+            tag.remove(ComponentDataTags.kPipeConnectorStartX);
+            tag.remove(ComponentDataTags.kPipeConnectorStartY);
+            tag.remove(ComponentDataTags.kPipeConnectorStartZ);
+            tag.remove(ComponentDataTags.kPipeConnectorEndDirection);
+            tag.remove(ComponentDataTags.kPipeConnectorEndX);
+            tag.remove(ComponentDataTags.kPipeConnectorEndY);
+            tag.remove(ComponentDataTags.kPipeConnectorEndZ);
+        });
         if (shouldShowMessage) {
             player.displayClientMessage(Component.translatable("item.pipe_connector.message.resettingPositions"), true);
         }
