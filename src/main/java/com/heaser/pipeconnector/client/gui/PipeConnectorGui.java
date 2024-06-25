@@ -15,6 +15,8 @@ import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import net.neoforged.neoforge.client.event.ScreenEvent;
+import net.neoforged.neoforge.common.NeoForge;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -76,6 +78,18 @@ public class PipeConnectorGui extends Screen {
         createLabel(guiGraphics, 0.12, 0.32, new InventoryGuardText());
         createLabel(guiGraphics, 0.08, 0.42 , new UtilizeExistingPipesText());
         createLabel(guiGraphics, 0.65, 0.65, new DepthLabel());
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    @Override
+    public void renderBackground(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
+        if (this.minecraft.level == null) {
+            this.renderPanorama(pGuiGraphics, pPartialTick);
+        }
+
+        this.renderMenuBackground(pGuiGraphics);
+        NeoForge.EVENT_BUS.post(new ScreenEvent.BackgroundRendered(this, pGuiGraphics));
     }
 
     // -----------------------------------------------------------------------------------------------------------------
