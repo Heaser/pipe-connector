@@ -14,6 +14,7 @@ import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
+import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
@@ -69,7 +70,7 @@ public class SupportedPipesInfoCategory implements IRecipeCategory<SupportedPipe
         IRecipeSlotBuilder inputSlotBuilder = builder.addSlot(RecipeIngredientRole.INPUT, xPos, 1).setBackground(slotBackground, -1, -1);
         addIngredient(VanillaTypes.ITEM_STACK, recipe.inputIngredient, inputSlotBuilder);
 
-        for (Item item : recipe.supportedPipes) {
+        for (Holder<Item> item : recipe.supportedPipes) {
             builder.addSlot(RecipeIngredientRole.OUTPUT, startPosWidth, startPosHeight).setBackground(slotBackground, -1, -1).addIngredient(VanillaTypes.ITEM_STACK, new ItemStack(item));
             startPosWidth += 18;
             if (startPosWidth > 161) {

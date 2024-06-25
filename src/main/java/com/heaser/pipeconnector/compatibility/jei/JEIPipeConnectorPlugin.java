@@ -29,7 +29,6 @@ public class JEIPipeConnectorPlugin implements IModPlugin {
         IGuiHelper guiHelper = registration.getJeiHelpers().getGuiHelper();
         category = new SupportedPipesInfoCategory(guiHelper);
         registration.addRecipeCategories(category);
-
     }
 
     @Override

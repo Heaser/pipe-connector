@@ -20,9 +20,9 @@ import java.util.Optional;
 public class SupportedPipesRecipeInfo {
     public final ItemStack inputIngredient;
 
-    public final List<Item> supportedPipes;
+    public final List<Holder<Item>> supportedPipes;
 
-    private SupportedPipesRecipeInfo(List<Item> supportedPipes) {
+    private SupportedPipesRecipeInfo(List<Holder<Item>> supportedPipes) {
         inputIngredient = ModItems.PIPE_CONNECTOR.get().getDefaultInstance();
         this.supportedPipes = supportedPipes;
     }

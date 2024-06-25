@@ -128,7 +128,7 @@ dependencies {
 //    modImplementation ("curse.maven:mekanism-${mekanism_mod_id}:4866575")
 
     // Loves mixins
-     implementation ("curse.maven:applied-energistics2-223794:5442679")
+    implementation ("curse.maven:applied-energistics2-223794:5466403")
 
 //    modImplementation ("curse.maven:cofh-core-69162:4970669")
 //    modImplementation ("curse.maven:thermal-dynamics-227443:4970699")
