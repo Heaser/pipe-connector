@@ -17,7 +17,7 @@ tasks.named('wrapper', Wrapper).configure {
     distributionType = Wrapper.DistributionType.BIN
 }
 
-version = mod_version
+version = "neoforge-${mod_version}"
 group = mod_group_id
 
 base {
@@ -50,7 +50,7 @@ neoForge {
 
         server {
             server()
-            programArgument '--nogui'
+//            programArgument '--nogui'
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
         }
 
@@ -125,10 +125,10 @@ dependencies {
 
       implementation ("curse.maven:pipez-443900:5465392")
 //    modImplementation ("curse.maven:refined-storage-${refinedstorage_mod_id}:4844585")
-//    modImplementation ("curse.maven:mekanism-${mekanism_mod_id}:4866575")
+    implementation "curse.maven:mekanism-268560:5478403"
 
     // Loves mixins
-    implementation ("curse.maven:applied-energistics2-223794:5466403")
+    implementation "curse.maven:applied-energistics-2-223794:5480501"
 
 //    modImplementation ("curse.maven:cofh-core-69162:4970669")
 //    modImplementation ("curse.maven:thermal-dynamics-227443:4970699")
@@ -136,7 +136,7 @@ dependencies {
 
     compileOnly ("curse.maven:pretty-pipes-376737:4769646")
     compileOnly ("curse.maven:pretty-pipes-fluids-479142:4729229")
-    implementation ("curse.maven:jei-238222:5447367")
+    implementation ("curse.maven:jei-238222:5466551")
 //    modImplementation ("curse.maven:mcjtylib-233105:4747680")
 }
 
