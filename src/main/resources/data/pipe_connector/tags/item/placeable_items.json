@@ -157,13 +157,14 @@
       "required": false
     },
     {
-    "id": "toms_storage:ts.inventory_cable",
-    "required": false
+      "id": "toms_storage:ts.inventory_cable",
+      "required": false
     },
     {
       "id": "toms_storage:ts.inventory_cable_framed",
       "required": false
-    },    {
+    },
+    {
       "id": "ae2:white_smart_cable",
       "required": false
     },
@@ -513,6 +514,34 @@
     },
     {
       "id": "quark:encased_pipe",
+      "required": false
+    },
+    {
+      "id": "moderndynamics:item_pipe",
+      "required": false
+    },
+    {
+      "id": "moderndynamics:fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "moderndynamics:lv_cable",
+      "required": false
+    },
+    {
+      "id": "moderndynamics:mv_cable",
+      "required": false
+    },
+    {
+      "id": "moderndynamics:hv_cable",
+      "required": false
+    },
+    {
+      "id": "moderndynamics:ev_cable",
+      "required": false
+    },
+    {
+      "id": "moderndynamics:superconductor_cable",
       "required": false
     }
   ]
