@@ -23,7 +23,7 @@ public record BuildPipesPacket() implements ServerboundPacket {
                     BuildPipesPacket::write,
                     BuildPipesPacket::decode);
 
-    public static final CustomPacketPayload.Type<BuildPipesPacket> TYPE = CustomPipeconnectorPayload.createType("build_pipes");
+    public static final CustomPacketPayload.Type<BuildPipesPacket> TYPE = CustomPipeConnectorPayload.createType("build_pipes");
 
     @Override
     public CustomPacketPayload.Type<BuildPipesPacket> type() {

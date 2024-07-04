@@ -123,13 +123,12 @@ configurations {
 
 dependencies {
 
-      implementation ("curse.maven:pipez-443900:5465392")
+    implementation ("curse.maven:pipez-443900:5465392")
     implementation "curse.maven:modern-dynamics-552758:5465437"
-//    modImplementation ("curse.maven:refined-storage-${refinedstorage_mod_id}:4844585")
     implementation "curse.maven:mekanism-268560:5478403"
 
     // Loves mixins
-    implementation "curse.maven:applied-energistics-2-223794:5480501"
+    compileOnly("curse.maven:applied-energistics-2-223794:5480501")
 
 //    modImplementation ("curse.maven:cofh-core-69162:4970669")
 //    modImplementation ("curse.maven:thermal-dynamics-227443:4970699")

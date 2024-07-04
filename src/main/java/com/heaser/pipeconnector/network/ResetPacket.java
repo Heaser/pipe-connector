@@ -14,7 +14,7 @@ public record ResetPacket() implements ServerboundPacket {
                     ResetPacket::write,
                     ResetPacket::decode);
 
-    public static final CustomPacketPayload.Type<ResetPacket> TYPE = CustomPipeconnectorPayload.createType("reset");
+    public static final CustomPacketPayload.Type<ResetPacket> TYPE = CustomPipeConnectorPayload.createType("reset");
 
     @Override
     public CustomPacketPayload.Type<ResetPacket> type() {

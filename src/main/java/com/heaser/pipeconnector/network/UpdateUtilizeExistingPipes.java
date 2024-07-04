@@ -1,16 +1,11 @@
 package com.heaser.pipeconnector.network;
 
-import com.heaser.pipeconnector.PipeConnector;
-import com.heaser.pipeconnector.constants.ComponentDataTags;
 import com.heaser.pipeconnector.utils.GeneralUtils;
 import com.heaser.pipeconnector.utils.TagUtils;
-import net.minecraft.core.component.DataComponents;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.component.CustomData;
 
 
 public record UpdateUtilizeExistingPipes(boolean utilizeExistingPipes) implements ServerboundPacket {
@@ -20,7 +15,7 @@ public record UpdateUtilizeExistingPipes(boolean utilizeExistingPipes) implement
                     UpdateUtilizeExistingPipes::write,
                     UpdateUtilizeExistingPipes::decode);
 
-    public static final Type<UpdateUtilizeExistingPipes> TYPE = CustomPipeconnectorPayload.createType("update_utilize_existing_pipes");
+    public static final Type<UpdateUtilizeExistingPipes> TYPE = CustomPipeConnectorPayload.createType("update_utilize_existing_pipes");
     @Override
     public Type<UpdateUtilizeExistingPipes> type() {
         return TYPE;

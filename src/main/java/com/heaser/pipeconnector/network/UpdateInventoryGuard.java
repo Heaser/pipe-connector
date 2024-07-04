@@ -12,7 +12,7 @@ public record UpdateInventoryGuard(boolean inventoryGuard) implements Serverboun
                     UpdateInventoryGuard::write,
                     UpdateInventoryGuard::decode);
 
-    public static final Type<UpdateInventoryGuard> TYPE = CustomPipeconnectorPayload.createType("update_inventory_guard");
+    public static final Type<UpdateInventoryGuard> TYPE = CustomPipeConnectorPayload.createType("update_inventory_guard");
     @Override
     public Type<UpdateInventoryGuard> type() {
         return TYPE;

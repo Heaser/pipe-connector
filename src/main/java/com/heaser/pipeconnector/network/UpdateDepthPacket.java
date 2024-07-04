@@ -1,19 +1,13 @@
 package com.heaser.pipeconnector.network;
 
 
-import com.heaser.pipeconnector.PipeConnector;
-import com.heaser.pipeconnector.constants.ComponentDataTags;
 import com.heaser.pipeconnector.utils.GeneralUtils;
-import com.heaser.pipeconnector.utils.PipeConnectorUtils;
 import com.heaser.pipeconnector.utils.TagUtils;
-import net.minecraft.core.component.DataComponents;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.component.CustomData;
 
 public record UpdateDepthPacket(int depth) implements ServerboundPacket {
     public static final StreamCodec<RegistryFriendlyByteBuf, UpdateDepthPacket> STREAM_CODEC = StreamCodec
@@ -21,7 +15,7 @@ public record UpdateDepthPacket(int depth) implements ServerboundPacket {
                     UpdateDepthPacket::write,
                     UpdateDepthPacket::decode);
 
-    public static final CustomPacketPayload.Type<UpdateDepthPacket> TYPE = CustomPipeconnectorPayload.createType("update_depth");
+    public static final CustomPacketPayload.Type<UpdateDepthPacket> TYPE = CustomPipeConnectorPayload.createType("update_depth");
 
     @Override
     public CustomPacketPayload.Type<UpdateDepthPacket> type() {
