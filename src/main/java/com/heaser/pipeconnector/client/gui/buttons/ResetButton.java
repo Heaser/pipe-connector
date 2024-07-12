@@ -1,11 +1,8 @@
 package com.heaser.pipeconnector.client.gui.buttons;
 
-import com.heaser.pipeconnector.network.NetworkHandler;
 import com.heaser.pipeconnector.network.ResetPacket;
-import com.heaser.pipeconnector.utils.PipeConnectorUtils;
 import com.heaser.pipeconnector.utils.TagUtils;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -27,8 +24,7 @@ public class ResetButton extends BaseButton {
 
     @Override
     public boolean isActive(ItemStack itemStack) {
-        BlockPos blockPos = TagUtils.getStartPosition(itemStack);
-        return blockPos != null;
+        return !TagUtils.getNodesFromStack(itemStack).isEmpty();
     }
 
     @Override

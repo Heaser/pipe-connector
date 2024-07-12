@@ -9,6 +9,11 @@ public class NodeParameter {
     public BlockPos position;
     public Direction direction;
 
+    public NodeParameter(BlockPos position, Direction direction) {
+        this.position = position;
+        this.direction = direction;
+    }
+
     public NodeParameter(CompoundTag nodeTag) {
         int x = nodeTag.getInt(ComponentDataTags.kPipeConnectorNodePositionX);
         int y = nodeTag.getInt(ComponentDataTags.kPipeConnectorNodePositionY);

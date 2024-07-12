@@ -2,6 +2,7 @@ package com.heaser.pipeconnector.network;
 
 import com.heaser.pipeconnector.constants.BridgeType;
 import com.heaser.pipeconnector.utils.GeneralUtils;
+import com.heaser.pipeconnector.utils.NodeParameter;
 import com.heaser.pipeconnector.utils.TagUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -14,6 +15,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
+
+import java.util.List;
 
 import static com.heaser.pipeconnector.utils.PipeConnectorUtils.connectBlocks;
 
@@ -46,16 +49,20 @@ public record BuildPipesPacket() implements ServerboundPacket {
         }
         ItemStack interactedItem = sender.getMainHandItem();
         int depth = TagUtils.getDepthFromStack(interactedItem);
-        BlockPos startPosition = TagUtils.getStartPosition(interactedItem);
-        BlockPos endPosition = TagUtils.getEndPosition(interactedItem);
-        Direction startDirection = TagUtils.getStartDirection(interactedItem);
-        Direction endDirection = TagUtils.getEndDirection(interactedItem);
-        BridgeType bridgeType = TagUtils.getBridgeType(interactedItem);
-        boolean utilizeExistingPipes = TagUtils.getUtilizeExistingPipes(interactedItem);
+        List<NodeParameter> nodes = TagUtils.getNodesFromStack(interactedItem);
 
-        if (startPosition == null || endPosition == null) {
+        if (nodes.size() < 2) {
             return;
         }
+
+        NodeParameter startNode = nodes.getFirst();
+        NodeParameter endNode = nodes.getLast();
+        BlockPos startPosition = startNode.position;
+        BlockPos endPosition = endNode.position;
+        Direction startDirection = startNode.direction;
+        Direction endDirection = endNode.direction;
+        BridgeType bridgeType = TagUtils.getBridgeType(interactedItem);
+        boolean utilizeExistingPipes = TagUtils.getUtilizeExistingPipes(interactedItem);
 
         BlockHitResult virtualHitResult = new BlockHitResult(Vec3.ZERO, endDirection, endPosition, false);
 

@@ -13,11 +13,11 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.HashSet;
+import java.util.List;
 
 import static com.heaser.pipeconnector.utils.GeneralUtils.*;
 
@@ -42,22 +42,25 @@ public class PreviewDrawer {
     }
 
     private HashSet<PreviewInfo> getNewPreview(ItemStack pipeConnector, Level currentLevel, Player player) {
-        BlockPos startPos = TagUtils.getStartPosition(pipeConnector);
-        BlockPos endPos = TagUtils.getEndPosition(pipeConnector);
-        if (startPos == null || endPos == null) {
+        List<NodeParameter> nodes = TagUtils.getNodesFromStack(pipeConnector);
+
+        // Don't show preview if at least two positions have not been set
+        if (nodes.size() < 2) {
             return new HashSet<>();
         }
+        NodeParameter startNode = nodes.getFirst();
+        NodeParameter endNode = nodes.getLast();
         int depth = TagUtils.getDepthFromStack(pipeConnector);
         boolean utilizeExitingPipes = TagUtils.getUtilizeExistingPipes(pipeConnector);
-        Direction startDirection = TagUtils.getStartDirection(pipeConnector);
-        Direction endDirection = TagUtils.getEndDirection(pipeConnector);
-        BlockPos relativeStartPos = startPos;
-        BlockPos relativeEndPos = endPos;
+        Direction startDirection = startNode.direction;
+        Direction endDirection = endNode.direction;
+        BlockPos relativeStartPos = startNode.position;
+        BlockPos relativeEndPos = endNode.position;
         if (startDirection != null) {
-            relativeStartPos = startPos.relative(startDirection);
+            relativeStartPos = startNode.position.relative(startDirection);
         }
         if (endDirection != null) {
-            relativeEndPos = endPos.relative(endDirection);
+            relativeEndPos = endNode.position.relative(endDirection);
         }
         return PipeConnectorUtils.getBlockPosSet(
                 PipeConnectorUtils.getBlockPosMap(
@@ -83,7 +86,10 @@ public class PreviewDrawer {
                 LevelRenderer.renderLineBox(pose, builder, aabb, 0.5F, 0.7F, 0.9F, 1F);
             } else if(previewInfo.isRelativeEndPos(pipeConnector)) {
                 LevelRenderer.renderLineBox(pose, builder, aabb, 1F, 0.5F, 0.3F, 1F);
-            } else if (isNotBreakable(player.level(), previewInfo.pos) || hasInventoryCapabilities(player.level(), previewInfo.pos)) {
+            } else if(previewInfo.isNode(pipeConnector)) {
+                LevelRenderer.renderLineBox(pose, builder, aabb, 1F, 1F, 1F, 1F);
+            }
+            else if (isNotBreakable(player.level(), previewInfo.pos) || hasInventoryCapabilities(player.level(), previewInfo.pos)) {
                 LevelRenderer.renderLineBox(pose, builder, aabb, 1F, 0, 0, 1F);
             } else if (isVoidableBlock(player.level(), previewInfo.pos)) {
                 LevelRenderer.renderLineBox(pose, builder, aabb, 1F, 1F, 0, 1F);

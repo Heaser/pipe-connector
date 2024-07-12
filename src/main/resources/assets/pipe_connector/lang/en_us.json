@@ -20,8 +20,8 @@
   "item.pipe_connector.gui.button.tooltip.disabledInventoryInPath": "Cannot break inventory blocks, %s is in path.",
   "item.pipe_connector.gui.button.ResetPipePos": "Reset Positions",
   "item.pipe_connector.gui.button.PlacePipes": "Place Pipes",
-  "item.pipe_connector.gui.button.tooltip.disabledResetPipePos": "You haven't chosen a any positions yet",
-  "item.pipe_connector.gui.button.tooltip.disabledPlacePipes": "Please choose 2 positions first",
+  "item.pipe_connector.gui.button.tooltip.disabledResetPipePos": "You haven't chosen at least two positions yet",
+  "item.pipe_connector.gui.button.tooltip.disabledPlacePipes": "Please choose at least two positions first",
   "item.pipe_connector.gui.button.toolTip.maxAllowedPipesReached": "Unable to place more than %s pipes at once",
   "item.pipe_connector.gui.label.depth": "Depth: %s",
   "item.pipe_connector.gui.label.requiredPipes": "Required Pipes: %s",
@@ -48,8 +48,8 @@
   "item.pipe_connector.gui.button.tooltip.utilizeExistingPipesInfoPartTwo": "pipes to connect the two positions",
   "item.pipe_connector.gui.button.tooltip.InventoryGuard": "This will prevent the destruction of blocks with inventories",
   "item.pipe_connector.jei.supportedPipesInfo": "Supported Pipes",
-  "item.pipe_connector.jei.description": "The Pipe Connector allows you to choose two positions by Shift+Right-Clicking, once both positions are chosen, a preview of the path will be shown.\n You can change the depth of the pipe by Shift+Scrolling.\n Once you are happy with the path, you can Shift+Right-Click to open the GUI and click on 'Place Pipes' to place the pipes.\n 'Reset Positions' to reset the positions if you are unhappy with the first position.\n A list of supported pipes that can be placed can be found in JEI."
-
+  "item.pipe_connector.jei.description": "The Pipe Connector allows you to choose two positions by Shift+Right-Clicking, once both positions are chosen, a preview of the path will be shown.\n You can change the depth of the pipe by Shift+Scrolling.\n Once you are happy with the path, you can Shift+Right-Click to open the GUI and click on 'Place Pipes' to place the pipes.\n 'Reset Positions' to reset the positions if you are unhappy with the first position.\n A list of supported pipes that can be placed can be found in JEI.",
+  "item.pipe_connector.message.maxNodesReached": "Reached the maximum number of nodes, Shift+Right-Click on an existing node to remove it"
 
 
 

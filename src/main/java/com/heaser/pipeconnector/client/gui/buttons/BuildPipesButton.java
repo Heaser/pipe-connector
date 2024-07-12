@@ -4,21 +4,16 @@ import com.heaser.pipeconnector.client.ClientSetup;
 import com.heaser.pipeconnector.compatibility.CompatibilityBlockGetter;
 import com.heaser.pipeconnector.config.PipeConnectorConfig;
 import com.heaser.pipeconnector.network.BuildPipesPacket;
-import com.heaser.pipeconnector.network.NetworkHandler;
-import com.heaser.pipeconnector.utils.GeneralUtils;
-import com.heaser.pipeconnector.utils.PipeConnectorUtils;
-import com.heaser.pipeconnector.utils.PreviewInfo;
-import com.heaser.pipeconnector.utils.TagUtils;
+import com.heaser.pipeconnector.utils.*;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.network.PacketDistributor;
 
+import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.heaser.pipeconnector.utils.GeneralUtils.*;
 
@@ -52,7 +47,7 @@ public class BuildPipesButton extends BaseButton {
 
     private Component getErrorMessage(ItemStack itemStack) {
         String blockName;
-        BlockPos blockPos = TagUtils.getEndPosition(itemStack);
+        List<NodeParameter> nodes = TagUtils.getNodesFromStack(itemStack);
         int existingPipes = PipeConnectorUtils.getNumberOfPipesInInventory(player);
         int missingPipes = PipeConnectorUtils.getMissingPipesInInventory(player, existingPipes, player.level(), ClientSetup.PREVIEW_DRAWER.previewMap,
                 CompatibilityBlockGetter.getInstance().getBlock(player.getOffhandItem()));
@@ -60,7 +55,7 @@ public class BuildPipesButton extends BaseButton {
         Optional<BlockPos> inventoryBlockPos = pathContainsInventory();
         Optional<BlockPos> unbreakableBlockPos = pathContainsUnbreakableBlocks();
 
-        if (blockPos == null) {
+        if (nodes.size() < 2) {
             return Component.translatable("item.pipe_connector.gui.button.tooltip.disabledPlacePipes");
         } else if (!GeneralUtils.isPlaceableBlock(player)) {
             return Component.translatable("item.pipe_connector.gui.button.tooltip.disabledButtonHoldValidItem");

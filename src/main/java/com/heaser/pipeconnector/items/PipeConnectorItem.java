@@ -7,10 +7,12 @@ import com.heaser.pipeconnector.client.proxy.items.PipeConnectorItemProxy;
 import com.heaser.pipeconnector.compatibility.CompatibilityDirectionGetter;
 import com.heaser.pipeconnector.particles.ParticleHelper;
 import com.heaser.pipeconnector.utils.GeneralUtils;
+import com.heaser.pipeconnector.utils.NodeParameter;
 import com.heaser.pipeconnector.utils.PipeConnectorUtils;
 import com.heaser.pipeconnector.utils.TagUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.resources.sounds.Sound;
+import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
@@ -134,27 +136,29 @@ public class PipeConnectorItem extends Item {
                         .withStyle(ChatFormatting.BOLD, ChatFormatting.GREEN), true);
                 return InteractionResult.FAIL;
             }
+            List<NodeParameter> currentNodes = TagUtils.getNodesFromStack(interactedItem);
+            NodeParameter newNode = new NodeParameter(clickedPosition, clickedFace);
+            boolean hasReachedMaxNodes = GeneralUtils.MaxAllowedNodesReached(currentNodes);
 
-            BlockPos startPos = TagUtils.getStartPosition(interactedItem);
-            Direction startDirection = TagUtils.getStartDirection(interactedItem);
+            if(hasReachedMaxNodes) {
+                usingPlayer.displayClientMessage(Component.translatable("item.pipe_connector.message.maxNodesReached")
+                        .withStyle(ChatFormatting.BOLD, ChatFormatting.RED), true);
 
-            if(startPos == null) {
-                TagUtils.setStartPositionAndDirection(interactedItem, clickedFace, clickedPosition);
+                return InteractionResult.FAIL;
+            }
+            else if (currentNodes.contains(newNode)) {
+                currentNodes.remove(newNode);
+                TagUtils.setNodesToStack(interactedItem, currentNodes);
+            }
+            else {
+                if (!level.dimensionTypeRegistration().getRegisteredName().equals(TagUtils.getDimension(interactedItem))) {
+                    currentNodes.clear();
+                }
+                currentNodes.add(newNode);
                 TagUtils.setDimension(interactedItem, level.dimensionTypeRegistration().getRegisteredName());
                 ParticleHelper.serverSpawnMarkerParticle((ServerLevel) level, relativePosition);
-            } else {
-                if (!level.dimensionTypeRegistration().getRegisteredName().equals(TagUtils.getDimension(interactedItem))) {
-                    TagUtils.resetPositionAndDirectionTags(interactedItem, usingPlayer, false);
-                    return InteractionResult.FAIL;
-                }
-                else if (clickedPosition.equals(startPos) && clickedFace == startDirection) {
-                    TagUtils.resetPositionAndDirectionTags(interactedItem, usingPlayer, true);
-                    return InteractionResult.FAIL;
-                }
-                TagUtils.setEndPositionAndDirection(interactedItem, clickedFace, clickedPosition);
-                ParticleHelper.serverSpawnMarkerParticle((ServerLevel) level, relativePosition);
+                TagUtils.setNodesToStack(interactedItem, currentNodes);
             }
-
         }
         return InteractionResult.SUCCESS;
     }
