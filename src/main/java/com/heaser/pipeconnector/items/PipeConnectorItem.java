@@ -159,17 +159,17 @@ public class PipeConnectorItem extends Item {
     // -----------------------------------------------------------------------------------------------------------------
 
     @Nullable
-    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> components, TooltipFlag tooltipFlag) {
+    public void appendHoverText(ItemStack pStack, TooltipContext pContext, List<Component> pTooltipComponents, TooltipFlag pTooltipFlag) {
         if (clientProxy != null) {
             if (clientProxy.hasShiftDown()) {
-                components.add(Component.translatable("item.pipe_connector.tooltip.usageExplanation").withStyle(ChatFormatting.DARK_AQUA));
-                components.add(Component.translatable("item.pipe_connector.tooltip.openGui").withStyle(ChatFormatting.BLUE));
-                components.add(Component.translatable("item.pipe_connector.tooltip.changeDepthExplanation").withStyle(ChatFormatting.LIGHT_PURPLE));
+                pTooltipComponents.add(Component.translatable("item.pipe_connector.tooltip.usageExplanation").withStyle(ChatFormatting.DARK_AQUA));
+                pTooltipComponents.add(Component.translatable("item.pipe_connector.tooltip.openGui").withStyle(ChatFormatting.BLUE));
+                pTooltipComponents.add(Component.translatable("item.pipe_connector.tooltip.changeDepthExplanation").withStyle(ChatFormatting.LIGHT_PURPLE));
             } else {
-                components.add(Component.translatable("item.pipe_connector.tooltip.shiftForMoreInfo").withStyle(ChatFormatting.GOLD));
+                pTooltipComponents.add(Component.translatable("item.pipe_connector.tooltip.shiftForMoreInfo").withStyle(ChatFormatting.GOLD));
             }
         }
-        super.appendHoverText(stack, TooltipContext.of(level), components, tooltipFlag);
+        super.appendHoverText(pStack, pContext, pTooltipComponents, pTooltipFlag);
     }
 
     // -----------------------------------------------------------------------------------------------------------------
