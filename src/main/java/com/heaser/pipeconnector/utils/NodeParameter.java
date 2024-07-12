@@ -27,4 +27,8 @@ public class NodeParameter {
         boolean directionEquals = this.direction.equals(other.direction);
         return positionEquals && directionEquals;
     }
+
+    public BlockPos getRelativePosition() {
+        return position.relative(direction);
+    }
 }

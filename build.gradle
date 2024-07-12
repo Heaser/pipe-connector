@@ -125,7 +125,7 @@ dependencies {
 
     implementation ("curse.maven:pipez-443900:5465392")
     implementation "curse.maven:modern-dynamics-552758:5465437"
-//    implementation "curse.maven:mekanism-268560:5478403"
+    implementation "curse.maven:mekanism-268560:5523554"
 
     // Loves mixins
     compileOnly("curse.maven:applied-energistics-2-223794:5480501")
@@ -136,7 +136,7 @@ dependencies {
 
     compileOnly ("curse.maven:pretty-pipes-376737:4769646")
     compileOnly ("curse.maven:pretty-pipes-fluids-479142:4729229")
-    implementation ("curse.maven:jei-238222:5466551")
+    implementation ("curse.maven:jei-238222:5525108")
 //    modImplementation ("curse.maven:mcjtylib-233105:4747680")
 }
 

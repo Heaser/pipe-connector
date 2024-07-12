@@ -35,11 +35,11 @@ import static com.heaser.pipeconnector.utils.GeneralUtils.*;
 public class PipeConnectorUtils {
 
 
-    public static boolean connectPathWithSegments(Player player, BlockPos start, BlockPos end, int depth, UseOnContext context, BridgeType bridgeType, boolean utilizeExistingPipes) {
+    public static boolean connectPathWithSegments(Player player, List<NodeParameter> nodes, int depth, UseOnContext context, BridgeType bridgeType, boolean utilizeExistingPipes) {
         Level level = player.level();
         ItemStack itemToPlace = player.getOffhandItem();
         Block blockToPlace = CompatibilityBlockGetter.getInstance().getBlock(itemToPlace);
-        Map<BlockPos, BlockState> blockPosMap = getBlockPosMap(start, end, depth, level, bridgeType, blockToPlace, itemToPlace, utilizeExistingPipes, player);
+        Map<BlockPos, BlockState> blockPosMap = getBlockPosMap(nodes, depth, level, bridgeType, blockToPlace, itemToPlace, utilizeExistingPipes, player);
         PipeConnector.LOGGER.debug(blockPosMap.toString());
 
 
@@ -125,46 +125,90 @@ public class PipeConnectorUtils {
         return previewSet;
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
-    // This Method returns a Map of BlockPos & And BlockStates which will eventually be used to bridge between the
-    // two locations clicked by the Player.
-    // -----------------------------------------------------------------------------------------------------------------
-
-    public static Map<BlockPos, BlockState> getBlockPosMap(BlockPos start, BlockPos end, int depth, Level level, BridgeType bridgeType, Block placedBlock, ItemStack placedItemStack, boolean utilizeExistingPipes, Player player) {
-        Map<BlockPos, BlockState> blockHashMap = new HashMap<>();
-
-        int deltaY = Math.abs(start.getY() - end.getY());
+  public static Map<BlockPos, BlockState> useRecursiveManhatten(Map<BlockPos, BlockState> blockHashMap, List<NodeParameter> nodes, Level level, int depth) {
+        NodeParameter startNode = nodes.getFirst();
+        NodeParameter endNode = nodes.getLast();
+        BlockPos startPos = startNode.getRelativePosition();
+        BlockPos endPos = endNode.getRelativePosition();
+        int deltaY = Math.abs(startPos.getY() - endPos.getY());
         int startDepth = depth, endDepth = depth;
 
-        if (start.getY() > end.getY()) {
+        if (startPos.getY() > endPos.getY()) {
+            endDepth -= deltaY;
+        } else {
+           startDepth -= deltaY;
+        }
+        startPos = moveAndStoreStates(startPos, startDepth, 0, -1, 0, level, blockHashMap);
+        endPos = moveAndStoreStates(endPos, endDepth, 0, -1, 0, level, blockHashMap);
+
+        List<BlockPos> blockPosPath = ManhattanAlgorithm.findPathManhattan(startPos, endPos, level);
+
+        for (BlockPos pos : blockPosPath) {
+            blockHashMap.putIfAbsent(pos, level.getBlockState(pos));
+        }
+
+        if (nodes.size() <=2) {
+            return blockHashMap;
+        } else {
+            List<NodeParameter> subNodes = nodes.subList(1, nodes.size());
+            return useRecursiveManhatten(blockHashMap, subNodes, level, depth);
+        }
+    }
+
+    public static Map<BlockPos, BlockState> useRecursiveAStar(Map<BlockPos, BlockState> blockHashMap, List<NodeParameter> nodes, Level level, int depth, Player player, PathfindingAStarAlgorithm.HeuristicChecker heuristicChecker, PathfindingAStarAlgorithm.DepthHeuristicChecker depthAlgorithm) {
+        NodeParameter startNode = nodes.getFirst();
+        NodeParameter endNode = nodes.getLast();
+        BlockPos startPos = startNode.getRelativePosition();
+        BlockPos endPos = endNode.getRelativePosition();
+        int deltaY = Math.abs(startPos.getY() - endPos.getY());
+        int startDepth = depth, endDepth = depth;
+
+        if (startPos.getY() > endPos.getY()) {
             endDepth -= deltaY;
         } else {
             startDepth -= deltaY;
         }
-        if (bridgeType == BridgeType.DEFAULT) {
-            start = moveAndStoreStates(start, startDepth, 0, -1, 0, level, blockHashMap);
-            end = moveAndStoreStates(end, endDepth, 0, -1, 0, level, blockHashMap);
+        PathfindingResult result = moveAndStoreStates(startPos, startDepth, level, blockHashMap, player, depthAlgorithm);
+        blockHashMap = result.blockPosMap;
+        startPos = result.finalPosition;
+        result = moveAndStoreStates(endPos, endDepth, level, blockHashMap, player, depthAlgorithm);
+        blockHashMap = result.blockPosMap;
+        endPos = result.finalPosition;
 
-        } else {
-            PathfindingResult result = moveAndStoreStates(start, startDepth, level, blockHashMap, bridgeType, placedBlock, placedItemStack, utilizeExistingPipes, player);
-            blockHashMap = result.blockPosMap;
-            start = result.finalPosition;
-            result = moveAndStoreStates(end, endDepth, level, blockHashMap, bridgeType, placedBlock, placedItemStack, utilizeExistingPipes, player);
-            blockHashMap = result.blockPosMap;
-            end = result.finalPosition;
-        }
-        List<BlockPos> blockPosPath = null;
-        switch (bridgeType) {
-            case A_STAR -> blockPosPath = PathfindingAStarAlgorithm.findPathAStar(start, end, -1, level, player,
-                    new PathfindingAStarAlgorithm.PositionHeuristicChecker(utilizeExistingPipes, placedBlock, placedItemStack, level));
-            case DEFAULT -> blockPosPath = ManhattanAlgorithm.findPathManhattan(start, end, level);
-//          case STEP -> test = PathfindingAStarAlgorithm.findPathAStar(start, end, level);
-        }
+        List<BlockPos> blockPosPath = PathfindingAStarAlgorithm.findPathAStar(startPos, endPos, -1, level, player, heuristicChecker);
+
         if (blockPosPath == null) {
             return blockHashMap;
         }
+
         for (BlockPos pos : blockPosPath) {
             blockHashMap.putIfAbsent(pos, level.getBlockState(pos));
+        }
+
+        if (nodes.size() <=2) {
+            return blockHashMap;
+        } else {
+            heuristicChecker.addDraftPlacements(blockPosPath);
+            depthAlgorithm.addDraftPlacements(blockPosPath);
+            List<NodeParameter> subNodes = nodes.subList(1, nodes.size());
+            return useRecursiveAStar(blockHashMap, subNodes, level, depth, player, heuristicChecker, depthAlgorithm);
+        }
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // This Method returns a Map of BlockPos & And BlockStates which will eventually be used to bridge between the
+    // two locations clicked by the Player.
+    // -----------------------------------------------------------------------------------------------------------------
+    public static Map<BlockPos, BlockState> getBlockPosMap(List<NodeParameter> nodes, int depth, Level level, BridgeType bridgeType, Block placedBlock, ItemStack placedItemStack, boolean utilizeExistingPipes, Player player) {
+        Map<BlockPos, BlockState> blockHashMap = new HashMap<>();
+        PathfindingAStarAlgorithm.PositionHeuristicChecker PositionAlgorithm = new PathfindingAStarAlgorithm.PositionHeuristicChecker(utilizeExistingPipes, placedBlock, placedItemStack, level);
+        PathfindingAStarAlgorithm.DepthHeuristicChecker DepthAlgorithm = new PathfindingAStarAlgorithm.DepthHeuristicChecker(utilizeExistingPipes, placedBlock, placedItemStack, level);
+
+        List<BlockPos> blockPosPath = null;
+        switch (bridgeType) {
+            case A_STAR -> useRecursiveAStar(blockHashMap, nodes, level, depth, player, PositionAlgorithm, DepthAlgorithm);
+            case DEFAULT -> useRecursiveManhatten(blockHashMap, nodes, level, depth);
+//          case STEP -> test = PathfindingAStarAlgorithm.findPathAStar(start, end, level);
         }
 
         return blockHashMap;
@@ -181,14 +225,10 @@ public class PipeConnectorUtils {
         return currentPos;
     }
 
-    private static PathfindingResult moveAndStoreStates(BlockPos start, int steps, Level level, Map<BlockPos, BlockState> map, BridgeType bridgeType, Block placedBlock, ItemStack placedItemStack, boolean utilizeExistingPipes, Player player) {
-        List<BlockPos> blockPosPath = null;
+    private static PathfindingResult moveAndStoreStates(BlockPos start, int steps, Level level, Map<BlockPos, BlockState> map, Player player, PathfindingAStarAlgorithm.DepthHeuristicChecker algorithm) {
         BlockPos end = start.below(steps);
-        switch (bridgeType) {
-            case A_STAR -> blockPosPath = PathfindingAStarAlgorithm.findPathAStar(start, null, end.getY(), level, player,
-                    new PathfindingAStarAlgorithm.DepthHeuristicChecker(utilizeExistingPipes, placedBlock, placedItemStack, level));
-//          case STEP -> test = PathfindingAStarAlgorithm.findPathAStar(start, end, level);
-        }
+        List<BlockPos> blockPosPath = PathfindingAStarAlgorithm.findPathAStar(start, null, end.getY(), level, player, algorithm);;
+
         if (blockPosPath == null) {
             return new PathfindingResult(map, start, start.below(steps));
         }
@@ -287,25 +327,13 @@ public class PipeConnectorUtils {
     // -----------------------------------------------------------------------------------------------------------------
 
     public static boolean connectBlocks(Player player,
-                                        BlockPos startPos,
-                                        Direction startDirection,
-                                        BlockPos endPos,
-                                        Direction endDirection,
+                                        List<NodeParameter> nodes,
                                         int depth,
                                         UseOnContext context,
                                         BridgeType bridgeType,
                                         boolean utilizeExistingPipes) {
-        BlockPos relativeStartPos = startPos;
-        BlockPos relativeEndPos = endPos;
-        if (startDirection != null) {
-            relativeStartPos = startPos.relative(startDirection);
-        }
-        if (endDirection != null) {
-            relativeEndPos = endPos.relative(endDirection);
-        }
         return PipeConnectorUtils.connectPathWithSegments(player,
-                relativeStartPos,
-                relativeEndPos,
+                nodes,
                 depth,
                 context,
                 bridgeType,

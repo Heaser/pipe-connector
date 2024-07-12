@@ -40,6 +40,7 @@ import net.neoforged.fml.loading.FMLLoader;
 
 
 import java.util.List;
+import java.util.stream.IntStream;
 
 public class PipeConnectorItem extends Item {
     private IPipeConnectorItemProxy itemProxy = null;
@@ -146,9 +147,9 @@ public class PipeConnectorItem extends Item {
 
                 return InteractionResult.FAIL;
             }
-            else if (currentNodes.contains(newNode)) {
-                currentNodes.remove(newNode);
-                TagUtils.setNodesToStack(interactedItem, currentNodes);
+            else if (currentNodes.stream().anyMatch((NodeParameter node) -> node.equals(newNode))) {
+                GeneralUtils.handleNodeRemoval(currentNodes, newNode, interactedItem);
+                return InteractionResult.SUCCESS;
             }
             else {
                 if (!level.dimensionTypeRegistration().getRegisteredName().equals(TagUtils.getDimension(interactedItem))) {

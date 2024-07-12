@@ -48,24 +48,11 @@ public class PreviewDrawer {
         if (nodes.size() < 2) {
             return new HashSet<>();
         }
-        NodeParameter startNode = nodes.getFirst();
-        NodeParameter endNode = nodes.getLast();
         int depth = TagUtils.getDepthFromStack(pipeConnector);
         boolean utilizeExitingPipes = TagUtils.getUtilizeExistingPipes(pipeConnector);
-        Direction startDirection = startNode.direction;
-        Direction endDirection = endNode.direction;
-        BlockPos relativeStartPos = startNode.position;
-        BlockPos relativeEndPos = endNode.position;
-        if (startDirection != null) {
-            relativeStartPos = startNode.position.relative(startDirection);
-        }
-        if (endDirection != null) {
-            relativeEndPos = endNode.position.relative(endDirection);
-        }
         return PipeConnectorUtils.getBlockPosSet(
                 PipeConnectorUtils.getBlockPosMap(
-                        relativeStartPos,
-                        relativeEndPos,
+                        nodes,
                         depth,
                         currentLevel,
                         TagUtils.getBridgeType(pipeConnector),

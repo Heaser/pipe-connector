@@ -28,20 +28,21 @@ public record BuildPipesPacket() implements ServerboundPacket {
 
     public static final CustomPacketPayload.Type<BuildPipesPacket> TYPE = CustomPipeConnectorPayload.createType("build_pipes");
 
+    public static BuildPipesPacket decode(RegistryFriendlyByteBuf buf) {
+        return new BuildPipesPacket();
+    }
+
     @Override
     public CustomPacketPayload.Type<BuildPipesPacket> type() {
         return TYPE;
     }
 
-    public static BuildPipesPacket decode(RegistryFriendlyByteBuf buf) {
-        return new BuildPipesPacket();
-    }
-
     public void write(RegistryFriendlyByteBuf buf) {
 
     }
+
     public void handleOnServer(ServerPlayer sender) {
-        if(sender == null)
+        if (sender == null)
             return;
 
         if (!GeneralUtils.isHoldingPipeConnector(sender)) {
@@ -55,11 +56,8 @@ public record BuildPipesPacket() implements ServerboundPacket {
             return;
         }
 
-        NodeParameter startNode = nodes.getFirst();
         NodeParameter endNode = nodes.getLast();
-        BlockPos startPosition = startNode.position;
         BlockPos endPosition = endNode.position;
-        Direction startDirection = startNode.direction;
         Direction endDirection = endNode.direction;
         BridgeType bridgeType = TagUtils.getBridgeType(interactedItem);
         boolean utilizeExistingPipes = TagUtils.getUtilizeExistingPipes(interactedItem);
@@ -67,10 +65,7 @@ public record BuildPipesPacket() implements ServerboundPacket {
         BlockHitResult virtualHitResult = new BlockHitResult(Vec3.ZERO, endDirection, endPosition, false);
 
         boolean wasSuccessful = connectBlocks(sender,
-                startPosition,
-                startDirection,
-                endPosition,
-                endDirection,
+                nodes,
                 depth,
                 new UseOnContext(sender, InteractionHand.MAIN_HAND, virtualHitResult),
                 bridgeType,

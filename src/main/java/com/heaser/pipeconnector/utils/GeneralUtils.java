@@ -1,30 +1,21 @@
 package com.heaser.pipeconnector.utils;
 
-import com.heaser.pipeconnector.PipeConnector;
 import com.heaser.pipeconnector.config.PipeConnectorConfig;
 import com.heaser.pipeconnector.constants.TagKeys;
 import com.heaser.pipeconnector.items.PipeConnectorItem;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.capabilities.BlockCapability;
 import net.neoforged.neoforge.items.IItemHandler;
-import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
-import java.util.function.Predicate;
 
 import static net.neoforged.neoforge.capabilities.Capabilities.ItemHandler;
 
-public class GeneralUtils
-{
+public class GeneralUtils {
     public static boolean isServerSide(Level level) {
         return !level.isClientSide();
     }
@@ -78,7 +69,7 @@ public class GeneralUtils
         if (level.getBlockEntity(pos) != null) {
             // TODO: double check this works with testing the inventory guard feature
             IItemHandler capabilities = level.getCapability(ItemHandler.BLOCK, pos, null);
-            if(capabilities != null) {
+            if (capabilities != null) {
                 int slotNum = capabilities.getSlots();
                 return slotNum != 0;
             }
@@ -95,11 +86,22 @@ public class GeneralUtils
 
     // -----------------------------------------------------------------------------------------------------------------
 
-    public static boolean MaxAllowedNodesReached(List nodes) {
+    public static boolean MaxAllowedNodesReached(List<NodeParameter> nodes) {
         return nodes.size() >= PipeConnectorConfig.MAX_ALLOWED_NODES.get();
     }
 
     // -----------------------------------------------------------------------------------------------------------------
+
+    public static void handleNodeRemoval(List<NodeParameter> nodes, NodeParameter nodeToRemove, ItemStack stack) {
+        for (int index = 0; index < nodes.size(); index++) {
+            NodeParameter currentNode = nodes.get(index);
+            if (currentNode.equals(nodeToRemove)) {
+                nodes.remove(currentNode);
+                break;
+            }
+        }
+        TagUtils.setNodesToStack(stack, nodes);
+    }
 }
 
 

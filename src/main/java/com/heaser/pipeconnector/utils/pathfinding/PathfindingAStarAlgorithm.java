@@ -109,6 +109,7 @@ PathfindingAStarAlgorithm {
     public interface HeuristicChecker {
         int heuristic(BlockPos current, BlockPos end, int endY);
         boolean isGoal(BlockPos current, BlockPos end, int endY);
+        void addDraftPlacements(List<BlockPos> draftPlacements);
     }
 
     public static class PositionHeuristicChecker implements HeuristicChecker {
@@ -116,7 +117,7 @@ PathfindingAStarAlgorithm {
         private final Block placedBlock;
         private final ItemStack placedItemStack;
         private final Level level;
-
+        private List<BlockPos> draftPlacements = new ArrayList<>();
 
         public PositionHeuristicChecker(boolean useExistingPipes, Block placedBlock, ItemStack placedItemStack, Level level) {
             this.useExistingPipes = useExistingPipes;
@@ -125,12 +126,16 @@ PathfindingAStarAlgorithm {
             this.level = level;
         }
 
+        public void addDraftPlacements(List<BlockPos> draftPlacements) {
+            this.draftPlacements.addAll(draftPlacements);
+        }
+
         public int heuristic(BlockPos current, BlockPos end, int endY) {
             int cost = Math.abs(current.getX() - end.getX()) + Math.abs(current.getZ() - end.getZ()) + Math.abs(current.getY() - end.getY());
-            if (useExistingPipes) {
-                if (CompatibilityBlockEqualsChecker.getInstance().isBlockStateSpecificBlock(current, placedBlock, placedItemStack, level)) {
-                    cost = (int)((double)cost * 0.3);
-                }
+            boolean isExistingPipe = useExistingPipes && CompatibilityBlockEqualsChecker.getInstance().isBlockStateSpecificBlock(current, placedBlock, placedItemStack, level);
+            boolean isDraftedPosition = this.draftPlacements.stream().anyMatch(current::equals);
+            if (isExistingPipe || isDraftedPosition) {
+                cost = (int)((double)cost * 0.3);
             }
             return cost;
         }
@@ -145,6 +150,7 @@ PathfindingAStarAlgorithm {
         private final boolean useExistingPipes;
         private final Block placedBlock;
         private final ItemStack placedItemStack;
+        private List<BlockPos> draftPlacements = new ArrayList<>();
 
         private final Level level;
 
@@ -155,12 +161,16 @@ PathfindingAStarAlgorithm {
             this.level = level;
         }
 
+        public void addDraftPlacements(List<BlockPos> draftPlacements) {
+            this.draftPlacements.addAll(draftPlacements);
+        }
+
         public int heuristic(BlockPos current, BlockPos end, int endY) {
             int cost = Math.abs(current.getY() - endY);
-            if (useExistingPipes) {
-                if (CompatibilityBlockEqualsChecker.getInstance().isBlockStateSpecificBlock(current, placedBlock, placedItemStack, level)) {
-                    cost = (int)((double)cost * 0.3);
-                }
+            boolean isExistingPipe = useExistingPipes && CompatibilityBlockEqualsChecker.getInstance().isBlockStateSpecificBlock(current, placedBlock, placedItemStack, level);
+            boolean isDraftedPosition = this.draftPlacements.stream().anyMatch(current::equals);
+            if (isExistingPipe || isDraftedPosition) {
+                cost = (int)((double)cost * 0.3);
             }
             return cost;
         }
