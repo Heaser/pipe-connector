@@ -1,6 +1,7 @@
 package com.heaser.pipeconnector.utils;
 
 import com.heaser.pipeconnector.PipeConnector;
+import com.heaser.pipeconnector.config.PipeConnectorConfig;
 import com.heaser.pipeconnector.constants.TagKeys;
 import com.heaser.pipeconnector.items.PipeConnectorItem;
 import net.minecraft.core.BlockPos;
@@ -16,6 +17,7 @@ import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
 
@@ -89,6 +91,12 @@ public class GeneralUtils
     public static boolean isAprilFoolsDay() {
         LocalDateTime now = LocalDateTime.now();
         return now.getMonthValue() == 4 && now.getDayOfMonth() == 1;
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    public static boolean MaxAllowedNodesReached(List nodes) {
+        return nodes.size() >= PipeConnectorConfig.MAX_ALLOWED_NODES.get();
     }
 
     // -----------------------------------------------------------------------------------------------------------------

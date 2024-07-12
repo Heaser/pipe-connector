@@ -7,6 +7,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -14,13 +15,52 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class TagUtils {
-    public static int getDepthFromStack(ItemStack stack) {
-
-
-
+    public static List<NodeParameter> getNodesFromStack(ItemStack stack) {
         CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+        List<NodeParameter> nodes = new ArrayList<>();
+        if (tag.contains(ComponentDataTags.kPipeConnectorNodes, tag.TAG_LIST)) {
+            ListTag nodeTags = tag.getList(ComponentDataTags.kPipeConnectorNodes, tag.TAG_COMPOUND);
+            for (int index = 0; index < nodeTags.size(); index++) {
+                CompoundTag nodeTag = nodeTags.getCompound((index));
+                nodes.add(new NodeParameter(nodeTag));
+            }
+        }
 
+        return nodes;
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    public static void setNodesToStack(ItemStack stack, List<NodeParameter> nodes) {
+        CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> {
+            ListTag list = new ListTag();
+            for (NodeParameter node : nodes) {
+                CompoundTag nodeTag = convertNodeToTag(node);
+                list.addTag(list.size(), nodeTag);
+            }
+            tag.put(ComponentDataTags.kPipeConnectorNodes, list);
+        });
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    public static CompoundTag convertNodeToTag(NodeParameter node) {
+        CompoundTag nodeTag = new CompoundTag();
+        nodeTag.putInt(ComponentDataTags.kPipeConnectorNodePositionX, node.position.getX());
+        nodeTag.putInt(ComponentDataTags.kPipeConnectorNodePositionY, node.position.getY());
+        nodeTag.putInt(ComponentDataTags.kPipeConnectorNodePositionZ, node.position.getZ());
+        nodeTag.putByte(ComponentDataTags.kPipeConnectorNodeDirection, (byte) node.direction.get3DDataValue());
+        return nodeTag;
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    public static int getDepthFromStack(ItemStack stack) {
+        CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
         if (tag.contains(ComponentDataTags.kPipeConnectorDepth, tag.TAG_INT)) {
             return tag.getInt(ComponentDataTags.kPipeConnectorDepth);
         }

@@ -3,6 +3,7 @@ package com.heaser.pipeconnector.constants;
 import com.heaser.pipeconnector.PipeConnector;
 
 public class ComponentDataTags {
+    public static String kPipeConnectorNodes = PipeConnector.MODID + "_Nodes";
     public static String kPipeConnectorDepth = PipeConnector.MODID + "_Depth";
     public static String kPipeConnectorStartDirection = PipeConnector.MODID + "_StartDirection";
     public static String kPipeConnectorStartX = PipeConnector.MODID + "_StartX";
@@ -18,6 +19,11 @@ public class ComponentDataTags {
     public static String kPipeConnectorInventoryGuard = PipeConnector.MODID + "_InventoryGuard";
     public static String kPipeConnectorCustomModelData = PipeConnector.MODID + "_CustomModelData";
 
+    // Node Compound Tags
+    public static String kPipeConnectorNodePositionX = PipeConnector.MODID + "_X";
+    public static String kPipeConnectorNodePositionY = PipeConnector.MODID + "_Y";
+    public static String kPipeConnectorNodePositionZ = PipeConnector.MODID + "_Z";
+    public static String kPipeConnectorNodeDirection = PipeConnector.MODID + "_Direction";
 }
 
 
