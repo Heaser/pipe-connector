@@ -134,8 +134,11 @@ PathfindingAStarAlgorithm {
             int cost = Math.abs(current.getX() - end.getX()) + Math.abs(current.getZ() - end.getZ()) + Math.abs(current.getY() - end.getY());
             boolean isExistingPipe = useExistingPipes && CompatibilityBlockEqualsChecker.getInstance().isBlockStateSpecificBlock(current, placedBlock, placedItemStack, level);
             boolean isDraftedPosition = this.draftPlacements.stream().anyMatch(current::equals);
-            if (isExistingPipe || isDraftedPosition) {
+            if (isExistingPipe) {
                 cost = (int)((double)cost * 0.3);
+            }
+            else if (isDraftedPosition) {
+                cost = (int)((double)cost * 0.1);
             }
             return cost;
         }

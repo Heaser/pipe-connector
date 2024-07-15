@@ -92,10 +92,10 @@ public class GeneralUtils {
 
     // -----------------------------------------------------------------------------------------------------------------
 
-    public static void handleNodeRemoval(List<NodeParameter> nodes, NodeParameter nodeToRemove, ItemStack stack) {
+    public static void handleNodeRemovalByPosition(List<NodeParameter> nodes, BlockPos positionToRemove, ItemStack stack) {
         for (int index = 0; index < nodes.size(); index++) {
             NodeParameter currentNode = nodes.get(index);
-            if (currentNode.equals(nodeToRemove)) {
+            if (currentNode.position.equals(positionToRemove)) {
                 nodes.remove(currentNode);
                 break;
             }

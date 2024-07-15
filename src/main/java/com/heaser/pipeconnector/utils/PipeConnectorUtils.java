@@ -126,20 +126,20 @@ public class PipeConnectorUtils {
     }
 
   public static Map<BlockPos, BlockState> useRecursiveManhatten(Map<BlockPos, BlockState> blockHashMap, List<NodeParameter> nodes, Level level, int depth) {
-        NodeParameter startNode = nodes.getFirst();
-        NodeParameter endNode = nodes.getLast();
+        NodeParameter startNode = nodes.get(0);
+        NodeParameter endNode = nodes.get(1);
         BlockPos startPos = startNode.getRelativePosition();
         BlockPos endPos = endNode.getRelativePosition();
         int deltaY = Math.abs(startPos.getY() - endPos.getY());
-        int startDepth = depth, endDepth = depth;
+        int nextDepth = depth;
 
         if (startPos.getY() > endPos.getY()) {
-            endDepth -= deltaY;
+            nextDepth -= deltaY;
         } else {
-           startDepth -= deltaY;
+            nextDepth += deltaY;
         }
-        startPos = moveAndStoreStates(startPos, startDepth, 0, -1, 0, level, blockHashMap);
-        endPos = moveAndStoreStates(endPos, endDepth, 0, -1, 0, level, blockHashMap);
+        startPos = moveAndStoreStates(startPos, depth, 0, -1, 0, level, blockHashMap);
+        endPos = moveAndStoreStates(endPos, nextDepth, 0, -1, 0, level, blockHashMap);
 
         List<BlockPos> blockPosPath = ManhattanAlgorithm.findPathManhattan(startPos, endPos, level);
 
@@ -151,27 +151,28 @@ public class PipeConnectorUtils {
             return blockHashMap;
         } else {
             List<NodeParameter> subNodes = nodes.subList(1, nodes.size());
-            return useRecursiveManhatten(blockHashMap, subNodes, level, depth);
+            return useRecursiveManhatten(blockHashMap, subNodes, level, nextDepth);
         }
     }
 
     public static Map<BlockPos, BlockState> useRecursiveAStar(Map<BlockPos, BlockState> blockHashMap, List<NodeParameter> nodes, Level level, int depth, Player player, PathfindingAStarAlgorithm.HeuristicChecker heuristicChecker, PathfindingAStarAlgorithm.DepthHeuristicChecker depthAlgorithm) {
-        NodeParameter startNode = nodes.getFirst();
-        NodeParameter endNode = nodes.getLast();
+        NodeParameter startNode = nodes.get(0);
+        NodeParameter endNode = nodes.get(1);
         BlockPos startPos = startNode.getRelativePosition();
         BlockPos endPos = endNode.getRelativePosition();
         int deltaY = Math.abs(startPos.getY() - endPos.getY());
-        int startDepth = depth, endDepth = depth;
+        int nextDepth = depth;
 
         if (startPos.getY() > endPos.getY()) {
-            endDepth -= deltaY;
+            nextDepth -= deltaY;
         } else {
-            startDepth -= deltaY;
+            nextDepth += deltaY;
         }
-        PathfindingResult result = moveAndStoreStates(startPos, startDepth, level, blockHashMap, player, depthAlgorithm);
+
+        PathfindingResult result = moveAndStoreStates(startPos, depth, level, blockHashMap, player, depthAlgorithm);
         blockHashMap = result.blockPosMap;
         startPos = result.finalPosition;
-        result = moveAndStoreStates(endPos, endDepth, level, blockHashMap, player, depthAlgorithm);
+        result = moveAndStoreStates(endPos, nextDepth, level, blockHashMap, player, depthAlgorithm);
         blockHashMap = result.blockPosMap;
         endPos = result.finalPosition;
 
@@ -191,7 +192,7 @@ public class PipeConnectorUtils {
             heuristicChecker.addDraftPlacements(blockPosPath);
             depthAlgorithm.addDraftPlacements(blockPosPath);
             List<NodeParameter> subNodes = nodes.subList(1, nodes.size());
-            return useRecursiveAStar(blockHashMap, subNodes, level, depth, player, heuristicChecker, depthAlgorithm);
+            return useRecursiveAStar(blockHashMap, subNodes, level, nextDepth, player, heuristicChecker, depthAlgorithm);
         }
     }
 
@@ -203,11 +204,16 @@ public class PipeConnectorUtils {
         Map<BlockPos, BlockState> blockHashMap = new HashMap<>();
         PathfindingAStarAlgorithm.PositionHeuristicChecker PositionAlgorithm = new PathfindingAStarAlgorithm.PositionHeuristicChecker(utilizeExistingPipes, placedBlock, placedItemStack, level);
         PathfindingAStarAlgorithm.DepthHeuristicChecker DepthAlgorithm = new PathfindingAStarAlgorithm.DepthHeuristicChecker(utilizeExistingPipes, placedBlock, placedItemStack, level);
+        NodeParameter startNode = nodes.getFirst();
+        NodeParameter endNode = nodes.getLast();
 
-        List<BlockPos> blockPosPath = null;
+        int relativeDepth = getRelativeDepth(startNode, endNode, depth);
+
+        List<NodeParameter> sortedNodes = getSortedNodes(nodes);
+
         switch (bridgeType) {
-            case A_STAR -> useRecursiveAStar(blockHashMap, nodes, level, depth, player, PositionAlgorithm, DepthAlgorithm);
-            case DEFAULT -> useRecursiveManhatten(blockHashMap, nodes, level, depth);
+            case A_STAR -> useRecursiveAStar(blockHashMap, sortedNodes, level, relativeDepth, player, PositionAlgorithm, DepthAlgorithm);
+            case DEFAULT -> useRecursiveManhatten(blockHashMap, sortedNodes, level, relativeDepth);
 //          case STEP -> test = PathfindingAStarAlgorithm.findPathAStar(start, end, level);
         }
 
@@ -339,6 +345,24 @@ public class PipeConnectorUtils {
                 bridgeType,
                 utilizeExistingPipes);
     }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    private static int getRelativeDepth(NodeParameter startNode, NodeParameter endNode, int depth) {
+        if (startNode.position.getY() > endNode.position.getY()) {
+            return depth;
+        }
+        int deltaY = Math.abs(startNode.position.getY() - endNode.position.getY());
+        return depth - deltaY;
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    private static List<NodeParameter> getSortedNodes(List<NodeParameter> nodes) {
+        return nodes.stream().sorted((node1, node2) -> Math.abs(node1.position.getX() - node2.position.getX()) + Math.abs(node1.position.getZ() - node2.position.getZ())).toList();
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
 
     static public class PathfindingResult {
         BlockPos finalPosition;

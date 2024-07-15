@@ -28,7 +28,7 @@
   "item.pipe_connector.gui.label.availablePipes": "Available Pipes: %s",
   "item.pipe_connector.gui.button.bridgeType": "Bridge Type: %s",
   "item.pipe_connector.gui.button.aStarPathfinding": "A* Pathfinding",
-  "item.pipe_connector.gui.tooltip.Pathfinding": "This will find the shortest path between the two positions",
+  "item.pipe_connector.gui.tooltip.Pathfinding": "This will try to find the shortest path between positions",
   "item.pipe_connector.gui.tooltip.aStarPathfindingImportantInfo": "A* will try to go around ores.",
   "item.pipe_connector.gui.tooltip.defaultPathfindingImportantInfo": "Manhattan will go through ores and void them.",
   "item.pipe_connector.gui.tooltip.performanceImpact": "Performance Impact:",
@@ -45,10 +45,10 @@
   "item.pipe_connector.gui.button.off": "❌",
   "item.pipe_connector.gui.button.tooltip.inactiveUtilizeExistingPipes": "A* Pathfinding must be selected to use this feature",
   "item.pipe_connector.gui.button.tooltip.utilizeExistingPipesInfoPartOne": "This will try to use already placed",
-  "item.pipe_connector.gui.button.tooltip.utilizeExistingPipesInfoPartTwo": "pipes to connect the two positions",
+  "item.pipe_connector.gui.button.tooltip.utilizeExistingPipesInfoPartTwo": "pipes to connect positions",
   "item.pipe_connector.gui.button.tooltip.InventoryGuard": "This will prevent the destruction of blocks with inventories",
   "item.pipe_connector.jei.supportedPipesInfo": "Supported Pipes",
-  "item.pipe_connector.jei.description": "The Pipe Connector allows you to choose two positions by Shift+Right-Clicking, once both positions are chosen, a preview of the path will be shown.\n You can change the depth of the pipe by Shift+Scrolling.\n Once you are happy with the path, you can Shift+Right-Click to open the GUI and click on 'Place Pipes' to place the pipes.\n 'Reset Positions' to reset the positions if you are unhappy with the first position.\n A list of supported pipes that can be placed can be found in JEI.",
+  "item.pipe_connector.jei.description": "The Pipe Connector allows you to choose up to %s positions by Shift+Right-Clicking. Once all positions are chosen, a preview of the path will be shown.\\n You can change the depth of the pipe by Shift+Scrolling.\\n Once you are happy with the path, you can Shift+Right-Click to open the GUI and click on 'Place Pipes' to place the pipes.\n 'Reset Positions' to reset the positions if you are unhappy with any of the chosen positions.\n A list of supported pipes that can be placed can be found in JEI.",
   "item.pipe_connector.message.maxNodesReached": "Reached the maximum number of nodes, Shift+Right-Click on an existing node to remove it"
 
 
