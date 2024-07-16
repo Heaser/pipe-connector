@@ -149,6 +149,7 @@ public class PipeConnectorItem extends Item {
             }
             else if (currentNodes.stream().anyMatch((NodeParameter node) -> node.position.equals(newNode.position))) {
                 GeneralUtils.handleNodeRemovalByPosition(currentNodes, newNode.position, interactedItem);
+                ParticleHelper.serverSpawnMarkerParticle((ServerLevel) level, newNode.position);
                 return InteractionResult.SUCCESS;
             }
             else {

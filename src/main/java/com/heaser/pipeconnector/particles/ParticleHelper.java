@@ -14,6 +14,7 @@ public class ParticleHelper {
             ParticleOptions particleType = switch (random.nextInt(3)) {
                 case 0 -> ParticleTypes.END_ROD;
                 case 1 -> ParticleTypes.PORTAL;
+                case 3 -> ParticleTypes.EXPLOSION_EMITTER;
                 default -> ParticleTypes.ELECTRIC_SPARK;
             };
 

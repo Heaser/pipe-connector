@@ -32,8 +32,7 @@ public class PreviewDrawer {
         ItemStack heldItem = GeneralUtils.heldPipeConnector(player);
         if (heldItem == null) {
             return;
-        }
-        else if(shouldUpdatePreview(heldItem)) {
+        } else if (shouldUpdatePreview(heldItem)) {
             Level currentLevel = player.level();
             previewMap = getNewPreview(heldItem, currentLevel, player);
         }
@@ -68,15 +67,9 @@ public class PreviewDrawer {
 
         for (PreviewInfo previewInfo : previewMap) {
             AABB aabb = new AABB(previewInfo.pos).move(-offset.x, -offset.y, -offset.z);
-
-            if(previewInfo.isRelativeStartPos(pipeConnector)) {
-                LevelRenderer.renderLineBox(pose, builder, aabb, 0.5F, 0.7F, 0.9F, 1F);
-            } else if(previewInfo.isRelativeEndPos(pipeConnector)) {
-                LevelRenderer.renderLineBox(pose, builder, aabb, 1F, 0.5F, 0.3F, 1F);
-            } else if(previewInfo.isNode(pipeConnector)) {
+            if (previewInfo.isNode(pipeConnector)) {
                 LevelRenderer.renderLineBox(pose, builder, aabb, 1F, 1F, 1F, 1F);
-            }
-            else if (isNotBreakable(player.level(), previewInfo.pos) || hasInventoryCapabilities(player.level(), previewInfo.pos)) {
+            } else if (isNotBreakable(player.level(), previewInfo.pos) || hasInventoryCapabilities(player.level(), previewInfo.pos)) {
                 LevelRenderer.renderLineBox(pose, builder, aabb, 1F, 0, 0, 1F);
             } else if (isVoidableBlock(player.level(), previewInfo.pos)) {
                 LevelRenderer.renderLineBox(pose, builder, aabb, 1F, 1F, 0, 1F);
