@@ -43,7 +43,6 @@ public class PipeConnectorUtils {
         PipeConnector.LOGGER.debug(blockPosMap.toString());
 
 
-        boolean isCreativeMode = player.getAbilities().instabuild;
         int pipeLimit = PipeConnectorConfig.MAX_ALLOWED_PIPES_TO_PLACE.get();
 
         int numOfPipes = getNumberOfPipesInInventory(player);
@@ -75,9 +74,6 @@ public class PipeConnectorUtils {
 
         for (Map.Entry<BlockPos, BlockState> set : blockPosMap.entrySet()) {
             if (!CompatibilityBlockEqualsChecker.getInstance().isBlockStateSpecificBlock(set.getKey(), blockToPlace, itemToPlace, level)) {
-                if (!isCreativeMode) {
-                    reduceNumberOfPipesInInventory(player);
-                }
                 ParticleHelper.serverSpawnMarkerParticle((ServerLevel) level, set.getKey());
                 breakAndSetBlock(level, set.getKey(), blockToPlace, player, context);
             }
@@ -217,7 +213,7 @@ public class PipeConnectorUtils {
 
             // This is required by some mods to recognize pipe placement
             BlockEvent.EntityPlaceEvent event = handlePlaceEvent(level, pos, level.getBlockState(pos), player);
-
+            reduceNumberOfPipesInInventory(player);
             return !event.isCanceled();
         }
         return false;
@@ -263,24 +259,27 @@ public class PipeConnectorUtils {
     // Reduce the number of pipes in the players inventory by one, start with the inventory and only finish with
     // the offhand if needed
     public static void reduceNumberOfPipesInInventory(Player player) {
-        Item pipe = player.getOffhandItem().getItem();
-        Inventory inventory = player.getInventory();
 
-        for (int i = 0; i < inventory.items.size(); i++) {
-            if (inventory.items.get(i).getItem() == pipe) {
-                if (inventory.items.get(i).getCount() > 1) {
-                    inventory.items.get(i).shrink(1);
-                } else {
-                    inventory.items.set(i, ItemStack.EMPTY);
+        if (!player.getAbilities().instabuild) {
+            Item pipe = player.getOffhandItem().getItem();
+            Inventory inventory = player.getInventory();
+
+            for (int i = 0; i < inventory.items.size(); i++) {
+                if (inventory.items.get(i).getItem() == pipe) {
+                    if (inventory.items.get(i).getCount() > 1) {
+                        inventory.items.get(i).shrink(1);
+                    } else {
+                        inventory.items.set(i, ItemStack.EMPTY);
+                    }
+                    return;
                 }
-                return;
             }
-        }
-        // Reduce the number of pipes in the players offhand by one
-        if (player.getOffhandItem().getCount() > 1) {
-            player.getOffhandItem().shrink(1);
-        } else {
-            player.setItemInHand(InteractionHand.OFF_HAND, ItemStack.EMPTY);
+            // Reduce the number of pipes in the players offhand by one
+            if (player.getOffhandItem().getCount() > 1) {
+                player.getOffhandItem().shrink(1);
+            } else {
+                player.setItemInHand(InteractionHand.OFF_HAND, ItemStack.EMPTY);
+            }
         }
     }
 
