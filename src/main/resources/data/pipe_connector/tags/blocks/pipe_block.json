@@ -163,7 +163,8 @@
     {
       "id": "toms_storage:ts.inventory_cable_framed",
       "required": false
-    },    {
+    },
+    {
       "id": "ae2:white_smart_cable",
       "required": false
     },
@@ -508,11 +509,31 @@
       "required": false
     },
     {
-     "id": "quark:pipe",
-     "required": false
+      "id": "quark:pipe",
+      "required": false
     },
     {
       "id": "quark:encased_pipe",
+      "required": false
+    },
+    {
+      "id": "immersiveengineering:fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "cyclic:fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "cyclic:item_pipe",
+      "required": false
+    },
+    {
+      "id": "cyclic:energy_pipe",
+      "required": false
+    },
+    {
+      "id": "industrialforegoingsouls:soul_network_pipe",
       "required": false
     }
   ]
