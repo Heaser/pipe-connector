@@ -535,6 +535,98 @@
     {
       "id": "industrialforegoingsouls:soul_network_pipe",
       "required": false
+    },
+    {
+      "id": "refinedstorage:light_gray_cable",
+      "required": false
+    },
+    {
+      "id": "refinedstorage:cyan_cable",
+      "required": false
+    },
+    {
+      "id": "refinedstorage:purple_cable",
+      "required": false
+    },
+    {
+      "id": "refinedstorage:blue_cable",
+      "required": false
+    },
+    {
+      "id": "refinedstorage:brown_cable",
+      "required": false
+    },
+    {
+      "id": "refinedstorage:green_cable",
+      "required": false
+    },
+    {
+      "id": "refinedstorage:red_cable",
+      "required": false
+    },
+    {
+      "id": "refinedstorage:black_cable",
+      "required": false
+    },
+    {
+      "id": "refinedstorage:white_cable",
+      "required": false
+    },
+    {
+      "id": "refinedstorage:orange_cable",
+      "required": false
+    },
+    {
+      "id": "refinedstorage:magenta_cable",
+      "required": false
+    },
+    {
+      "id": "refinedstorage:light_blue_cable",
+      "required": false
+    },
+    {
+      "id": "refinedstorage:yellow_cable",
+      "required": false
+    },
+    {
+      "id": "refinedstorage:lime_cable",
+      "required": false
+    },
+    {
+      "id": "refinedstorage:pink_cable",
+      "required": false
+    },
+    {
+      "id": "moderndynamics:superconductor_cable",
+      "required": false
+    },
+    {
+      "id": "moderndynamics:item_pipe",
+      "required": false
+    },
+    {
+      "id": "moderndynamics:fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "moderndynamics:lv_cable",
+      "required": false
+    },
+    {
+      "id": "moderndynamics:mv_cable",
+      "required": false
+    },
+    {
+      "id": "moderndynamics:hv_cable",
+      "required": false
+    },
+    {
+      "id": "moderndynamics:ev_cable",
+      "required": false
+    },
+    {
+      "id": "moderndynamics:superconductor_cable",
+      "required": false
     }
   ]
 }
