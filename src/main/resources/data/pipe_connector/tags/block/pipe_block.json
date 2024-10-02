@@ -627,6 +627,34 @@
     {
       "id": "moderndynamics:superconductor_cable",
       "required": false
+    },
+    {
+      "id": "powah:energy_cable_starter",
+      "required":false
+    },
+    {
+      "id": "powah:energy_cable_basic",
+      "required":false
+    },
+    {
+      "id": "powah:energy_cable_hardened",
+      "required":false
+    },
+    {
+      "id": "powah:energy_cable_blazing",
+      "required":false
+    },
+    {
+      "id": "powah:energy_cable_niotic",
+      "required":false
+    },
+    {
+      "id": "powah:energy_cable_spirited",
+      "required":false
+    },
+    {
+      "id": "powah:energy_cable_nitro",
+      "required":false
     }
   ]
 }
