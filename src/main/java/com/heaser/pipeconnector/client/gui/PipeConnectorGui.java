@@ -89,7 +89,8 @@ public class PipeConnectorGui extends Screen {
         }
 
         this.renderMenuBackground(pGuiGraphics);
-        NeoForge.EVENT_BUS.post(new ScreenEvent.BackgroundRendered(this, pGuiGraphics));
+
+        NeoForge.EVENT_BUS.post(new ScreenEvent.Render.Post(this, pGuiGraphics, pMouseX, pMouseY, pPartialTick));
     }
 
     // -----------------------------------------------------------------------------------------------------------------

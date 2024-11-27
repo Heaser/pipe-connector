@@ -140,6 +140,8 @@ dependencies {
     implementation "curse.maven:powah-rearchitected-633483:5735677"
     implementation "curse.maven:cloth-config-348521:5729127"
 //    modImplementation ("curse.maven:mcjtylib-233105:4747680")
+
+    implementation "curse.maven:gregtechceu-modern-890405:5812613"
 }
 
 tasks.withType(ProcessResources).configureEach {
