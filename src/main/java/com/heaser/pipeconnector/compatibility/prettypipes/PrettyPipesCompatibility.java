@@ -4,6 +4,7 @@ import com.heaser.pipeconnector.compatibility.interfaces.IPlacer;
 import de.ellpeck.prettypipes.items.PipeFrameItem;
 import de.ellpeck.prettypipes.pipe.PipeBlock;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
@@ -21,7 +22,7 @@ public class PrettyPipesCompatibility implements IPlacer {
 
     static public Class<? extends Item> getItemStackClassToRegister() { return PipeFrameItem.class; };
 
-    public boolean place(Level level, BlockPos pos, Player player, Item item) {
+    public boolean place(Level level, BlockPos pos, Player player, Item item, Direction side) {
         if (!isVoidableBlock(level, pos)) {
             level.addDestroyBlockEffect(pos, level.getBlockState(pos));
             level.destroyBlock(pos, true, player);

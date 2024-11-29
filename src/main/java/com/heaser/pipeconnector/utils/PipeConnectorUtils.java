@@ -246,7 +246,7 @@ public class PipeConnectorUtils {
 
     // -----------------------------------------------------------------------------------------------------------------
     private static boolean breakAndSetBlock(Level level, BlockPos pos, Block block, Player player, UseOnContext context) {
-        if (CompatibilityPlacer.getInstance().place(level, pos, player, player.getOffhandItem())) {
+        if (CompatibilityPlacer.getInstance().place(level, pos, player, player.getOffhandItem(), context.getClickedFace())) {
             // This is needed to update the blockStates of the blocks around the placed block
             handleBlockUpdates(level, pos);
 

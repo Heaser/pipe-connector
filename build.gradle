@@ -142,6 +142,12 @@ dependencies {
 //    modImplementation ("curse.maven:mcjtylib-233105:4747680")
 
     implementation "curse.maven:gregtechceu-modern-890405:5812613"
+    implementation "curse.maven:ldlib-626676:5782845"
+
+
+    implementation "curse.maven:probejs-585406:5820894"
+    implementation "curse.maven:kubejs-238086:5810100"
+    implementation "curse.maven:rhino-416294:5691686"
 }
 
 tasks.withType(ProcessResources).configureEach {
