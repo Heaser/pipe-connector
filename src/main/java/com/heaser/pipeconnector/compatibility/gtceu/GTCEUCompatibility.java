@@ -14,10 +14,12 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
+import java.util.List;
+
 public class GTCEUCompatibility implements IPlacer {
     static public Class<? extends Block> getBlockToRegister() { return PipeBlock.class; }
 
-    public boolean place(Level level, BlockPos pos, Player player, Item item, Direction side) {
+    public boolean place(Level level, BlockPos pos, Player player, Item item, List<Direction> adjacentDirectionSides) {
         if (item instanceof PipeBlockItem) {
             BlockState blockState = Block.byItem(item).defaultBlockState();
             boolean superVal = level.setBlock(pos, blockState, 11);
@@ -28,8 +30,10 @@ public class GTCEUCompatibility implements IPlacer {
                     return true;
                 }
 
-                if (selfTile.getPipeBlock().canConnect(selfTile, side)) {
-                    selfTile.setConnection(side, true, false);
+                for (Direction side : adjacentDirectionSides) {
+                    if (selfTile.getPipeBlock().canConnect(selfTile, side)) {
+                        selfTile.setConnection(side, true, false);
+                    }
                 }
 
                 for(Direction facing : GTUtil.DIRECTIONS) {
@@ -47,6 +51,7 @@ public class GTCEUCompatibility implements IPlacer {
                         selfTile.setConnection(facing, true, false);
                     }
                 }
+                selfTile.notifyBlockUpdate();
             }
 
             return superVal;

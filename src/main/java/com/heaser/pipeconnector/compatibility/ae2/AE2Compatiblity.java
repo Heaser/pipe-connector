@@ -24,6 +24,8 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+
 import static com.heaser.pipeconnector.utils.GeneralUtils.isVoidableBlock;
 
 
@@ -36,7 +38,7 @@ public class AE2Compatiblity implements IBlockGetter, IPlacer, IBlockEqualsCheck
         return AEBlocks.CABLE_BUS.block();
     }
 
-    public boolean place(Level level, BlockPos pos, Player player, Item item, Direction side) {
+    public boolean place(Level level, BlockPos pos, Player player, Item item, List<Direction> adjacentDirectionSides) {
         IPart part = null;
         if (item instanceof IPartItem<?> partItem) {
             BlockEntity blockEntity = level.getBlockEntity(pos);

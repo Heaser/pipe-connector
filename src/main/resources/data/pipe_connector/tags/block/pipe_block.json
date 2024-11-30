@@ -681,10 +681,6 @@
       "required": false
     },
     {
-      "id": "gtceu:aluminium_large_fluid_pipe",
-      "required": false
-    },
-    {
       "id": "gtceu:tin_alloy_quadruple_fluid_pipe",
       "required": false
     },
@@ -698,14 +694,6 @@
     },
     {
       "id": "gtceu:titanium_large_fluid_pipe",
-      "required": false
-    },
-    {
-      "id": "gtceu:tin_quadruple_cable",
-      "required": false
-    },
-    {
-      "id": "gtceu:tungsten_steel_tiny_fluid_pipe",
       "required": false
     },
     {
@@ -733,23 +721,7 @@
       "required": false
     },
     {
-      "id": "gtceu:aluminium_tiny_fluid_pipe",
-      "required": false
-    },
-    {
-      "id": "gtceu:steel_single_cable",
-      "required": false
-    },
-    {
       "id": "gtceu:copper_single_cable",
-      "required": false
-    },
-    {
-      "id": "gtceu:silver_double_cable",
-      "required": false
-    },
-    {
-      "id": "gtceu:titanium_nonuple_fluid_pipe",
       "required": false
     },
     {
@@ -766,10 +738,6 @@
     },
     {
       "id": "gtceu:lead_nonuple_fluid_pipe",
-      "required": false
-    },
-    {
-      "id": "gtceu:ultimet_large_restrictive_item_pipe",
       "required": false
     },
     {
@@ -809,10 +777,6 @@
       "required": false
     },
     {
-      "id": "gtceu:graphene_double_cable",
-      "required": false
-    },
-    {
       "id": "gtceu:graphene_octal_cable",
       "required": false
     },
@@ -822,14 +786,6 @@
     },
     {
       "id": "gtceu:bronze_normal_fluid_pipe",
-      "required": false
-    },
-    {
-      "id": "gtceu:blue_alloy_double_cable",
-      "required": false
-    },
-    {
-      "id": "gtceu:cupronickel_large_restrictive_item_pipe",
       "required": false
     },
     {
@@ -845,10 +801,6 @@
       "required": false
     },
     {
-      "id": "gtceu:copper_normal_fluid_pipe",
-      "required": false
-    },
-    {
       "id": "gtceu:kanthal_double_cable",
       "required": false
     },
@@ -861,23 +813,11 @@
       "required": false
     },
     {
-      "id": "gtceu:rtm_alloy_octal_cable",
-      "required": false
-    },
-    {
       "id": "gtceu:potin_quadruple_fluid_pipe",
       "required": false
     },
     {
-      "id": "gtceu:naquadah_alloy_quadruple_cable",
-      "required": false
-    },
-    {
       "id": "gtceu:neutronium_nonuple_fluid_pipe",
-      "required": false
-    },
-    {
-      "id": "gtceu:europium_double_cable",
       "required": false
     },
     {
@@ -893,35 +833,11 @@
       "required": false
     },
     {
-      "id": "gtceu:lead_normal_fluid_pipe",
-      "required": false
-    },
-    {
-      "id": "gtceu:niobium_nitride_quadruple_cable",
-      "required": false
-    },
-    {
-      "id": "gtceu:tin_small_restrictive_item_pipe",
-      "required": false
-    },
-    {
-      "id": "gtceu:nickel_octal_cable",
-      "required": false
-    },
-    {
       "id": "gtceu:naquadah_nonuple_fluid_pipe",
       "required": false
     },
     {
       "id": "gtceu:electrum_small_item_pipe",
-      "required": false
-    },
-    {
-      "id": "gtceu:ultimet_normal_restrictive_item_pipe",
-      "required": false
-    },
-    {
-      "id": "gtceu:cobalt_brass_large_restrictive_item_pipe",
       "required": false
     },
     {
@@ -937,27 +853,11 @@
       "required": false
     },
     {
-      "id": "gtceu:europium_nonuple_fluid_pipe",
-      "required": false
-    },
-    {
       "id": "gtceu:naquadah_double_cable",
       "required": false
     },
     {
-      "id": "gtceu:black_bronze_small_item_pipe",
-      "required": false
-    },
-    {
       "id": "gtceu:iridium_quadruple_fluid_pipe",
-      "required": false
-    },
-    {
-      "id": "gtceu:magnalium_large_restrictive_item_pipe",
-      "required": false
-    },
-    {
-      "id": "gtceu:americium_small_restrictive_item_pipe",
       "required": false
     },
     {
@@ -966,10 +866,6 @@
     },
     {
       "id": "gtceu:tungsten_quadruple_fluid_pipe",
-      "required": false
-    },
-    {
-      "id": "gtceu:tungsten_huge_fluid_pipe",
       "required": false
     },
     {
@@ -989,19 +885,7 @@
       "required": false
     },
     {
-      "id": "gtceu:ultimet_small_item_pipe",
-      "required": false
-    },
-    {
       "id": "gtceu:tin_double_cable",
-      "required": false
-    },
-    {
-      "id": "gtceu:neutronium_huge_fluid_pipe",
-      "required": false
-    },
-    {
-      "id": "gtceu:brass_small_item_pipe",
       "required": false
     },
     {
@@ -1009,23 +893,7 @@
       "required": false
     },
     {
-      "id": "gtceu:osmium_small_restrictive_item_pipe",
-      "required": false
-    },
-    {
       "id": "gtceu:cobalt_brass_large_item_pipe",
-      "required": false
-    },
-    {
-      "id": "gtceu:stainless_steel_quadruple_fluid_pipe",
-      "required": false
-    },
-    {
-      "id": "gtceu:tungsten_steel_large_fluid_pipe",
-      "required": false
-    },
-    {
-      "id": "gtceu:tungsten_octal_cable",
       "required": false
     },
     {
@@ -1033,39 +901,15 @@
       "required": false
     },
     {
-      "id": "gtceu:polybenzimidazole_huge_fluid_pipe",
-      "required": false
-    },
-    {
       "id": "gtceu:steel_tiny_fluid_pipe",
       "required": false
     },
     {
-      "id": "gtceu:steel_huge_fluid_pipe",
-      "required": false
-    },
-    {
-      "id": "gtceu:large_duct_pipe",
-      "required": false
-    },
-    {
-      "id": "gtceu:rose_gold_normal_restrictive_item_pipe",
-      "required": false
-    },
-    {
-      "id": "gtceu:lead_huge_fluid_pipe",
+      "id": "gtceu:normal_pipe",
       "required": false
     },
     {
       "id": "gtceu:vanadium_steel_large_fluid_pipe",
-      "required": false
-    },
-    {
-      "id": "gtceu:copper_quadruple_cable",
-      "required": false
-    },
-    {
-      "id": "gtceu:cobalt_octal_cable",
       "required": false
     },
     {
@@ -1089,19 +933,15 @@
       "required": false
     },
     {
+      "id": "gtceu:small_pipe",
+      "required": false
+    },
+    {
       "id": "gtceu:tungsten_steel_quadruple_fluid_pipe",
       "required": false
     },
     {
       "id": "gtceu:niobium_titanium_large_fluid_pipe",
-      "required": false
-    },
-    {
-      "id": "gtceu:normal_laser_pipe",
-      "required": false
-    },
-    {
-      "id": "gtceu:yttrium_barium_cuprate_hex_cable",
       "required": false
     },
     {
@@ -1113,11 +953,947 @@
       "required": false
     },
     {
-      "id": "gtceu:sterling_silver_large_restrictive_item_pipe",
+      "id": "gtceu:tin_small_item_pipe",
       "required": false
     },
     {
-      "id": "gtceu:tin_small_item_pipe",
+      "id": "gtceu:bronze_nonuple_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:niobium_nitride_octal_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:polybenzimidazole_large_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:osmiridium_huge_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:duranium_large_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:chromium_quadruple_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:brass_normal_restrictive_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:neutronium_large_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:naquadah_large_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:black_bronze_large_restrictive_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:wood_normal_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:trinium_quadruple_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:nickel_normal_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:blue_alloy_hex_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:americium_large_restrictive_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:stainless_steel_small_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:huge_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:brass_small_restrictive_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:chromium_huge_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:gold_huge_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:iron_octal_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:gold_octal_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:niobium_titanium_huge_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:tin_alloy_small_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:europium_normal_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:rose_gold_large_restrictive_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:steel_small_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:potin_normal_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:graphene_quadruple_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:stainless_steel_normal_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:polyethylene_normal_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:polyvinyl_chloride_normal_restrictive_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:black_steel_octal_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:cupronickel_small_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:red_alloy_hex_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:europium_huge_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:long_distance_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:ultimet_huge_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:black_bronze_normal_restrictive_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:europium_octal_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:cupronickel_small_restrictive_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:small_duct_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:tritanium_octal_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:platinum_large_restrictive_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:silver_single_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:americium_normal_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:aluminium_quadruple_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:tungsten_small_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:naquadah_alloy_octal_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:osmium_double_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:yttrium_barium_cuprate_single_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:osmium_huge_restrictive_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:brass_huge_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:polyvinyl_chloride_normal_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:black_bronze_large_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:niobium_titanium_nonuple_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:nichrome_single_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:chromium_small_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:annealed_copper_quadruple_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:tin_large_restrictive_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:polybenzimidazole_quadruple_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:bronze_large_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:trinium_octal_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:vanadium_steel_tiny_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:ultimet_normal_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:polyethylene_nonuple_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:tiny_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:sterling_silver_huge_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:tungsten_hex_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:yttrium_barium_cuprate_double_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:duranium_tiny_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:cobalt_brass_huge_restrictive_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:red_alloy_quadruple_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:titanium_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:titanium_huge_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:titanium_small_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:vanadium_gallium_quadruple_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:nickel_large_restrictive_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:aluminium_quadruple_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:naquadah_alloy_hex_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:aluminium_octal_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:vanadium_gallium_single_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:gold_large_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:cobalt_small_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:tungsten_steel_quadruple_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:tungsten_carbide_nonuple_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:aluminium_normal_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:cupronickel_normal_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:aluminium_small_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:silver_hex_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:cupronickel_huge_restrictive_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:copper_huge_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:polyvinyl_chloride_huge_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:osmium_octal_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:steel_quadruple_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:electrum_single_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:magnalium_normal_restrictive_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:cupronickel_normal_restrictive_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:europium_quadruple_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:tungsten_large_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:graphene_hex_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:iridium_nonuple_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:europium_large_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:iron_single_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:gold_tiny_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:niobium_titanium_quadruple_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:neutronium_quadruple_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:americium_small_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:osmium_normal_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:aluminium_double_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:polytetrafluoroethylene_large_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:platinum_double_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:iridium_normal_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:nickel_small_restrictive_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:tungsten_steel_double_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:tungsten_steel_single_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:polyvinyl_chloride_huge_restrictive_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:magnalium_huge_restrictive_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:steel_nonuple_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:neutronium_normal_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:blue_alloy_quadruple_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:osmiridium_small_restrictive_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:wood_small_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:tin_alloy_huge_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:rose_gold_huge_restrictive_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:treated_wood_large_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:platinum_quadruple_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:polytetrafluoroethylene_normal_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:cobalt_normal_restrictive_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:platinum_single_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:polyethylene_tiny_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:magnalium_huge_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:cobalt_quadruple_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:polytetrafluoroethylene_huge_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:iridium_tiny_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:aluminium_single_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:aluminium_hex_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:rose_gold_small_restrictive_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:sterling_silver_huge_restrictive_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:black_steel_hex_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:potin_large_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:lead_quadruple_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:americium_normal_restrictive_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:platinum_huge_restrictive_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:polybenzimidazole_tiny_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:tungsten_steel_hex_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:niobium_titanium_double_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:potin_nonuple_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:naquadah_huge_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:naquadah_normal_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:lead_quadruple_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:platinum_octal_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:tin_huge_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:cobalt_brass_normal_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:rose_gold_huge_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:gold_normal_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:vanadium_steel_normal_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:americium_large_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:polytetrafluoroethylene_quadruple_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:cobalt_large_restrictive_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:platinum_large_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:vanadium_steel_quadruple_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:europium_single_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:potin_huge_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:brass_large_restrictive_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:ultimet_small_restrictive_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:naquadah_octal_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:black_bronze_normal_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:niobium_titanium_single_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:silver_octal_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:chromium_large_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:stainless_steel_tiny_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:tungsten_carbide_tiny_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:bronze_small_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:black_steel_double_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:vanadium_gallium_double_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:black_bronze_small_restrictive_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:brass_large_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:osmium_huge_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:tungsten_steel_nonuple_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:black_steel_single_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:cobalt_brass_huge_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:rtm_alloy_single_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:naquadah_quadruple_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:bronze_quadruple_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:long_distance_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:rtm_alloy_double_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:tungsten_steel_normal_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:aluminium_large_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:long_distance_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:tin_quadruple_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:tungsten_steel_tiny_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:aluminium_tiny_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:steel_single_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:silver_double_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:titanium_nonuple_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:tungstensteel_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:ultimet_large_restrictive_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:graphene_double_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:blue_alloy_double_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:cupronickel_large_restrictive_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:copper_normal_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:rtm_alloy_octal_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:naquadah_alloy_quadruple_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:europium_double_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:lead_normal_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:niobium_nitride_quadruple_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:tin_small_restrictive_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:nickel_octal_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:ultimet_normal_restrictive_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:cobalt_brass_large_restrictive_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:europium_nonuple_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:long_distance_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:black_bronze_small_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:magnalium_large_restrictive_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:americium_small_restrictive_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:tungsten_huge_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:steel_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:ultimet_small_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:neutronium_huge_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:brass_small_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:osmium_small_restrictive_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:stainless_steel_quadruple_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:tungsten_steel_large_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:tungsten_octal_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:polybenzimidazole_huge_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:steel_huge_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:large_duct_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:rose_gold_normal_restrictive_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:lead_huge_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:copper_quadruple_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:cobalt_octal_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:normal_laser_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:yttrium_barium_cuprate_hex_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:sterling_silver_large_restrictive_item_pipe",
       "required": false
     },
     {
@@ -1133,10 +1909,6 @@
       "required": false
     },
     {
-      "id": "gtceu:bronze_nonuple_fluid_pipe",
-      "required": false
-    },
-    {
       "id": "gtceu:nichrome_double_cable",
       "required": false
     },
@@ -1149,7 +1921,7 @@
       "required": false
     },
     {
-      "id": "gtceu:niobium_nitride_octal_cable",
+      "id": "gtceu:bronze_pipe",
       "required": false
     },
     {
@@ -1157,27 +1929,11 @@
       "required": false
     },
     {
-      "id": "gtceu:polybenzimidazole_large_fluid_pipe",
-      "required": false
-    },
-    {
-      "id": "gtceu:osmiridium_huge_item_pipe",
-      "required": false
-    },
-    {
       "id": "gtceu:tin_huge_restrictive_item_pipe",
       "required": false
     },
     {
-      "id": "gtceu:duranium_large_fluid_pipe",
-      "required": false
-    },
-    {
       "id": "gtceu:platinum_small_item_pipe",
-      "required": false
-    },
-    {
-      "id": "gtceu:chromium_quadruple_fluid_pipe",
       "required": false
     },
     {
@@ -1193,23 +1949,11 @@
       "required": false
     },
     {
-      "id": "gtceu:brass_normal_restrictive_item_pipe",
-      "required": false
-    },
-    {
-      "id": "gtceu:neutronium_large_fluid_pipe",
-      "required": false
-    },
-    {
       "id": "gtceu:red_alloy_double_cable",
       "required": false
     },
     {
       "id": "gtceu:duranium_nonuple_fluid_pipe",
-      "required": false
-    },
-    {
-      "id": "gtceu:naquadah_large_fluid_pipe",
       "required": false
     },
     {
@@ -1222,10 +1966,6 @@
     },
     {
       "id": "gtceu:tin_single_cable",
-      "required": false
-    },
-    {
-      "id": "gtceu:black_bronze_large_restrictive_item_pipe",
       "required": false
     },
     {
@@ -1245,7 +1985,675 @@
       "required": false
     },
     {
-      "id": "gtceu:wood_normal_fluid_pipe",
+      "id": "gtceu:iron_double_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:hssg_octal_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:polybenzimidazole_normal_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:cobalt_double_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:nichrome_quadruple_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:sterling_silver_normal_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:kanthal_single_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:cupronickel_quadruple_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:cupronickel_octal_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:naquadah_single_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:osmiridium_small_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:copper_octal_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:potin_small_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:nickel_normal_restrictive_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:platinum_normal_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:ptfe_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:treated_wood_normal_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:cobalt_brass_normal_restrictive_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:niobium_titanium_quadruple_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:magnalium_normal_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:vanadium_steel_huge_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:iridium_large_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:steel_normal_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:lead_small_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:platinum_normal_restrictive_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:niobium_titanium_tiny_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:gold_quadruple_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:silver_quadruple_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:annealed_copper_hex_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:polyvinyl_chloride_small_restrictive_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:cobalt_large_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:rose_gold_normal_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:steel_quadruple_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:polytetrafluoroethylene_nonuple_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:cobalt_small_restrictive_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:lead_hex_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:polybenzimidazole_nonuple_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:copper_small_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:red_alloy_octal_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:cobalt_brass_small_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:tritanium_hex_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:titanium_quadruple_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:niobium_nitride_hex_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:tin_large_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:europium_tiny_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:iridium_huge_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:tritanium_double_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:electrum_hex_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:brass_normal_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:kanthal_quadruple_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:polyethylene_large_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:lead_octal_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:hssg_hex_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:steel_octal_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:titanium_tiny_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:copper_tiny_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:duranium_huge_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:tungsten_carbide_large_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:lead_single_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:huge_duct_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:polyvinyl_chloride_small_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:tin_hex_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:polyethylene_huge_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:electrum_huge_restrictive_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:tin_alloy_tiny_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:niobium_titanium_hex_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:duranium_normal_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:osmium_small_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:kanthal_octal_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:osmium_large_restrictive_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:lead_double_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:osmium_quadruple_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:naquadah_alloy_double_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:naquadah_alloy_single_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:electrum_normal_restrictive_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:rose_gold_small_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:vanadium_steel_small_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:tungsten_nonuple_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:nickel_small_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:large_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:cupronickel_hex_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:vanadium_gallium_hex_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:osmiridium_normal_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:hssg_quadruple_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:tin_alloy_nonuple_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:rtm_alloy_quadruple_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:polytetrafluoroethylene_tiny_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:niobium_titanium_small_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:copper_quadruple_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:cupronickel_single_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:yttrium_barium_cuprate_quadruple_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:steel_hex_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:tungsten_double_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:tungsten_single_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:tungsten_steel_small_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:vanadium_gallium_octal_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:cupronickel_large_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:cupronickel_double_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:tritanium_single_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:cobalt_normal_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:nickel_large_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:osmium_normal_restrictive_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:graphene_single_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:cobalt_huge_restrictive_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:rose_gold_large_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:chromium_normal_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:lead_tiny_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:blue_alloy_octal_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:sterling_silver_small_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:cupronickel_huge_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:gold_double_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:nichrome_hex_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:duranium_small_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:blue_alloy_single_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:platinum_huge_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:rtm_alloy_hex_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:platinum_hex_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:magnalium_small_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:platinum_small_restrictive_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:stainless_steel_nonuple_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:europium_hex_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:naquadah_tiny_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:steel_large_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:hssg_single_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:annealed_copper_single_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:nickel_huge_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:cobalt_hex_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:stainless_steel_huge_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:tin_alloy_large_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:osmiridium_huge_restrictive_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:sterling_silver_normal_restrictive_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:vanadium_steel_nonuple_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:tungsten_carbide_normal_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:neutronium_small_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:annealed_copper_octal_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:black_bronze_huge_restrictive_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:stainless_steel_large_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:trinium_single_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:tritanium_quadruple_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:polyvinyl_chloride_large_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:nickel_quadruple_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:potin_tiny_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:iridium_small_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:nickel_huge_restrictive_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:iron_hex_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:black_steel_quadruple_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:ultimet_huge_restrictive_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:nickel_double_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:electrum_large_restrictive_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:copper_double_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:lead_large_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:steel_double_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:electrum_octal_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:tungsten_carbide_huge_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:iron_quadruple_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:gold_quadruple_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:naquadah_small_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:sterling_silver_large_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:copper_large_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:osmium_large_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:tungsten_quadruple_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:bronze_tiny_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:nickel_single_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:black_bronze_huge_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:tungsten_steel_octal_cable",
+      "required": false
+    },
+    {
+      "id": "gtceu:osmiridium_normal_restrictive_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:electrum_normal_item_pipe",
+      "required": false
+    },
+    {
+      "id": "gtceu:tin_alloy_normal_fluid_pipe",
       "required": false
     }
   ]

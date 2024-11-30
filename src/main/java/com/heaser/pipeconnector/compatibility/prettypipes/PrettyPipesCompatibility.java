@@ -14,6 +14,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
 
+import java.util.List;
+
 import static com.heaser.pipeconnector.utils.GeneralUtils.isVoidableBlock;
 
 public class PrettyPipesCompatibility implements IPlacer {
@@ -22,7 +24,7 @@ public class PrettyPipesCompatibility implements IPlacer {
 
     static public Class<? extends Item> getItemStackClassToRegister() { return PipeFrameItem.class; };
 
-    public boolean place(Level level, BlockPos pos, Player player, Item item, Direction side) {
+    public boolean place(Level level, BlockPos pos, Player player, Item item, List<Direction> side) {
         if (!isVoidableBlock(level, pos)) {
             level.addDestroyBlockEffect(pos, level.getBlockState(pos));
             level.destroyBlock(pos, true, player);

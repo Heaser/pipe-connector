@@ -17,6 +17,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.fml.ModList;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static com.heaser.pipeconnector.utils.GeneralUtils.isVoidableBlock;
@@ -62,7 +63,7 @@ public class CompatibilityPlacer {
         return level.setBlockAndUpdate(pos, blockState);
     }
 
-    public boolean place(Level level, BlockPos pos, Player player, ItemStack stack, Direction side) {
+    public boolean place(Level level, BlockPos pos, Player player, ItemStack stack, List<Direction> adjacentDirectionSides) {
         IPlacer placer = null;
         Item item = stack.getItem();
         for (Map.Entry<Class<? extends Item>, IPlacer> set : itemClassToPlacerMap.entrySet()) {
@@ -74,7 +75,7 @@ public class CompatibilityPlacer {
         }
         if (placer == null && item instanceof BlockItem) {
             for (Map.Entry<Class<? extends Block>, IPlacer> set : blockClassToPlacerMap.entrySet()) {
-                if (((BlockItem) item).getBlock().getClass().isAssignableFrom(set.getKey())) {
+                if (set.getKey().isAssignableFrom(((BlockItem) item).getBlock().getClass())) {
 
                     placer = set.getValue();
                     break;
@@ -82,7 +83,7 @@ public class CompatibilityPlacer {
             }
         }
         if (placer != null) {
-            return placer.place(level, pos, player, stack.getItem(), side);
+            return placer.place(level, pos, player, stack.getItem(), adjacentDirectionSides);
         }
         else {
             return defaultPlace(level, pos, player, stack.getItem());

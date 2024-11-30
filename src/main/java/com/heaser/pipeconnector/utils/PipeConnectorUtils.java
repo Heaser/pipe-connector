@@ -75,8 +75,10 @@ public class PipeConnectorUtils {
 
         for (Map.Entry<BlockPos, BlockState> set : blockPosMap.entrySet()) {
             if (!CompatibilityBlockEqualsChecker.getInstance().isBlockStateSpecificBlock(set.getKey(), blockToPlace, itemToPlace, level)) {
+                BlockPos position = set.getKey();
                 ParticleHelper.serverSpawnMarkerParticle((ServerLevel) level, set.getKey());
-                breakAndSetBlock(level, set.getKey(), blockToPlace, player, context);
+                List<Direction> directions = getNeighboringDirections(position, blockPosMap);
+                breakAndSetBlock(level, position, blockToPlace, player, context, directions);
             }
         }
         return true;
@@ -244,12 +246,12 @@ public class PipeConnectorUtils {
         return currentPos;
     }
 
+
     // -----------------------------------------------------------------------------------------------------------------
-    private static boolean breakAndSetBlock(Level level, BlockPos pos, Block block, Player player, UseOnContext context) {
-        if (CompatibilityPlacer.getInstance().place(level, pos, player, player.getOffhandItem(), context.getClickedFace())) {
+    private static boolean breakAndSetBlock(Level level, BlockPos pos, Block block, Player player, UseOnContext context, List<Direction> adjacentDirectionSides) {
+        if (CompatibilityPlacer.getInstance().place(level, pos, player, player.getOffhandItem(), adjacentDirectionSides)) {
             // This is needed to update the blockStates of the blocks around the placed block
             handleBlockUpdates(level, pos);
-
             // This is required by some mods to recognize pipe placement
             BlockEvent.EntityPlaceEvent event = handlePlaceEvent(level, pos, level.getBlockState(pos), player);
             reduceNumberOfPipesInInventory(player);
@@ -259,7 +261,18 @@ public class PipeConnectorUtils {
     }
 
     // -----------------------------------------------------------------------------------------------------------------
+    private static List<Direction> getNeighboringDirections(BlockPos pos, Map<BlockPos, BlockState> blockPosBlockStateMap) {
+        List<Direction> directions = new ArrayList<>();
+        for (Direction direction : Direction.values()) {
+            BlockPos relativePos = pos.relative(direction);
+            if (blockPosBlockStateMap.containsKey(relativePos)) {
+                directions.add(direction);
+            }
+        }
+        return directions;
+    }
 
+    // -----------------------------------------------------------------------------------------------------------------
     private static void handleBlockUpdates(Level level, BlockPos pos) {
         for(Direction direction : Direction.values()) {
             BlockPos neighborPos = pos.relative(direction);
