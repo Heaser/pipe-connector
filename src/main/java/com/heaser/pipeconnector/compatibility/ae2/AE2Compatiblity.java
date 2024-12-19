@@ -38,7 +38,7 @@ public class AE2Compatiblity implements IBlockGetter, IPlacer, IBlockEqualsCheck
         return AEBlocks.CABLE_BUS.block();
     }
 
-    public boolean place(Level level, BlockPos pos, Player player, Item item, List<Direction> adjacentDirectionSides) {
+    public boolean place(Level level, BlockPos pos, Player player, Item item, List<Direction> adjacentDirectionSides, ItemStack heldPipeItem) {
         IPart part = null;
         if (item instanceof IPartItem<?> partItem) {
             BlockEntity blockEntity = level.getBlockEntity(pos);

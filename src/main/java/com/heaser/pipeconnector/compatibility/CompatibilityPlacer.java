@@ -1,6 +1,7 @@
 package com.heaser.pipeconnector.compatibility;
 
 import com.heaser.pipeconnector.compatibility.ae2.AE2Compatiblity;
+import com.heaser.pipeconnector.compatibility.enderio.EnderIoCompatibility;
 import com.heaser.pipeconnector.compatibility.gtceu.GTCEUCompatibility;
 import com.heaser.pipeconnector.compatibility.interfaces.IPlacer;
 import com.heaser.pipeconnector.compatibility.prettypipes.PrettyPipesCompatibility;
@@ -38,6 +39,9 @@ public class CompatibilityPlacer {
         }
         if(isModLoaded("gtceu")) {
             blockClassToPlacerMap.put(GTCEUCompatibility.getBlockToRegister(), new GTCEUCompatibility());
+        }
+        if(isModLoaded("enderio_conduits")) {
+            blockClassToPlacerMap.put(EnderIoCompatibility.getBlockToRegister(), new EnderIoCompatibility());
         }
     }
 
@@ -83,7 +87,7 @@ public class CompatibilityPlacer {
             }
         }
         if (placer != null) {
-            return placer.place(level, pos, player, stack.getItem(), adjacentDirectionSides);
+            return placer.place(level, pos, player, stack.getItem(), adjacentDirectionSides, stack);
         }
         else {
             return defaultPlace(level, pos, player, stack.getItem());

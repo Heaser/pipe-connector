@@ -2655,6 +2655,10 @@
     {
       "id": "gtceu:tin_alloy_normal_fluid_pipe",
       "required": false
+    },
+    {
+      "id": "enderio:conduit",
+       "required": false
     }
   ]
 }

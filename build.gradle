@@ -108,6 +108,10 @@ repositories {
         url "https://mcentral.firstdark.dev/releases"
     }
 
+    maven {
+        url 'https://maven.rover656.dev/releases'
+    }
+
     flatDir {
         dir 'libs'
     }
@@ -125,18 +129,20 @@ dependencies {
 
     implementation ("curse.maven:pipez-443900:5465392")
     implementation "curse.maven:modern-dynamics-552758:5465437"
-    implementation "curse.maven:mekanism-268560:5523554"
+    implementation "curse.maven:mekanism-268560:5680395"
 
     // Loves mixins
     compileOnly("curse.maven:applied-energistics-2-223794:5480501")
+    implementation("com.enderio:enderio-conduits:7.0.11-alpha")
+//    implementation "curse.maven:ender-io-64578:5981524"
 
 //    modImplementation ("curse.maven:cofh-core-69162:4970669")
 //    modImplementation ("curse.maven:thermal-dynamics-227443:4970699")
 //    modImplementation ("curse.maven:thermal-foundation-222880:4979840")
 
     compileOnly ("curse.maven:pretty-pipes-376737:4769646")
-    compileOnly ("curse.maven:pretty-pipes-fluids-479142:4729229")
-    implementation ("curse.maven:jei-238222:5775467")
+    compileOnly("curse.maven:pretty-pipes-fluids-479142:4729229")
+    implementation("curse.maven:jei-238222:5775467")
     implementation "curse.maven:powah-rearchitected-633483:5735677"
     implementation "curse.maven:cloth-config-348521:5729127"
 //    modImplementation ("curse.maven:mcjtylib-233105:4747680")
@@ -148,6 +154,7 @@ dependencies {
     implementation "curse.maven:probejs-585406:5820894"
     implementation "curse.maven:kubejs-238086:5810100"
     implementation "curse.maven:rhino-416294:5691686"
+
 }
 
 tasks.withType(ProcessResources).configureEach {

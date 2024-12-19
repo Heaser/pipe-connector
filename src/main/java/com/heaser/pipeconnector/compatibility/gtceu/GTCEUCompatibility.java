@@ -9,6 +9,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -19,7 +20,7 @@ import java.util.List;
 public class GTCEUCompatibility implements IPlacer {
     static public Class<? extends Block> getBlockToRegister() { return PipeBlock.class; }
 
-    public boolean place(Level level, BlockPos pos, Player player, Item item, List<Direction> adjacentDirectionSides) {
+    public boolean place(Level level, BlockPos pos, Player player, Item item, List<Direction> adjacentDirectionSides, ItemStack heldPipeItem) {
         if (item instanceof PipeBlockItem) {
             BlockState blockState = Block.byItem(item).defaultBlockState();
             boolean superVal = level.setBlock(pos, blockState, 11);
