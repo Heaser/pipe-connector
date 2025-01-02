@@ -8,7 +8,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -38,13 +37,15 @@ public class EnderIoCompatibility implements IPlacer, IBlockEqualsChecker {
 
     public boolean place(Level level, BlockPos pos, Player player, Item item, List<Direction> adjacentDirectionSides, ItemStack heldPipeItem) {
         Holder<Conduit<?>> conduit = heldPipeItem.get(ConduitComponents.CONDUIT);
-        if (conduit != null && level.getBlockEntity(pos) instanceof ConduitBundleBlockEntity blockEntity) {
+        var existingEntity = level.getBlockEntity(pos);
+        if (conduit != null && existingEntity instanceof ConduitBundleBlockEntity blockEntity) {
             if (blockEntity.hasType(conduit)) {
                 return false;
             }
-            BlockState blockState = level.getBlockState(pos);
-            blockEntity.addType(conduit, player);
+            BlockState blockState =  level.getBlockState(pos);
             level.gameEvent(GameEvent.BLOCK_PLACE, pos, GameEvent.Context.of(player, blockState));
+            blockEntity.getBundle().addConduit(level, conduit, player);
+            //blockEntity.addType(conduit, player);
             return true;
         }
         BlockState blockState = Block.byItem(item).defaultBlockState();
