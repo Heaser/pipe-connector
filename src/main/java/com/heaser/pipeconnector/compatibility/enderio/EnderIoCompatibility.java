@@ -1,9 +1,11 @@
 package com.heaser.pipeconnector.compatibility.enderio;
 
+import com.enderio.conduits.common.conduit.ConduitBlockItem;
 import com.enderio.conduits.common.conduit.block.ConduitBundleBlock;
 import com.enderio.conduits.common.init.ConduitComponents;
 import com.heaser.pipeconnector.compatibility.interfaces.IBlockEqualsChecker;
 import com.heaser.pipeconnector.compatibility.interfaces.IPlacer;
+import com.heaser.pipeconnector.compatibility.interfaces.IRecipeInfoGetter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
@@ -19,12 +21,17 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class EnderIoCompatibility implements IPlacer, IBlockEqualsChecker {
+public class EnderIoCompatibility implements IPlacer, IBlockEqualsChecker, IRecipeInfoGetter {
     static public Class<? extends Block> getBlockToRegister() {
         return ConduitBundleBlock.class;
     }
+    static public Class<? extends Item> getItemToRegister() { return ConduitBlockItem.class; }
+
+    // TODO: Fix conduits copying meta data when they shouldn't (when adding new conduits and not just when upgrading), They will will be connected to each other properly
+    // TODO: Fix JEI support for conduits (currently shows <MISSING> Conduit)
 
     public boolean isBlockStateSpecificBlock(BlockPos pos, Block specificBlock, ItemStack placedItemStack, Level level) {
         BlockEntity blockEntity = level.getBlockEntity(pos);
@@ -56,5 +63,12 @@ public class EnderIoCompatibility implements IPlacer, IBlockEqualsChecker {
             blockEntity.addType(conduit, player);
         }
         return true;
+    }
+
+    public List<Holder<Item>> getSupportedPipeItems(Holder<Item> supportedBaseItem) {
+        //Conduit.DIRECT_CODEC
+        ArrayList<Holder<Item>> result = new ArrayList<>();
+        result.add(supportedBaseItem);
+        return result;
     }
 }

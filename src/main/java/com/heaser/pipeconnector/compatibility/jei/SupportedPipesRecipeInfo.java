@@ -33,7 +33,7 @@ public class SupportedPipesRecipeInfo {
         int maxRows = 6;
         int slotsPerPage = maxSlotsPerRow * maxRows;
         HolderSet.Named<Item> supportedPipesHolderSet = BuiltInRegistries.ITEM.getTag(TagKeys.PLACEABLE_ITEMS).get();
-        List<Holder<Item>> supportedPipes =  supportedPipesHolderSet.stream().sorted(Comparator.comparing((Holder<Item> item) ->
+        List<Holder<Item>> supportedPipes = supportedPipesHolderSet.stream().flatMap(CompatibilityRecipeInfoGetter::getSupportedPipeItems).sorted(Comparator.comparing((Holder<Item> item) ->
                 item.value().getDescriptionId())).toList();
 
         int pagesNum = (int)Math.ceil((float) supportedPipes.size() / (float) slotsPerPage);

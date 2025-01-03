@@ -292,14 +292,15 @@ public class PipeConnectorUtils {
     // -----------------------------------------------------------------------------------------------------------------
     // Check how many items that were in the players offhand are also available in the players inventory
     public static int getNumberOfPipesInInventory(Player player) {
-        Item pipe = player.getOffhandItem().getItem();
+        ItemStack offhandStack = player.getOffhandItem();
+        Item offhandPipe = offhandStack.getItem();
         int numberOfPipes;
         numberOfPipes = player.getOffhandItem().getCount();
         Inventory inventory = player.getInventory();
 
-
         for (ItemStack itemStack : inventory.items) {
-            if (itemStack.getItem() == pipe) {
+            Item inventoryItem = itemStack.getItem();
+            if (inventoryItem == offhandPipe && offhandPipe.getName(offhandStack) == inventoryItem.getName(itemStack)) {
                 numberOfPipes += itemStack.getCount();
             }
         }
@@ -308,35 +309,44 @@ public class PipeConnectorUtils {
     }
 
     // -----------------------------------------------------------------------------------------------------------------
-    // Reduce the number of pipes in the players inventory by one, start with the inventory and only finish with
+    // Reduce the number of pipes in the players inventory by one, start with the inventory and only finishes with
     // the offhand if needed
     // -----------------------------------------------------------------------------------------------------------------
     public static void reduceNumberOfPipesInInventory(Player player) {
 
         // Check if the player is not in creative mode
         if(!player.getAbilities().instabuild) {
-            Item pipe = player.getOffhandItem().getItem();
+            ItemStack offhandStack = player.getOffhandItem();
             Inventory inventory = player.getInventory();
 
             for (int i = 0; i < inventory.items.size(); i++) {
-                if (inventory.items.get(i).getItem() == pipe) {
-                    if (inventory.items.get(i).getCount() > 1) {
-                        inventory.items.get(i).shrink(1);
-                    } else {
-                        inventory.items.set(i, ItemStack.EMPTY);
-                    }
+                ItemStack inventoryItemStack = inventory.items.get(i);
+                if (isExactlySamePipeItem(offhandStack, inventoryItemStack)) {
+                    handlePipeReduction(inventoryItemStack);
                     return;
                 }
             }
-            // Reduce the number of pipes in the players offhand by one
-            if (player.getOffhandItem().getCount() > 1) {
-                player.getOffhandItem().shrink(1);
-            } else {
-                player.setItemInHand(InteractionHand.OFF_HAND, ItemStack.EMPTY);
-            }
+            handlePipeReduction(offhandStack);
         }
     }
 
+    // -----------------------------------------------------------------------------------------------------------------
+
+    private static void handlePipeReduction(ItemStack pipe) {
+        if (pipe.getCount() > 1) {
+            pipe.shrink(1);
+        } else {
+            pipe.setCount(0);
+        }
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    private static boolean isExactlySamePipeItem(ItemStack ItemToTestStack, ItemStack inventoryItemStack) {
+        boolean isSameItem = ItemToTestStack.getItem() == inventoryItemStack.getItem();
+        boolean doesHaveSameName = ItemToTestStack.getItem().getName(ItemToTestStack) == inventoryItemStack.getItem().getName(inventoryItemStack);
+        return isSameItem && doesHaveSameName;
+    }
     // -----------------------------------------------------------------------------------------------------------------
 
     public static boolean connectBlocks(Player player,
