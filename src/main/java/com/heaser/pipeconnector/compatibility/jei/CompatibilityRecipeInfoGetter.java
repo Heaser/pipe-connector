@@ -1,13 +1,12 @@
 package com.heaser.pipeconnector.compatibility.jei;
-
 import com.heaser.pipeconnector.compatibility.enderio.EnderIoCompatibility;
 import com.heaser.pipeconnector.compatibility.interfaces.IRecipeInfoGetter;
-import net.minecraft.core.Holder;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.neoforged.fml.ModList;
-
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Stream;
 
 public class CompatibilityRecipeInfoGetter {
@@ -20,18 +19,27 @@ public class CompatibilityRecipeInfoGetter {
         }
     }
 
+    public static CompatibilityRecipeInfoGetter getInstance() {
+        if(INSTANCE == null) {
+            INSTANCE = new CompatibilityRecipeInfoGetter();
+        }
+
+        return INSTANCE;
+    }
+
     private boolean isModLoaded(String modId) {
         return ModList.get().isLoaded(modId);
     }
 
-    public static Stream<Holder<Item>> getSupportedPipeItems(Holder<Item> supportedBaseItem) {
-        if (classToGetterMap.containsKey(supportedBaseItem.value().getClass())) {
-            return classToGetterMap.get(supportedBaseItem.getClass()).getSupportedPipeItems(supportedBaseItem).stream();
+    public Stream<ItemStack> getSupportedPipeItems(ItemStack supportedBaseItemStack) {
+        for (Map.Entry<Class<? extends Item>, IRecipeInfoGetter> set : classToGetterMap.entrySet()) {
+            Item supportedBaseItem = supportedBaseItemStack.getItem();
+            if (set.getKey().isAssignableFrom(supportedBaseItem.getClass())) {
+                return set.getValue().getSupportedPipeItems(supportedBaseItemStack).stream();
+            }
         }
-        else {
-            ArrayList<Holder<Item>> result = new ArrayList<>();
-            result.add(supportedBaseItem);
-            return result.stream();
-        }
+        ArrayList<ItemStack> result = new ArrayList<>();
+        result.add(supportedBaseItemStack);
+        return result.stream();
     }
 }

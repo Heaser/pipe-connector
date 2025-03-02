@@ -1,5 +1,8 @@
 package com.heaser.pipeconnector.compatibility.enderio;
 
+import com.enderio.conduits.api.ConduitApi;
+import com.enderio.conduits.api.ConduitType;
+import com.enderio.conduits.api.EnderIOConduitsRegistries;
 import com.enderio.conduits.common.conduit.ConduitBlockItem;
 import com.enderio.conduits.common.conduit.block.ConduitBundleBlock;
 import com.enderio.conduits.common.init.ConduitComponents;
@@ -65,10 +68,26 @@ public class EnderIoCompatibility implements IPlacer, IBlockEqualsChecker, IReci
         return true;
     }
 
-    public List<Holder<Item>> getSupportedPipeItems(Holder<Item> supportedBaseItem) {
-        //Conduit.DIRECT_CODEC
-        ArrayList<Holder<Item>> result = new ArrayList<>();
-        result.add(supportedBaseItem);
+    public List<ItemStack> getSupportedPipeItems(ItemStack supportedBaseItem) {
+        ArrayList<ItemStack> result = new ArrayList<>();
+        // TODO: Fix this
+        // Need to register the conduit types to show in JEI
+
+//        Item item = supportedBaseItem.getItem();
+//        if (item instanceof ConduitBlockItem conduitItem) {
+//        EnderIOConduitsRegistries.Keys.CONDUIT.get.stream().map((conduitType -> {
+//            ConduitApi.INSTANCE.getStackForType(0, conduitType);
+//            ConduitBlockItem.getStackFor()
+//         }));
+//        }
+        //baseConduitItem.ge
+        //Conduit.DIRECT_CODEC.dispatchMap();
+        //result.add(supportedBaseItem);
+
+
+
+        //EnderIOConduitsRegistries.CONDUIT_TYPE.stream().map((conduitType -> )) //.byNameCodec().dispatch(Conduit::type, ConduitType::codec);
+
         return result;
     }
 }

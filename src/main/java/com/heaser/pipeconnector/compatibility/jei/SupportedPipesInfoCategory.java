@@ -70,8 +70,10 @@ public class SupportedPipesInfoCategory implements IRecipeCategory<SupportedPipe
         IRecipeSlotBuilder inputSlotBuilder = builder.addSlot(RecipeIngredientRole.INPUT, xPos, 1).setBackground(slotBackground, -1, -1);
         addIngredient(VanillaTypes.ITEM_STACK, recipe.inputIngredient, inputSlotBuilder);
 
-        for (Holder<Item> item : recipe.supportedPipes) {
-            builder.addSlot(RecipeIngredientRole.OUTPUT, startPosWidth, startPosHeight).setBackground(slotBackground, -1, -1).addIngredient(VanillaTypes.ITEM_STACK, new ItemStack(item));
+        for (ItemStack itemStack : recipe.supportedPipes) {
+
+            //Item item = itemStack.value().getItem();
+            builder.addSlot(RecipeIngredientRole.OUTPUT, startPosWidth, startPosHeight).setBackground(slotBackground, -1, -1).addIngredient(VanillaTypes.ITEM_STACK, itemStack);
             startPosWidth += 18;
             if (startPosWidth > 161) {
                 startPosHeight += 18;
