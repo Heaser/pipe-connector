@@ -4,6 +4,7 @@ import com.enderio.conduits.api.ConduitApi;
 import com.enderio.conduits.api.ConduitType;
 import com.enderio.conduits.api.EnderIOConduitsRegistries;
 import com.enderio.conduits.common.conduit.ConduitBlockItem;
+import com.enderio.conduits.common.conduit.RightClickAction;
 import com.enderio.conduits.common.conduit.block.ConduitBundleBlock;
 import com.enderio.conduits.common.init.ConduitComponents;
 import com.heaser.pipeconnector.PipeConnector;
@@ -61,8 +62,8 @@ public class EnderIoCompatibility implements IPlacer, IBlockEqualsChecker, IReci
             }
             BlockState blockState =  level.getBlockState(pos);
             level.gameEvent(GameEvent.BLOCK_PLACE, pos, GameEvent.Context.of(player, blockState));
-            blockEntity.getBundle().addConduit(level, conduit, player);
-            blockEntity.addType(conduit, player);
+            RightClickAction action  = blockEntity.addType(conduit, player);
+            PipeConnector.LOGGER.debug("Action: " + action);
             return true;
         }
         BlockState blockState = Block.byItem(item).defaultBlockState();
