@@ -6,12 +6,17 @@ import com.enderio.conduits.api.EnderIOConduitsRegistries;
 import com.enderio.conduits.common.conduit.ConduitBlockItem;
 import com.enderio.conduits.common.conduit.block.ConduitBundleBlock;
 import com.enderio.conduits.common.init.ConduitComponents;
+import com.heaser.pipeconnector.PipeConnector;
 import com.heaser.pipeconnector.compatibility.interfaces.IBlockEqualsChecker;
 import com.heaser.pipeconnector.compatibility.interfaces.IPlacer;
 import com.heaser.pipeconnector.compatibility.interfaces.IRecipeInfoGetter;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.core.Holder;
+import com.heaser.pipeconnector.items.PipeConnectorItem;
+import net.minecraft.client.Minecraft;
+import net.minecraft.core.*;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.ReloadableServerRegistries;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -24,8 +29,10 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 
 
+import java.nio.channels.Pipe;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class EnderIoCompatibility implements IPlacer, IBlockEqualsChecker, IRecipeInfoGetter {
     static public Class<? extends Block> getBlockToRegister() {
@@ -55,7 +62,7 @@ public class EnderIoCompatibility implements IPlacer, IBlockEqualsChecker, IReci
             BlockState blockState =  level.getBlockState(pos);
             level.gameEvent(GameEvent.BLOCK_PLACE, pos, GameEvent.Context.of(player, blockState));
             blockEntity.getBundle().addConduit(level, conduit, player);
-            //blockEntity.addType(conduit, player);
+            blockEntity.addType(conduit, player);
             return true;
         }
         BlockState blockState = Block.byItem(item).defaultBlockState();
@@ -70,24 +77,17 @@ public class EnderIoCompatibility implements IPlacer, IBlockEqualsChecker, IReci
 
     public List<ItemStack> getSupportedPipeItems(ItemStack supportedBaseItem) {
         ArrayList<ItemStack> result = new ArrayList<>();
-        // TODO: Fix this
-        // Need to register the conduit types to show in JEI
 
-//        Item item = supportedBaseItem.getItem();
-//        if (item instanceof ConduitBlockItem conduitItem) {
-//        EnderIOConduitsRegistries.Keys.CONDUIT.get.stream().map((conduitType -> {
-//            ConduitApi.INSTANCE.getStackForType(0, conduitType);
-//            ConduitBlockItem.getStackFor()
-//         }));
-//        }
-        //baseConduitItem.ge
-        //Conduit.DIRECT_CODEC.dispatchMap();
-        //result.add(supportedBaseItem);
+        RegistryAccess registries = Minecraft.getInstance().getConnection().getLevel().registryAccess();
+        ResourceKey key = EnderIOConduitsRegistries.Keys.CONDUIT;
 
-
-
-        //EnderIOConduitsRegistries.CONDUIT_TYPE.stream().map((conduitType -> )) //.byNameCodec().dispatch(Conduit::type, ConduitType::codec);
-
+        MappedRegistry<Conduit<?>> conduitRegistry = (MappedRegistry<Conduit<?>>)registries.registry(key).get();
+        ;
+        for (Map.Entry<ResourceKey<Conduit<?>>, Conduit<?>> entry : conduitRegistry.entrySet()) {
+            Holder<Conduit<?>> conduit = conduitRegistry.getHolder(entry.getKey()).get();
+            ItemStack itemStack = ConduitApi.INSTANCE.getStackForType(conduit);
+            result.add(itemStack);
+        }
         return result;
     }
 }

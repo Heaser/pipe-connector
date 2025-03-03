@@ -152,9 +152,9 @@ dependencies {
     compileOnly ("curse.maven:ldlib-626676:5782845")
     compileOnly ("curse.maven:pretty-pipes-376737:4769646")
     compileOnly ("curse.maven:pretty-pipes-fluids-479142:4729229")
-    compileOnly ("curse.maven:jei-238222:5775467")
+    implementation ("curse.maven:jei-238222:5775467")
     compileOnly("curse.maven:applied-energistics-2-223794:5480501")
-    implementation("com.enderio:enderio-conduits:7.1.2-alpha")
+    implementation("com.enderio:enderio-conduits:7.1.6-alpha")
 
 
 
