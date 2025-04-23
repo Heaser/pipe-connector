@@ -127,9 +127,10 @@ configurations {
 
 dependencies {
 
-    implementation ("curse.maven:pipez-443900:5465392")
-    implementation "curse.maven:modern-dynamics-552758:5465437"
-    implementation "curse.maven:mekanism-268560:5680395"
+//    implementation "curse.maven:pipez-443900:5465392"
+//    implementation "curse.maven:modern-dynamics-552758:5465437"
+//    implementation "curse.maven:mekanism-268560:6327955"
+//    implementation "curse.maven:mekanism-extras-1026040:6381324"
 
     // Loves mixins
 //    implementation "curse.maven:ender-io-64578:5981524"
@@ -147,14 +148,17 @@ dependencies {
 //    implementation "curse.maven:kubejs-238086:5810100"
 //    implementation "curse.maven:rhino-416294:5691686"
 
+//    implementation "curse.maven:oritech-1030830:6227002"
+
     // Required
     compileOnly ("curse.maven:gregtechceu-modern-890405:5812613")
     compileOnly ("curse.maven:ldlib-626676:5782845")
     compileOnly ("curse.maven:pretty-pipes-376737:4769646")
     compileOnly ("curse.maven:pretty-pipes-fluids-479142:4729229")
-    implementation ("curse.maven:jei-238222:5775467")
     compileOnly("curse.maven:applied-energistics-2-223794:5480501")
-    implementation("com.enderio:enderio-conduits:7.1.6-alpha")
+    compileOnly("com.enderio:enderio-conduits:7.1.6-alpha")
+    implementation ("curse.maven:jei-238222:5775467")
+
 
 
 
