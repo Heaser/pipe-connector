@@ -300,7 +300,7 @@ public class PipeConnectorUtils {
 
         for (ItemStack itemStack : inventory.items) {
             Item inventoryItem = itemStack.getItem();
-            if (inventoryItem == offhandPipe && offhandPipe.getName(offhandStack) == inventoryItem.getName(itemStack)) {
+            if (inventoryItem == offhandPipe && offhandPipe.getDescriptionId(offhandStack) == inventoryItem.getDescriptionId(itemStack)) {
                 numberOfPipes += itemStack.getCount();
             }
         }
@@ -344,7 +344,7 @@ public class PipeConnectorUtils {
 
     private static boolean isExactlySamePipeItem(ItemStack ItemToTestStack, ItemStack inventoryItemStack) {
         boolean isSameItem = ItemToTestStack.getItem() == inventoryItemStack.getItem();
-        boolean doesHaveSameName = ItemToTestStack.getItem().getName(ItemToTestStack) == inventoryItemStack.getItem().getName(inventoryItemStack);
+        boolean doesHaveSameName = ItemToTestStack.getItem().getDescriptionId(ItemToTestStack) == inventoryItemStack.getItem().getDescriptionId(inventoryItemStack);
         return isSameItem && doesHaveSameName;
     }
     // -----------------------------------------------------------------------------------------------------------------
