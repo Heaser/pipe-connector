@@ -2739,6 +2739,14 @@
     {
       "id": "mekanism_extras:infinite_thermodynamic_conductor",
       "required": false
+    },
+    {
+      "id": "toms_storage:inventory_cable",
+      "required": false
+    },
+    {
+      "id": "toms_storage:inventory_cable_framed",
+      "required": false
     }
   ]
 }
