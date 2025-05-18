@@ -2747,6 +2747,62 @@
     {
       "id": "toms_storage:inventory_cable_framed",
       "required": false
+    },
+    {
+      "id": "xnet:netcable_red",
+      "required": false
+    },
+    {
+      "id": "xnet:netcable_green",
+      "required": false
+    },
+    {
+      "id": "xnet:netcable_blue",
+      "required": false
+    },
+    {
+      "id": "xnet:netcable_yellow",
+      "required": false
+    },
+    {
+      "id": "xnet:netcable_routing",
+      "required": false
+    },
+    {
+      "id": "xnet:connector_red",
+      "required": false
+    },
+    {
+      "id": "xnet:connector_green",
+      "required": false
+    },
+    {
+      "id": "xnet:connector_blue",
+      "required": false
+    },
+    {
+      "id": "xnet:connector_yellow",
+      "required": false
+    },
+    {
+      "id": "xnet:connector_routing",
+      "required": false
+    },
+    {
+      "id": "xnet:advanced_connector_red",
+      "required": false
+    },
+    {
+      "id": "xnet:advanced_connector_green",
+      "required": false
+    },
+    {
+      "id": "xnet:advanced_connector_yellow",
+      "required": false
+    },
+    {
+      "id": "xnet:advanced_connector_routing",
+      "required": false
     }
   ]
 }
