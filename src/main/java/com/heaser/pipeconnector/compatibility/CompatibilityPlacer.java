@@ -6,15 +6,20 @@ import com.heaser.pipeconnector.compatibility.gtceu.GTCEUCompatibility;
 import com.heaser.pipeconnector.compatibility.interfaces.IPlacer;
 import com.heaser.pipeconnector.compatibility.prettypipes.PrettyPipesCompatibility;
 import com.heaser.pipeconnector.compatibility.prettypipes.PrettyPipesFluidsCompatibility;
+import com.heaser.pipeconnector.compatibility.xnet.XNetCompatibility;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.fml.ModList;
 
 import java.util.HashMap;
@@ -43,6 +48,9 @@ public class CompatibilityPlacer {
         if(isModLoaded("enderio_conduits")) {
             blockClassToPlacerMap.put(EnderIoCompatibility.getBlockToRegister(), new EnderIoCompatibility());
         }
+        //if (isModLoaded("xnet")) {
+        //    blockClassToPlacerMap.put(XNetCompatibility.getBlockToRegister(), new XNetCompatibility());
+        //}
     }
 
     private boolean isModLoaded(String modId) {
@@ -57,13 +65,15 @@ public class CompatibilityPlacer {
         return INSTANCE;
     }
 
-    public boolean defaultPlace(Level level, BlockPos pos, Player player, Item item) {
+    public boolean defaultPlace(Level level, BlockPos pos, Player player, Item item, List<Direction> directions, ItemStack stack) {
         if (!isVoidableBlock(level, pos)) {
             level.addDestroyBlockEffect(pos, level.getBlockState(pos));
             level.destroyBlock(pos, true, player);
         }
 
-        BlockState blockState = Block.byItem(item).defaultBlockState();
+        BlockHitResult hitResult = new BlockHitResult(new Vec3(pos.getX(), pos.getY(), pos.getZ()), directions.getFirst(), pos, false);
+        BlockPlaceContext context = new BlockPlaceContext(level, player, InteractionHand.OFF_HAND, stack, hitResult);
+        BlockState blockState = Block.byItem(item).getStateForPlacement(context);
         return level.setBlockAndUpdate(pos, blockState);
     }
 
@@ -90,7 +100,7 @@ public class CompatibilityPlacer {
             return placer.place(level, pos, player, stack.getItem(), adjacentDirectionSides, stack);
         }
         else {
-            return defaultPlace(level, pos, player, stack.getItem());
+            return defaultPlace(level, pos, player, stack.getItem(), adjacentDirectionSides, stack);
         }
     }
 }
