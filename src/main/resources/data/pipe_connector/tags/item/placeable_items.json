@@ -2803,6 +2803,42 @@
     {
       "id": "xnet:advanced_connector_routing",
       "required": false
+    },
+    {
+      "id": "oritech:fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "oritech:framed_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "oritech:item_pipe",
+      "required": false
+    },
+    {
+      "id": "oritech:transparent_item_pipe",
+      "required": false
+    },
+    {
+      "id": "oritech:framed_item_pipe",
+      "required": false
+    },
+    {
+      "id": "oritech:energy_pipe",
+      "required": false
+    },
+    {
+      "id": "oritech:framed_energy_pipe",
+      "required": false
+    },
+    {
+      "id": "oritech:superconductor",
+      "required": false
+    },
+    {
+      "id": "oritech:framed_superconductor",
+      "required": false
     }
   ]
 }
