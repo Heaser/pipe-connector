@@ -126,21 +126,21 @@ configurations {
 }
 
 dependencies {
-    implementation "curse.maven:rftools-base-326041:6362247"
-    implementation "curse.maven:xnet-260912:6310525"
-    implementation "curse.maven:mcjtylib-233105:6541819"
-
-    implementation "curse.maven:toms-storage-378609:6418144"
-    implementation "curse.maven:pipez-443900:5465392"
-    implementation "curse.maven:modern-dynamics-552758:5465437"
-    implementation "curse.maven:mekanism-268560:6327955"
-    implementation "curse.maven:mekanism-extras-1026040:6381324"
-
-    // Loves mixins
-    implementation "curse.maven:ender-io-64578:5981524"
-
-   implementation "curse.maven:powah-rearchitected-633483:5735677"
-    implementation "curse.maven:cloth-config-348521:5729127"
+//    implementation "curse.maven:rftools-base-326041:6362247"
+//    implementation "curse.maven:xnet-260912:6310525"
+//    implementation "curse.maven:mcjtylib-233105:6541819"
+//
+//    implementation "curse.maven:toms-storage-378609:6418144"
+//    implementation "curse.maven:pipez-443900:5465392"
+//    implementation "curse.maven:modern-dynamics-552758:5465437"
+//    implementation "curse.maven:mekanism-268560:6327955"
+//    implementation "curse.maven:mekanism-extras-1026040:6381324"
+//
+//    // Loves mixins
+//    implementation "curse.maven:ender-io-64578:5981524"
+//
+//   implementation "curse.maven:powah-rearchitected-633483:5735677"
+//    implementation "curse.maven:cloth-config-348521:5729127"
 
 //    implementation "curse.maven:probejs-585406:5820894"
 //    implementation "curse.maven:kubejs-238086:5810100"
@@ -148,11 +148,11 @@ dependencies {
 
 
     // Oritech stuff
-    implementation "curse.maven:oritech-1030830:6548040"
-    implementation "curse.maven:architectury-api-419699:5553800"
-    implementation "curse.maven:geckolib-388172:6304958"
-    implementation "curse.maven:owo-lib-532610:6313308"
-    implementation "curse.maven:stitch-841890:5629395"
+//    implementation "curse.maven:oritech-1030830:6548040"
+//    implementation "curse.maven:architectury-api-419699:5553800"
+//    implementation "curse.maven:geckolib-388172:6304958"
+//    implementation "curse.maven:owo-lib-532610:6313308"
+//    implementation "curse.maven:stitch-841890:5629395"
     // End of Oritech stuff
 
 

@@ -48,9 +48,9 @@ public class CompatibilityPlacer {
         if(isModLoaded("enderio_conduits")) {
             blockClassToPlacerMap.put(EnderIoCompatibility.getBlockToRegister(), new EnderIoCompatibility());
         }
-        //if (isModLoaded("xnet")) {
-        //    blockClassToPlacerMap.put(XNetCompatibility.getBlockToRegister(), new XNetCompatibility());
-        //}
+        if (isModLoaded("xnet")) {
+            blockClassToPlacerMap.put(XNetCompatibility.getBlockToRegister(), new XNetCompatibility());
+        }
     }
 
     private boolean isModLoaded(String modId) {
