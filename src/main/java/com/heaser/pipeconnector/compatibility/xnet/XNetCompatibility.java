@@ -39,9 +39,16 @@ public class XNetCompatibility implements IPlacer {
 
             BlockHitResult hitResult = new BlockHitResult(new Vec3(pos.getX(), pos.getY(), pos.getZ()), adjacentDirectionSides.getFirst(), pos, false);
             BlockPlaceContext context = new BlockPlaceContext(level, player, InteractionHand.OFF_HAND, heldPipeItem, hitResult);
+
             BlockState blockState = (colorBlock).calculateState(context.getLevel(),
                     context.getClickedPos(), colorBlock.defaultBlockState().setValue(GenericCableBlock.COLOR, color));
-            return level.setBlockAndUpdate(pos, blockState);
+
+            boolean placed = level.setBlockAndUpdate(pos, blockState);
+            if (placed) {
+                blockState.getBlock().setPlacedBy(level, pos, blockState, player, heldPipeItem);
+            }
+            return placed;
+
         }
         return false;
     }
