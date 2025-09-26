@@ -1,8 +1,10 @@
 package com.heaser.pipeconnector.utils;
 
+import com.heaser.pipeconnector.PipeConnector;
 import com.heaser.pipeconnector.config.PipeConnectorConfig;
 import com.heaser.pipeconnector.constants.BridgeType;
 import com.heaser.pipeconnector.constants.ComponentDataTags;
+import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -12,6 +14,7 @@ import net.minecraft.world.item.ItemStack;
 
 import net.minecraft.world.item.component.CustomData;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,7 +53,11 @@ public class TagUtils {
         nodeTag.putInt(ComponentDataTags.kPipeConnectorNodePositionX, node.position.getX());
         nodeTag.putInt(ComponentDataTags.kPipeConnectorNodePositionY, node.position.getY());
         nodeTag.putInt(ComponentDataTags.kPipeConnectorNodePositionZ, node.position.getZ());
-        nodeTag.putByte(ComponentDataTags.kPipeConnectorNodeDirection, (byte) node.direction.get3DDataValue());
+        if (node.direction != null) {
+            nodeTag.putByte(ComponentDataTags.kPipeConnectorNodeDirection, (byte) node.direction.get3DDataValue());
+        } else {
+
+        }
         return nodeTag;
     }
 

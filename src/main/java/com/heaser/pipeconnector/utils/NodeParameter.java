@@ -19,16 +19,28 @@ public class NodeParameter {
         int y = nodeTag.getInt(ComponentDataTags.kPipeConnectorNodePositionY);
         int z = nodeTag.getInt(ComponentDataTags.kPipeConnectorNodePositionZ);
         this.position = new BlockPos(x, y, z);
-        this.direction = Direction.from3DDataValue(nodeTag.getByte(ComponentDataTags.kPipeConnectorNodeDirection));
+        if (!nodeTag.contains(ComponentDataTags.kPipeConnectorNodeDirection)) {
+            this.direction = null;
+        } else {
+            this.direction = Direction.from3DDataValue(nodeTag.getByte(ComponentDataTags.kPipeConnectorNodeDirection));
+        }
     }
 
+
     public boolean equals(NodeParameter other) {
+        if ( this.direction == null || other.direction == null ) {
+            return this.position.equals(other.position);
+        }
         boolean positionEquals = this.position.equals(other.position);
         boolean directionEquals = this.direction.equals(other.direction);
         return positionEquals && directionEquals;
     }
 
     public BlockPos getRelativePosition() {
-        return position.relative(direction);
+        if (direction == null) {
+            return position;
+        } else {
+            return position.relative(direction);
+        }
     }
 }
