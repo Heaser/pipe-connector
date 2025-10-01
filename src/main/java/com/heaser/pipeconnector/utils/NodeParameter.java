@@ -38,9 +38,9 @@ public class NodeParameter {
 
     public BlockPos getRelativePosition() {
         if (direction == null) {
-            return position;
+            return this.position;
         } else {
-            return position.relative(direction);
+            return this.position.relative(direction);
         }
     }
 }

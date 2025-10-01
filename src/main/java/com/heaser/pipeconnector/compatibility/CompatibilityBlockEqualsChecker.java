@@ -1,7 +1,7 @@
 package com.heaser.pipeconnector.compatibility;
 
 import com.heaser.pipeconnector.compatibility.ae2.AE2Compatiblity;
-import com.heaser.pipeconnector.compatibility.enderio.EnderIoCompatibility;
+//import com.heaser.pipeconnector.compatibility.enderio.EnderIoCompatibility;
 import com.heaser.pipeconnector.compatibility.interfaces.IBlockEqualsChecker;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
@@ -19,9 +19,9 @@ public class CompatibilityBlockEqualsChecker {
         if (isModLoaded("ae2")) {
             classToCheckerMap.put(AE2Compatiblity.getBlockToRegister(), new AE2Compatiblity());
         }
-        if (isModLoaded("enderio_conduits")) {
-            classToCheckerMap.put(EnderIoCompatibility.getBlockToRegister(), new EnderIoCompatibility());
-        }
+//      if (isModLoaded("enderio_conduits")) {
+//          classToCheckerMap.put(EnderIoCompatibility.getBlockToRegister(), new EnderIoCompatibility());
+//      }
     }
 
     private boolean isModLoaded(String modId) {

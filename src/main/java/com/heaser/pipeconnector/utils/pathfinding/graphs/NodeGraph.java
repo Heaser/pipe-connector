@@ -33,8 +33,10 @@ public class NodeGraph {
         edges = new ArrayList<>();
         for (BlockPos nodePosition : nodes) {
             for (BlockPos nextNodePosition : nodes) {
-                int cost = PathfindingUtils.getCost(nodePosition, nextNodePosition);
-                edges.add(new Edge(nodePosition, nextNodePosition, cost));
+                if (nextNodePosition != null && !nodePosition.equals(nextNodePosition)) {
+                    int cost = PathfindingUtils.getCost(nodePosition, nextNodePosition);
+                    edges.add(new Edge(nodePosition, nextNodePosition, cost));
+                }
             }
         }
     }

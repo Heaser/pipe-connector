@@ -167,12 +167,12 @@ dependencies {
     compileOnly("curse.maven:pretty-pipes-376737:4769646")
     compileOnly("curse.maven:pretty-pipes-fluids-479142:4729229")
     compileOnly("curse.maven:applied-energistics-2-223794:5480501")
-    compileOnly("com.enderio:enderio-conduits:7.1.6-alpha")
-    compileOnly("curse.maven:xnet-260912:6310525")
     compileOnly("curse.maven:mcjtylib-233105:6541819")
+    compileOnly("curse.maven:xnet-260912:6310525")
+    compileOnly ("curse.maven:jei-238222:5775467")
 
+//    compileOnly("com.enderio:enderio-conduits:8.0.4-alpha")  TODO: Fix after ender io finishes their conduit API updates
 
-    implementation ("curse.maven:jei-238222:5775467")
 
 
 
