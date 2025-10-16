@@ -49,6 +49,7 @@
   "item.pipe_connector.gui.button.tooltip.utilizeExistingPipesInfoPartTwo": "pipes to connect positions",
   "item.pipe_connector.gui.button.tooltip.noPathFound": "No valid path found (blocked or avoided)",
   "item.pipe_connector.gui.button.tooltip.InventoryGuard": "This will prevent the destruction of blocks with inventories",
+  "item.pipe_connector.preview.position": "Position",
   "item.pipe_connector.gui.button.tooltip.avoidInventoryBlocks": "Will try to route inventory blocks if possible",
   "item.pipe_connector.message.inventoryBlocksNotAvoided": "Path could not avoid all inventory blocks",
   "item.pipe_connector.jei.supportedPipesInfo": "Supported Pipes",
