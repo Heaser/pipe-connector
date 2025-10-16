@@ -165,6 +165,25 @@ public class TagUtils {
 
     // -----------------------------------------------------------------------------------------------------------------
 
+    public static boolean getAvoidInventoryBlocks(ItemStack stack) {
+        CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+
+        if (tag.contains(ComponentDataTags.kPipeConnectorAvoidInventoryBlocks, tag.TAG_BYTE)) {
+            return tag.getBoolean(ComponentDataTags.kPipeConnectorAvoidInventoryBlocks);
+        }
+        return false;
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
+    public static void setAvoidInventoryBlocks(ItemStack stack, boolean avoidInventoryBlocks) {
+        CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> {
+            tag.putBoolean(ComponentDataTags.kPipeConnectorAvoidInventoryBlocks, avoidInventoryBlocks);
+        });
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
     public static void resetPositionAndDirectionTags(ItemStack stack, Player player, boolean shouldShowMessage) {
         CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> {
             tag.remove(ComponentDataTags.kPipeConnectorNodes);

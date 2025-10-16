@@ -13,6 +13,7 @@ import java.util.*;
 
 import static com.heaser.pipeconnector.compatibility.CompatibilityBlockEqualsChecker.isBlockStateSpecificBlock;
 import com.heaser.pipeconnector.compatibility.CompatibilityBlockEqualsChecker;
+import com.heaser.pipeconnector.utils.TagUtils;
 import static com.heaser.pipeconnector.utils.GeneralUtils.*;
 
 public class
@@ -100,6 +101,16 @@ PathfindingAStarAlgorithm {
         boolean canAvoid = !isPipeBlock(level, neighbor) || isOffhandItemAvoidable(level, neighbor, player);
         boolean isBlockSpecificBlock = isBlockStateSpecificBlock(neighbor, block, offhandItem, level);
         boolean isCompatPassable = CompatibilityBlockEqualsChecker.isPassableForPathfinding(neighbor, level, offhandItem);
+
+        // Optional: avoid blocks with inventories (containers) when A* is selected via GUI.
+        boolean avoidInventories = false;
+        ItemStack connector = heldPipeConnector(player);
+        if (connector != null) {
+            avoidInventories = TagUtils.getAvoidInventoryBlocks(connector);
+        }
+        if (avoidInventories && hasInventoryCapabilities(level, neighbor)) {
+            return false;
+        }
 
         return (isStartOrEnd || isAtRequiredLevel || isNotVoidable) && canAvoid && (isBlockSpecificBlock || isCompatPassable);
     }

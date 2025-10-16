@@ -33,6 +33,7 @@ public class PipeConnectorGui extends Screen {
     private BaseButton bridgeTypeButton;
     private BaseButton utilizeExistingPipesButton;
     private BaseButton inventoryGuardButton;
+    private BaseButton avoidInventoryBlocksButton;
 
     public PipeConnectorGui(ItemStack pipeConnectorStack) {
         super(Component.literal("PipeConnectorScreen"));
@@ -45,7 +46,8 @@ public class PipeConnectorGui extends Screen {
     protected void init() {
         bridgeTypeButton = createButton(0.05, 0.2, new BridgeTypeButton(pipeConnectorStack));
         inventoryGuardButton = createButton(0.45, 0.3, new InventoryGuardButton(pipeConnectorStack));
-        utilizeExistingPipesButton = createButton(0.45, 0.4, new UtilizeExistingPipesButton(pipeConnectorStack));
+        avoidInventoryBlocksButton = createButton(0.45, 0.4, new AvoidInventoryBlocksButton(pipeConnectorStack));
+        utilizeExistingPipesButton = createButton(0.45, 0.5, new UtilizeExistingPipesButton(pipeConnectorStack));
         resetBaseButton = createButton(0.65, 0.7, new ResetButton());
         buildPipesButton = createButton(0.65, 0.8, new BuildPipesButton(this.getMinecraft().player));
     }
@@ -68,15 +70,18 @@ public class PipeConnectorGui extends Screen {
         drawTooltipList(guiGraphics, mouseX, mouseY, bridgeTypeButton);
         drawTooltip(guiGraphics, mouseX, mouseY, inventoryGuardButton);
         drawTooltipList(guiGraphics, mouseX, mouseY, utilizeExistingPipesButton);
+        drawTooltipList(guiGraphics, mouseX, mouseY, avoidInventoryBlocksButton);
         guiGraphics.blit(PIPE_CONNECTOR_TEXTURE, drawStartX, drawStartY, 0, 0, imageWidth, imageHeight);
         super.render(guiGraphics, mouseX, mouseY, partialTick);
         utilizeExistingPipesButton.button.active = utilizeExistingPipesButton.isActive(pipeConnectorStack);
+        avoidInventoryBlocksButton.button.active = avoidInventoryBlocksButton.isActive(pipeConnectorStack);
         buildPipesButton.button.active = buildPipesButton.isActive(pipeConnectorStack);
 
         // Labels
         createLabel(guiGraphics, 0.07, 0.05, new TitleLabelText(), 3f);
         createLabel(guiGraphics, 0.12, 0.32, new InventoryGuardText());
-        createLabel(guiGraphics, 0.08, 0.42 , new UtilizeExistingPipesText());
+        createLabel(guiGraphics, 0.08, 0.42 , new com.heaser.pipeconnector.client.gui.labels.AvoidInventoryBlocksText());
+        createLabel(guiGraphics, 0.08, 0.52 , new UtilizeExistingPipesText());
         createLabel(guiGraphics, 0.65, 0.65, new DepthLabel());
     }
 

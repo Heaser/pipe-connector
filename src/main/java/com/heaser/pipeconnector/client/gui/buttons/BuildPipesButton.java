@@ -1,6 +1,7 @@
 package com.heaser.pipeconnector.client.gui.buttons;
 
 import com.heaser.pipeconnector.client.ClientSetup;
+import com.heaser.pipeconnector.constants.BridgeType;
 import com.heaser.pipeconnector.compatibility.CompatibilityBlockGetter;
 import com.heaser.pipeconnector.config.PipeConnectorConfig;
 import com.heaser.pipeconnector.network.BuildPipesPacket;
@@ -67,6 +68,16 @@ public class BuildPipesButton extends BaseButton {
             return Component.translatable("item.pipe_connector.message.unbreakableBlockReached", blockName);
         }
 
+
+        // If using A*, ensure a real path exists (not just isolated nodes)
+        if (TagUtils.getBridgeType(itemStack) == BridgeType.A_STAR) {
+            var nodePositions = nodes.stream().map(NodeParameter::getRelativePosition).collect(java.util.stream.Collectors.toSet());
+            boolean anyNonNodePositions = ClientSetup.PREVIEW_DRAWER.previewMap.stream()
+                    .anyMatch(preview -> !nodePositions.contains(preview.pos));
+            if (!anyNonNodePositions) {
+                return Component.translatable("item.pipe_connector.gui.button.tooltip.noPathFound");
+            }
+        }
 
         if (ClientSetup.PREVIEW_DRAWER.previewMap.size() >= maxAllowedPipes) {
             return Component.translatable("item.pipe_connector.gui.button.toolTip.maxAllowedPipesReached", maxAllowedPipes);

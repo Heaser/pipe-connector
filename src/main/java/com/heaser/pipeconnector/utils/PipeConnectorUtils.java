@@ -59,17 +59,32 @@ public class PipeConnectorUtils {
             player.displayClientMessage(Component.translatable("item.pipe_connector.message.reachedPipeLimit", pipeLimit).withStyle(ChatFormatting.BOLD, ChatFormatting.YELLOW), true);
             return false;
         }
-        // Checks if the block is unbreakable
+        // Checks if the block is unbreakable and handles inventory-guard behavior
+        boolean inventoryFoundInPath = false;
+        boolean inventoryGuard = TagUtils.getPreventInventoryBlockBreaking(context.getItemInHand());
+        boolean avoidInventoryBlocks = TagUtils.getAvoidInventoryBlocks(context.getItemInHand());
+        boolean isAStar = bridgeType == BridgeType.A_STAR;
+
         for (Map.Entry<BlockPos, BlockState> set : blockPosMap.entrySet()) {
             String blockName = set.getValue().getBlock().getName().getString();
             if (isNotBreakable(level, set.getKey())) {
                 player.displayClientMessage(Component.translatable("item.pipe_connector.message.unbreakableBlockReached", blockName).withStyle(ChatFormatting.BOLD, ChatFormatting.DARK_RED), true);
                 return false;
             }
-            if (hasInventoryCapabilities(level, set.getKey()) && TagUtils.getPreventInventoryBlockBreaking(context.getItemInHand())) {
-                player.displayClientMessage(Component.translatable("item.pipe_connector.gui.button.tooltip.disabledInventoryInPath", blockName).withStyle(ChatFormatting.BOLD, ChatFormatting.DARK_RED), true);
-                return false;
+            if (hasInventoryCapabilities(level, set.getKey()) && inventoryGuard) {
+                if (avoidInventoryBlocks && isAStar) {
+                    inventoryFoundInPath = true; // Keep checking all to see if any remain
+                } else {
+                    player.displayClientMessage(Component.translatable("item.pipe_connector.gui.button.tooltip.disabledInventoryInPath", blockName).withStyle(ChatFormatting.BOLD, ChatFormatting.DARK_RED), true);
+                    return false;
+                }
             }
+        }
+
+        if (inventoryFoundInPath) {
+            // With avoidance enabled for A*, the path should not include inventories; if it still does, we couldn't avoid.
+            player.displayClientMessage(Component.translatable("item.pipe_connector.message.inventoryBlocksNotAvoided").withStyle(ChatFormatting.BOLD, ChatFormatting.DARK_RED), true);
+            return false;
         }
 
         for (Map.Entry<BlockPos, BlockState> set : blockPosMap.entrySet()) {

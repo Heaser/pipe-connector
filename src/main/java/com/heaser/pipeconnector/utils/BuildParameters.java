@@ -14,6 +14,7 @@ public class BuildParameters {
     public List<NodeParameter> nodes;
     public BridgeType bridgeType;
     public boolean utilizeExistingPipes;
+    public boolean avoidInventoryBlocks;
     public String dimension;
 
     public BuildParameters() {
@@ -22,6 +23,7 @@ public class BuildParameters {
         this.dimension = "";
         this.bridgeType = BridgeType.DEFAULT;
         this.utilizeExistingPipes = true;
+        this.avoidInventoryBlocks = false;
     }
 
     public BuildParameters(ItemStack pipeConnectorItem) {
@@ -30,18 +32,21 @@ public class BuildParameters {
         this.dimension = TagUtils.getDimension(pipeConnectorItem);
         this.bridgeType = TagUtils.getBridgeType(pipeConnectorItem);
         this.utilizeExistingPipes = TagUtils.getUtilizeExistingPipes(pipeConnectorItem);
+        this.avoidInventoryBlocks = TagUtils.getAvoidInventoryBlocks(pipeConnectorItem);
     }
 
     public BuildParameters(int depth,
                            List<NodeParameter> nodes,
                            String dimension,
                            BridgeType bridgeType,
-                           boolean utilizeExistingPipes) {
+                           boolean utilizeExistingPipes,
+                           boolean avoidInventoryBlocks) {
         this.depth = depth;
         this.nodes = (List<NodeParameter>) new ArrayList<>(nodes).clone();
         this.dimension = dimension;
         this.bridgeType = bridgeType;
         this.utilizeExistingPipes = utilizeExistingPipes;
+        this.avoidInventoryBlocks = avoidInventoryBlocks;
     }
 
     public boolean equals(BuildParameters other) {
@@ -49,6 +54,7 @@ public class BuildParameters {
         boolean isDimensionEqual = other.dimension.equals(this.dimension);
         boolean isBridgeTypeEqual = other.bridgeType == this.bridgeType;
         boolean isUtilizeExistingPipesEqual = other.utilizeExistingPipes == this.utilizeExistingPipes;
+        boolean isAvoidInventoryBlocksEqual = other.avoidInventoryBlocks == this.avoidInventoryBlocks;
         boolean nodesEqual;
         nodesEqual = other.nodes.size() == this.nodes.size();
         if (nodesEqual) {
@@ -59,6 +65,6 @@ public class BuildParameters {
             }
         }
         return depthEqual && nodesEqual && isDimensionEqual
-                && isBridgeTypeEqual && isUtilizeExistingPipesEqual;
+                && isBridgeTypeEqual && isUtilizeExistingPipesEqual && isAvoidInventoryBlocksEqual;
     }
 }

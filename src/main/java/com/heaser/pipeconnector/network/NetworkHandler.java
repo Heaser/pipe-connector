@@ -14,6 +14,7 @@ public class NetworkHandler {
         var registrar = event.registrar(PipeConnector.MODID);
         serverbound(registrar, UpdateUtilizeExistingPipes.TYPE, UpdateUtilizeExistingPipes.STREAM_CODEC);
         serverbound(registrar, UpdateInventoryGuard.TYPE, UpdateInventoryGuard.STREAM_CODEC);
+        serverbound(registrar, UpdateAvoidInventoryBlocks.TYPE, UpdateAvoidInventoryBlocks.STREAM_CODEC);
         serverbound(registrar, UpdateDepthPacket.TYPE, UpdateDepthPacket.STREAM_CODEC);
         serverbound(registrar, UpdateBridgeTypePacket.TYPE, UpdateBridgeTypePacket.STREAM_CODEC);
         serverbound(registrar, ResetPacket.TYPE, ResetPacket.STREAM_CODEC);
