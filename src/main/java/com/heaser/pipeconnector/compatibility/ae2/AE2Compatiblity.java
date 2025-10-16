@@ -75,6 +75,41 @@ public class AE2Compatiblity implements IBlockGetter, IPlacer, IBlockEqualsCheck
     }
 
     @Override
+    public boolean isPlacementAlreadySatisfied(BlockPos pos, Block specificBlock, ItemStack placedItemStack, Level level) {
+        BlockEntity blockEntity = level.getBlockEntity(pos);
+        Item placedItem = placedItemStack.getItem();
+        if (level.getBlockState(pos).getBlock() instanceof CableBusBlock &&
+                blockEntity instanceof IPartHost host &&
+                placedItem instanceof IPartItem) {
+            IPart part = host.getPart(null);
+            if (part == null) {
+                return false;
+            }
+            IPartItem<?> partItem = part.getPartItem();
+            boolean colorsEqual = true;
+            if (partItem instanceof ColoredPartItem<?> coloredPartItem && placedItem instanceof ColoredPartItem<?> coloredPlacedItem) {
+                colorsEqual = coloredPartItem.getColor().equals(coloredPlacedItem.getColor());
+            }
+            Class<?> ownClass = ((IPartItem<?>) placedItem).getPartClass();
+            Class<?> targetClass = partItem.getPartClass();
+            return colorsEqual && targetClass == ownClass;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean isPassableForPathfinding(BlockPos pos, Level level, ItemStack placedItemStack) {
+        BlockEntity blockEntity = level.getBlockEntity(pos);
+        if (level.getBlockState(pos).getBlock() instanceof CableBusBlock &&
+                blockEntity instanceof IPartHost host) {
+            // Treat empty cable bus as passable for A* so depth 0 routing works.
+            return host.getPart(null) == null;
+        }
+        return false;
+    }
+
+    @Override
     @Nullable
     public Direction getDirection(UseOnContext context) {
         BlockPos clickedPosition = context.getClickedPos();

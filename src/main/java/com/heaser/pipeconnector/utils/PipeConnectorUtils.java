@@ -73,7 +73,7 @@ public class PipeConnectorUtils {
         }
 
         for (Map.Entry<BlockPos, BlockState> set : blockPosMap.entrySet()) {
-            if (!CompatibilityBlockEqualsChecker.getInstance().isBlockStateSpecificBlock(set.getKey(), blockToPlace, itemToPlace, level)) {
+            if (!CompatibilityBlockEqualsChecker.isPlacementAlreadySatisfied(set.getKey(), blockToPlace, itemToPlace, level)) {
                 BlockPos position = set.getKey();
                 ParticleHelper.serverSpawnMarkerParticle((ServerLevel) level, set.getKey());
                 List<Direction> directions = getNeighboringDirections(position, blockPosMap);
@@ -96,7 +96,7 @@ public class PipeConnectorUtils {
     public static int getMissingPipesInInventory(Player player, int NumberOfPipesInInventory, Map<BlockPos, BlockState> blockPosMap, Block block) {
         int existingPipesInPath = 0;
         for (Map.Entry<BlockPos, BlockState> set : blockPosMap.entrySet()) {
-            if (CompatibilityBlockEqualsChecker.getInstance().isBlockStateSpecificBlock(set.getKey(), block, player.getOffhandItem(), player.level())) {
+            if (CompatibilityBlockEqualsChecker.isPlacementAlreadySatisfied(set.getKey(), block, player.getOffhandItem(), player.level())) {
                 existingPipesInPath++;
             }
         }
@@ -107,7 +107,7 @@ public class PipeConnectorUtils {
         int existingPipesInPath = 0;
 
         for (PreviewInfo previewInfo : previewMap) {
-            if (CompatibilityBlockEqualsChecker.getInstance().isBlockStateSpecificBlock(previewInfo.pos, block, player.getOffhandItem(), level)) {
+            if (CompatibilityBlockEqualsChecker.isPlacementAlreadySatisfied(previewInfo.pos, block, player.getOffhandItem(), level)) {
                 existingPipesInPath++;
             }
         }
@@ -392,3 +392,4 @@ public class PipeConnectorUtils {
         }
     }
 }
+

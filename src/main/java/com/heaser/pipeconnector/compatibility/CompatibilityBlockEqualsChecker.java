@@ -55,4 +55,34 @@ public class CompatibilityBlockEqualsChecker {
             return defaultIsBlockStateSpecificBlock(pos, specificBlock, placedItemStack, level);
         }
     }
+
+    public static boolean isPlacementAlreadySatisfied(BlockPos pos, Block specificBlock, ItemStack placedItemStack, Level level) {
+        IBlockEqualsChecker checker = null;
+        for (Map.Entry<Class<? extends Block>, IBlockEqualsChecker> set : classToCheckerMap.entrySet()) {
+            if (set.getKey().isAssignableFrom(specificBlock.getClass())) {
+                checker = set.getValue();
+                break;
+            }
+        }
+        if (checker != null) {
+            return checker.isPlacementAlreadySatisfied(pos, specificBlock, placedItemStack, level);
+        } else {
+            return defaultIsBlockStateSpecificBlock(pos, specificBlock, placedItemStack, level);
+        }
+    }
+
+    public static boolean isPassableForPathfinding(BlockPos pos, Level level, ItemStack placedItemStack) {
+        IBlockEqualsChecker checker = null;
+        Block currentBlock = level.getBlockState(pos).getBlock();
+        for (Map.Entry<Class<? extends Block>, IBlockEqualsChecker> set : classToCheckerMap.entrySet()) {
+            if (set.getKey().isAssignableFrom(currentBlock.getClass())) {
+                checker = set.getValue();
+                break;
+            }
+        }
+        if (checker != null) {
+            return checker.isPassableForPathfinding(pos, level, placedItemStack);
+        }
+        return false;
+    }
 }

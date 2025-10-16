@@ -12,6 +12,7 @@ import net.minecraft.world.level.block.Block;
 import java.util.*;
 
 import static com.heaser.pipeconnector.compatibility.CompatibilityBlockEqualsChecker.isBlockStateSpecificBlock;
+import com.heaser.pipeconnector.compatibility.CompatibilityBlockEqualsChecker;
 import static com.heaser.pipeconnector.utils.GeneralUtils.*;
 
 public class
@@ -98,8 +99,9 @@ PathfindingAStarAlgorithm {
         boolean isNotVoidable = !isVoidableBlock(level, neighbor);
         boolean canAvoid = !isPipeBlock(level, neighbor) || isOffhandItemAvoidable(level, neighbor, player);
         boolean isBlockSpecificBlock = isBlockStateSpecificBlock(neighbor, block, offhandItem, level);
+        boolean isCompatPassable = CompatibilityBlockEqualsChecker.isPassableForPathfinding(neighbor, level, offhandItem);
 
-        return (isStartOrEnd || isAtRequiredLevel || isNotVoidable) && canAvoid && isBlockSpecificBlock;
+        return (isStartOrEnd || isAtRequiredLevel || isNotVoidable) && canAvoid && (isBlockSpecificBlock || isCompatPassable);
     }
 
     private static boolean isStartOrEnd(BlockPos pos, BlockPos start, BlockPos end) {
