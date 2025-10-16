@@ -9,6 +9,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.gui.Font;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -65,24 +67,30 @@ public class PreviewDrawer {
         // Prepare node index lookup (1-based indexing in preview)
         java.util.List<NodeParameter> nodes = TagUtils.getNodesFromStack(pipeConnector);
         java.util.List<net.minecraft.core.BlockPos> nodePositions = nodes.stream().map(NodeParameter::getRelativePosition).toList();
+        java.util.Set<net.minecraft.core.BlockPos> nodeSet = new java.util.HashSet<>(nodePositions);
 
-        // Pass 1: draw all boxes
+        // Precompute lookup for connectivity
+        java.util.Set<BlockPos> previewPositions = new java.util.HashSet<>();
+        for (PreviewInfo pi : previewMap) previewPositions.add(pi.pos);
+
+        // Pass 1: draw pipe-like segments (center joint + connectors to neighbors)
         for (PreviewInfo previewInfo : previewMap) {
-            VertexConsumer builder = buffer.getBuffer(PipeConnectorRenderType.LINES_NO_DEPTH_TEST);
-            AABB aabb = new AABB(previewInfo.pos).move(-offset.x, -offset.y, -offset.z);
-            if (previewInfo.isNode(pipeConnector)) {
-                LevelRenderer.renderLineBox(pose, builder, aabb, 1F, 1F, 1F, 1F);
-            } else if (isNotBreakable(player.level(), previewInfo.pos) || hasInventoryCapabilities(player.level(), previewInfo.pos)) {
-                LevelRenderer.renderLineBox(pose, builder, aabb, 1F, 0, 0, 1F);
-            } else if (isVoidableBlock(player.level(), previewInfo.pos)) {
-                LevelRenderer.renderLineBox(pose, builder, aabb, 1F, 1F, 0, 1F);
-            } else if (CompatibilityBlockEqualsChecker.getInstance().isBlockStateSpecificBlock(previewInfo.pos,
-                    CompatibilityBlockGetter.getInstance().getBlock(player.getOffhandItem()),
-                    player.getOffhandItem(), player.level())) {
-                LevelRenderer.renderLineBox(pose, builder, aabb, 0.87F, 0.25F, 0.87F, 0.5F);
-            } else {
-                LevelRenderer.renderLineBox(pose, builder, aabb, 0, 1F, 0, 0.5F);
+            BlockPos pos = previewInfo.pos;
+            float[] color = getColorForPos(player, pos);
+            int nodeIdx = nodePositions.indexOf(pos);
+            boolean isNode = nodeIdx >= 0;
+            float[] nodeColor = null;
+            if (isNode) {
+                // Start cyan, end orange, intermediates use palette
+                if (nodeIdx == 0) {
+                    nodeColor = new float[]{0f, 1f, 1f, 1f}; // cyan
+                } else if (nodeIdx == nodePositions.size() - 1) {
+                    nodeColor = new float[]{1f, 0.65f, 0f, 1f}; // orange
+                } else {
+                    nodeColor = argbToRgba(getIndexColor(nodeIdx));
+                }
             }
+            drawPipePiece(pose, buffer, pos, offset, previewPositions, color, isNode, nodeColor);
         }
 
         // Pass 2: render node indices so text rendering does not interfere with line buffers
@@ -144,16 +152,115 @@ public class PreviewDrawer {
         pose.popPose();
     }
 
+    private float[] getColorForPos(Player player, BlockPos pos) {
+        // Returns RGBA floats for this preview position, matching previous color semantics
+        if (isNotBreakable(player.level(), pos) || hasInventoryCapabilities(player.level(), pos)) {
+            return new float[]{1f, 0f, 0f, 1f}; // red
+        } else if (isVoidableBlock(player.level(), pos)) {
+            return new float[]{1f, 1f, 0f, 1f}; // yellow
+        } else if (CompatibilityBlockEqualsChecker.getInstance().isBlockStateSpecificBlock(pos,
+                CompatibilityBlockGetter.getInstance().getBlock(player.getOffhandItem()),
+                player.getOffhandItem(), player.level())) {
+            return new float[]{0.87f, 0.25f, 0.87f, 0.5f}; // purple-ish
+        }
+        return new float[]{0f, 1f, 0f, 0.5f}; // green
+    }
+
+    private static final double PIPE_HALF = 0.075; // thickness for regular segments (overall 0.15)
+    private static final double NODE_HALF = 0.20;  // thicker joint for nodes (overall 0.40)
+
+    private void drawPipePiece(PoseStack pose, MultiBufferSource buffer, BlockPos pos, Vec3 offset,
+                                java.util.Set<BlockPos> previewPositions, float[] rgba, boolean isNode, float[] nodeRgba) {
+        double cx = pos.getX() + 0.5;
+        double cy = pos.getY() + 0.5;
+        double cz = pos.getZ() + 0.5;
+        double half = isNode ? NODE_HALF : PIPE_HALF; // larger joint for nodes
+        float[] drawColor = (isNode && nodeRgba != null) ? nodeRgba : rgba;
+
+        // Center joint
+        drawThinBox(pose, buffer,
+                cx - half - offset.x, cy - half - offset.y, cz - half - offset.z,
+                cx + half - offset.x, cy + half - offset.y, cz + half - offset.z,
+                drawColor);
+
+        // Connectors
+        // West (x-)
+        if (previewPositions.contains(pos.relative(Direction.WEST))) {
+            drawThinBox(pose, buffer,
+                    pos.getX() - offset.x, cy - half - offset.y, cz - half - offset.z,
+                    cx - half - offset.x, cy + half - offset.y, cz + half - offset.z,
+                    drawColor);
+        }
+        // East (x+)
+        if (previewPositions.contains(pos.relative(Direction.EAST))) {
+            drawThinBox(pose, buffer,
+                    cx + half - offset.x, cy - half - offset.y, cz - half - offset.z,
+                    pos.getX() + 1.0 - offset.x, cy + half - offset.y, cz + half - offset.z,
+                    drawColor);
+        }
+        // North (z-)
+        if (previewPositions.contains(pos.relative(Direction.NORTH))) {
+            drawThinBox(pose, buffer,
+                    cx - half - offset.x, cy - half - offset.y, pos.getZ() - offset.z,
+                    cx + half - offset.x, cy + half - offset.y, cz - half - offset.z,
+                    drawColor);
+        }
+        // South (z+)
+        if (previewPositions.contains(pos.relative(Direction.SOUTH))) {
+            drawThinBox(pose, buffer,
+                    cx - half - offset.x, cy - half - offset.y, cz + half - offset.z,
+                    cx + half - offset.x, cy + half - offset.y, pos.getZ() + 1.0 - offset.z,
+                    drawColor);
+        }
+        // Down (y-)
+        if (previewPositions.contains(pos.relative(Direction.DOWN))) {
+            drawThinBox(pose, buffer,
+                    cx - half - offset.x, pos.getY() - offset.y, cz - half - offset.z,
+                    cx + half - offset.x, cy - half - offset.y, cz + half - offset.z,
+                    drawColor);
+        }
+        // Up (y+)
+        if (previewPositions.contains(pos.relative(Direction.UP))) {
+            drawThinBox(pose, buffer,
+                    cx - half - offset.x, cy + half - offset.y, cz - half - offset.z,
+                    cx + half - offset.x, pos.getY() + 1.0 - offset.y, cz + half - offset.z,
+                    drawColor);
+        }
+
+        // No large full-block outline; nodes are emphasized by thicker center and node-specific color
+    }
+
+    private void drawThinBox(PoseStack pose, MultiBufferSource buffer,
+                              double x0, double y0, double z0,
+                              double x1, double y1, double z1,
+                              float[] rgba) {
+        VertexConsumer builder = buffer.getBuffer(PipeConnectorRenderType.LINES_NO_DEPTH_TEST);
+        AABB aabb = new AABB(
+                Math.min(x0, x1), Math.min(y0, y1), Math.min(z0, z1),
+                Math.max(x0, x1), Math.max(y0, y1), Math.max(z0, z1)
+        );
+        LevelRenderer.renderLineBox(pose, builder, aabb, rgba[0], rgba[1], rgba[2], rgba[3]);
+    }
+
+    private float[] argbToRgba(int argb) {
+        float a = ((argb >> 24) & 0xFF) / 255f;
+        float r = ((argb >> 16) & 0xFF) / 255f;
+        float g = ((argb >> 8) & 0xFF) / 255f;
+        float b = (argb & 0xFF) / 255f;
+        return new float[]{r, g, b, Math.max(a, 1.0f)}; // ensure fully opaque for node emphasis
+    }
+
     private int getIndexColor(int zeroBasedIndex) {
+        // Intermediate node palette (avoid reserved: Start=Cyan, End=Orange)
         int[] palette = new int[] {
-                0xFFFFFFFF, // 1 - White
-                0xFFFFA500, // 2 - Orange
-                0xFF00FFFF, // 3 - Cyan
-                0xFFFFFF00, // 4 - Yellow
-                0xFFFF00FF, // 5 - Magenta
-                0xFF00FF7F, // 6 - Spring Green
-                0xFF7B68EE, // 7 - Slate Blue
-                0xFFFF69B4  // 8 - Hot Pink
+                0xFFFFFFFF, // White
+                0xFFFF00FF, // Magenta
+                0xFFFFFF00, // Yellow
+                0xFF7FFF00, // Chartreuse
+                0xFF00FF7F, // Spring Green
+                0xFF7B68EE, // Slate Blue
+                0xFFFF69B4, // Hot Pink
+                0xFFADFF2F  // Green Yellow
         };
         return palette[zeroBasedIndex % palette.length];
     }

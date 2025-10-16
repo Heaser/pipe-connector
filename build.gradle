@@ -130,7 +130,7 @@ dependencies {
 //    implementation "curse.maven:toms-storage-378609:6418144"
 //    implementation "curse.maven:pipez-443900:5465392"
 //    implementation "curse.maven:modern-dynamics-552758:5465437"
-    implementation "curse.maven:mekanism-268560:6327955"
+//    implementation "curse.maven:mekanism-268560:6327955"
 //    implementation "curse.maven:mekanism-extras-1026040:6381324"
 //
 //    // Loves mixins

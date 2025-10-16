@@ -141,18 +141,18 @@ public class PipeConnectorItem extends Item {
             NodeParameter newNode = new NodeParameter(clickedPosition, clickedFace);
             boolean hasReachedMaxNodes = GeneralUtils.MaxAllowedNodesReached(currentNodes);
 
-            if(hasReachedMaxNodes) {
-                usingPlayer.displayClientMessage(Component.translatable("item.pipe_connector.message.maxNodesReached")
-                        .withStyle(ChatFormatting.BOLD, ChatFormatting.RED), true);
-
-                return InteractionResult.FAIL;
-            }
-            else if (currentNodes.stream().anyMatch((NodeParameter node) -> node.position.equals(newNode.position))) {
+            // Always allow removing an existing node, even if max nodes has been reached
+            if (currentNodes.stream().anyMatch((NodeParameter node) -> node.position.equals(newNode.position))) {
                 GeneralUtils.handleNodeRemovalByPosition(currentNodes, newNode.position, interactedItem);
                 ParticleHelper.serverSpawnMarkerParticle((ServerLevel) level, newNode.position);
                 return InteractionResult.SUCCESS;
             }
-            else {
+            else if (hasReachedMaxNodes) {
+                usingPlayer.displayClientMessage(Component.translatable("item.pipe_connector.message.maxNodesReached")
+                        .withStyle(ChatFormatting.BOLD, ChatFormatting.RED), true);
+
+                return InteractionResult.FAIL;
+            } else {
                 if (!level.dimensionTypeRegistration().getRegisteredName().equals(TagUtils.getDimension(interactedItem))) {
                     currentNodes.clear();
                 }
