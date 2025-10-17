@@ -21,6 +21,7 @@ public class PipeConnector {
 
     public PipeConnector(IEventBus modEventBus) {
         ModItems.ITEMS.register(modEventBus);
+        ModSounds.SOUND_EVENTS.register(modEventBus);
 
         ModLoadingContext.get().getActiveContainer().registerConfig(ModConfig.Type.COMMON, PipeConnectorConfig.SPEC, "pipe-connector.toml");
         modEventBus.addListener(NetworkHandler::register);

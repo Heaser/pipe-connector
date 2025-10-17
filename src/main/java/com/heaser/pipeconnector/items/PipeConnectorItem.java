@@ -145,6 +145,7 @@ public class PipeConnectorItem extends Item {
             if (currentNodes.stream().anyMatch((NodeParameter node) -> node.position.equals(newNode.position))) {
                 GeneralUtils.handleNodeRemovalByPosition(currentNodes, newNode.position, interactedItem);
                 ParticleHelper.serverSpawnMarkerParticle((ServerLevel) level, newNode.position);
+                level.playSound(null, newNode.position, com.heaser.pipeconnector.ModSounds.nextAlternating(usingPlayer.getUUID()), net.minecraft.sounds.SoundSource.PLAYERS, 1.0f, 1.0f);
                 return InteractionResult.SUCCESS;
             }
             else if (hasReachedMaxNodes) {
@@ -160,6 +161,8 @@ public class PipeConnectorItem extends Item {
                 TagUtils.setDimension(interactedItem, level.dimensionTypeRegistration().getRegisteredName());
                 ParticleHelper.serverSpawnMarkerParticle((ServerLevel) level, relativePosition);
                 TagUtils.setNodesToStack(interactedItem, currentNodes);
+                // Alternate beep/boop
+                level.playSound(null, relativePosition, com.heaser.pipeconnector.ModSounds.nextAlternating(usingPlayer.getUUID()), net.minecraft.sounds.SoundSource.PLAYERS, 1.0f, 1.0f);
             }
         }
         return InteractionResult.SUCCESS;

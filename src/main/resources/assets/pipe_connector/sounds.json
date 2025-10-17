@@ -1,0 +1,12 @@
+{
+  "beep_emma": {
+    "sounds": [
+      { "name": "pipe_connector:beep_emma", "stream": false }
+    ]
+  },
+  "boop_emma": {
+    "sounds": [
+      { "name": "pipe_connector:boop_emma", "stream": false }
+    ]
+  }
+}
