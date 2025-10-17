@@ -95,8 +95,17 @@ public class PreviewDrawer {
 
         // Pass 2: render node indices so text rendering does not interfere with line buffers
         for (int i = 0; i < nodePositions.size(); i++) {
-            renderNodeIndexNumber(pose, buffer, nodePositions.get(i), i + 1, offset, getIndexColor(i));
+            // Match the node AABB color semantics for contrast computation
+            int nodeColorInt;
+            if (i == 0) {
+                nodeColorInt = 0xFF00FFFF; // cyan (start)
+            } else if (i == nodePositions.size() - 1) {
+                nodeColorInt = 0xFFFFA500; // orange (end)
+                nodeColorInt = getIndexColor(i); // intermediate palette color
+            }
+            renderNodeIndexNumber(pose, buffer, nodePositions.get(i), i + 1, offset, nodeColorInt);
         }
+    } else {
     }
 
     private void renderNodeIndexNumber(PoseStack pose, MultiBufferSource buffer, net.minecraft.core.BlockPos pos, int index, Vec3 cameraOffset, int color) {
@@ -106,16 +115,16 @@ public class PreviewDrawer {
         String number = Integer.toString(index);
 
         pose.pushPose();
-        // Position text at block center (middle of the preview block)
+        // Always-visible label: place near block center with slight upward offset; text is rendered see-through
         double x = pos.getX() + 0.5 - cameraOffset.x;
-        double y = pos.getY() + 0.5 - cameraOffset.y;
+        double y = pos.getY() + 0.75 - cameraOffset.y; // small lift above center
         double z = pos.getZ() + 0.5 - cameraOffset.z;
         pose.translate(x, y, z);
 
         // Make text face the camera
         pose.mulPose(mc.gameRenderer.getMainCamera().rotation());
-        // Slightly smaller overall; flip Y so text isn't mirrored
-        float scale = 0.035f;
+        // Slightly larger for readability; flip Y so text isn't mirrored
+        float scale = 0.040f;
         pose.scale(scale, -scale, scale);
         // Slightly offset towards the camera to avoid z-fighting with line boxes
         pose.translate(0.0, 0.0, 0.01);
@@ -125,27 +134,57 @@ public class PreviewDrawer {
         float numberWidth = font.width(number);
         int white = 0xFFFFFFFF;
 
-        // Draw "Position" label (white)
+        // Draw label shadow behind text (depth-tested) then main glyph see-through in front
+        pose.pushPose();
+        pose.translate(0.0, 0.0, -0.001); // push slightly away so shadow never overdraws the text
         font.drawInBatch(label,
                 -labelWidth / 2.0f,
                 -font.lineHeight,
-                white,
+                0xFF000000,
                 true,
                 pose.last().pose(),
                 buffer,
                 Font.DisplayMode.NORMAL,
                 0,
                 15728880);
+        pose.popPose();
 
-        // Draw index number (colored)
+        font.drawInBatch(label,
+                -labelWidth / 2.0f,
+                -font.lineHeight,
+                white,
+                false,
+                pose.last().pose(),
+                buffer,
+                Font.DisplayMode.SEE_THROUGH,
+                0,
+                15728880);
+
+        // Draw index number with a color distinct from and readable against the node AABB color
+        int textColor = chooseReadableDistinctColor(color);
+        // Number shadow (depth-tested) behind, then main number see-through
+        pose.pushPose();
+        pose.translate(0.0, 0.0, -0.001);
         font.drawInBatch(number,
                 -numberWidth / 2.0f,
                 0f,
-                color,
+                0xFF000000,
                 true,
                 pose.last().pose(),
                 buffer,
                 Font.DisplayMode.NORMAL,
+                0,
+                15728880);
+        pose.popPose();
+
+        font.drawInBatch(number,
+                -numberWidth / 2.0f,
+                0f,
+                textColor,
+                false,
+                pose.last().pose(),
+                buffer,
+                Font.DisplayMode.SEE_THROUGH,
                 0,
                 15728880);
 
@@ -263,6 +302,63 @@ public class PreviewDrawer {
                 0xFFADFF2F  // Green Yellow
         };
         return palette[zeroBasedIndex % palette.length];
+    }
+    private int chooseReadableDistinctColor(int baseArgb) {
+        int[] candidates = new int[] {
+                0xFFFF00FF, // Magenta
+                0xFFFFFF00, // Yellow
+                0xFF7FFF00, // Chartreuse
+                0xFF00FF7F, // Spring Green
+                0xFF7B68EE, // Slate Blue
+                0xFFFF69B4, // Hot Pink
+                0xFFADFF2F, // Green Yellow
+                0xFF1E90FF, // Dodger Blue
+                0xFF00BFFF, // Deep Sky Blue
+                0xFFFF1493  // Deep Pink
+        };
+
+        double bestRatio = -1.0;
+        int best = candidates[0];
+        for (int candidate : candidates) {
+            if ((candidate & 0xFFFFFFFF) == (baseArgb & 0xFFFFFFFF)) continue; // not same color
+            double ratio = contrastRatio(baseArgb, candidate);
+            // Prefer higher contrast; require a modest threshold for readability
+            boolean readable = ratio >= 2.5; // relaxed threshold since text is outlined by shadow blending
+            if (readable && ratio > bestRatio) {
+                bestRatio = ratio;
+                best = candidate;
+            } else if (bestRatio < 0 && ratio > bestRatio) {
+                bestRatio = ratio;
+                best = candidate;
+            }
+        }
+
+        // If chosen color still too low contrast, try white as a last resort (avoid black)
+        if (contrastRatio(baseArgb, best) < 2.5) {
+            double bwWhite = contrastRatio(baseArgb, 0xFFFFFFFF);
+            if (bwWhite >= 2.0) {
+                best = 0xFFFFFFFF; // prefer white for readability
+            }
+        }
+        return best;
+    }
+
+    private static double contrastRatio(int argb1, int argb2) {
+        double l1 = relLuminance(argb1);
+        double l2 = relLuminance(argb2);
+        double lighter = Math.max(l1, l2);
+        double darker = Math.min(l1, l2);
+        return (lighter + 0.05) / (darker + 0.05);
+    }
+
+    private static double relLuminance(int argb) {
+        double r = ((argb >> 16) & 0xFF) / 255.0;
+        double g = ((argb >> 8) & 0xFF) / 255.0;
+        double b = (argb & 0xFF) / 255.0;
+        r = (r <= 0.03928) ? (r / 12.92) : Math.pow((r + 0.055) / 1.055, 2.4);
+        g = (g <= 0.03928) ? (g / 12.92) : Math.pow((g + 0.055) / 1.055, 2.4);
+        b = (b <= 0.03928) ? (b / 12.92) : Math.pow((b + 0.055) / 1.055, 2.4);
+        return 0.2126 * r + 0.7152 * g + 0.0722 * b;
     }
 
     private boolean shouldUpdatePreview(ItemStack pipeConnector) {
