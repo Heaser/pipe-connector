@@ -3,10 +3,7 @@ package com.heaser.pipeconnector.client.gui;
 import com.heaser.pipeconnector.PipeConnector;
 import com.heaser.pipeconnector.client.gui.buttons.*;
 import com.heaser.pipeconnector.client.gui.interfaces.ILabelable;
-import com.heaser.pipeconnector.client.gui.labels.DepthLabel;
-import com.heaser.pipeconnector.client.gui.labels.InventoryGuardText;
-import com.heaser.pipeconnector.client.gui.labels.TitleLabelText;
-import com.heaser.pipeconnector.client.gui.labels.UtilizeExistingPipesText;
+import com.heaser.pipeconnector.client.gui.labels.*;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
@@ -34,6 +31,8 @@ public class PipeConnectorGui extends Screen {
     private BaseButton utilizeExistingPipesButton;
     private BaseButton inventoryGuardButton;
     private BaseButton avoidInventoryBlocksButton;
+    private BaseButton outlinePreviewButton;
+    private BaseButton solidPreviewButton;
 
     public PipeConnectorGui(ItemStack pipeConnectorStack) {
         super(Component.literal("PipeConnectorScreen"));
@@ -48,8 +47,10 @@ public class PipeConnectorGui extends Screen {
         inventoryGuardButton = createButton(0.45, 0.3, new InventoryGuardButton(pipeConnectorStack));
         avoidInventoryBlocksButton = createButton(0.45, 0.4, new AvoidInventoryBlocksButton(pipeConnectorStack));
         utilizeExistingPipesButton = createButton(0.45, 0.5, new UtilizeExistingPipesButton(pipeConnectorStack));
-        resetBaseButton = createButton(0.65, 0.7, new ResetButton());
-        buildPipesButton = createButton(0.65, 0.8, new BuildPipesButton(this.getMinecraft().player));
+        outlinePreviewButton = createButton(0.60, 0.5, new OutlinePreviewButton(pipeConnectorStack));
+        solidPreviewButton = createButton(0.78, 0.5, new SolidPreviewButton(pipeConnectorStack));
+        resetBaseButton = createButton(0.62, 0.7, new ResetButton());
+        buildPipesButton = createButton(0.60, 0.8, new BuildPipesButton(this.getMinecraft().player));
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -75,14 +76,22 @@ public class PipeConnectorGui extends Screen {
         super.render(guiGraphics, mouseX, mouseY, partialTick);
         utilizeExistingPipesButton.button.active = utilizeExistingPipesButton.isActive(pipeConnectorStack);
         avoidInventoryBlocksButton.button.active = avoidInventoryBlocksButton.isActive(pipeConnectorStack);
+
         buildPipesButton.button.active = buildPipesButton.isActive(pipeConnectorStack);
+        if (outlinePreviewButton instanceof OutlinePreviewButton opb) {
+            opb.updateLabel(pipeConnectorStack);
+        }
+        if (solidPreviewButton instanceof SolidPreviewButton spb) {
+            spb.updateLabel(pipeConnectorStack);
+        }
 
         // Labels
         createLabel(guiGraphics, 0.07, 0.05, new TitleLabelText(), 3f);
         createLabel(guiGraphics, 0.12, 0.32, new InventoryGuardText());
-        createLabel(guiGraphics, 0.08, 0.42 , new com.heaser.pipeconnector.client.gui.labels.AvoidInventoryBlocksText());
-        createLabel(guiGraphics, 0.08, 0.52 , new UtilizeExistingPipesText());
-        createLabel(guiGraphics, 0.65, 0.65, new DepthLabel());
+        createLabel(guiGraphics, 0.08, 0.42, new AvoidInventoryBlocksText());
+        createLabel(guiGraphics, 0.08, 0.52, new UtilizeExistingPipesText());
+        createLabel(guiGraphics, 0.60, 0.45, new PreviewStyleText());
+        createLabel(guiGraphics, 0.62, 0.65, new DepthLabel());
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -200,5 +209,3 @@ public class PipeConnectorGui extends Screen {
         return false;
     }
 }
-
-

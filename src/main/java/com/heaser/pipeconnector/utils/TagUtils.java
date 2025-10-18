@@ -228,4 +228,21 @@ public class TagUtils {
     }
 
     // -----------------------------------------------------------------------------------------------------------------
+    // Preview mode: solid vs outline-only. Default is outline (solid=false)
+    // -----------------------------------------------------------------------------------------------------------------
+    public static boolean getSolidPreview(ItemStack stack) {
+        CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+        if (tag.contains(ComponentDataTags.kPipeConnectorSolidPreview, tag.TAG_BYTE)) {
+            return tag.getBoolean(ComponentDataTags.kPipeConnectorSolidPreview);
+        }
+        return false;
+    }
+
+    public static void setSolidPreview(ItemStack stack, boolean solid) {
+        CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> {
+            tag.putBoolean(ComponentDataTags.kPipeConnectorSolidPreview, solid);
+        });
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
 }

@@ -74,6 +74,7 @@ public class PreviewDrawer {
         for (PreviewInfo pi : previewMap) previewPositions.add(pi.pos);
 
         // Pass 1: draw pipe-like segments (center joint + connectors to neighbors)
+        boolean solid = TagUtils.getSolidPreview(pipeConnector);
         for (PreviewInfo previewInfo : previewMap) {
             BlockPos pos = previewInfo.pos;
             float[] color = getColorForPos(player, pos);
@@ -90,7 +91,7 @@ public class PreviewDrawer {
                     nodeColor = argbToRgba(getIndexColor(nodeIdx));
                 }
             }
-            drawPipePiece(pose, buffer, pos, offset, previewPositions, color, isNode, nodeColor);
+            drawPipePiece(pose, buffer, pos, offset, previewPositions, color, isNode, nodeColor, solid);
         }
 
         // Pass 2: render node indices so text rendering does not interfere with line buffers
@@ -207,8 +208,7 @@ public class PreviewDrawer {
     private static final double PIPE_HALF = 0.075; // thickness for regular segments (overall 0.15)
     private static final double NODE_HALF = 0.20;  // thicker joint for nodes (overall 0.40)
 
-    private void drawPipePiece(PoseStack pose, MultiBufferSource buffer, BlockPos pos, Vec3 offset,
-                                java.util.Set<BlockPos> previewPositions, float[] rgba, boolean isNode, float[] nodeRgba) {
+    private void drawPipePiece(PoseStack pose, MultiBufferSource buffer, BlockPos pos, Vec3 offset, java.util.Set<BlockPos> previewPositions, float[] rgba, boolean isNode, float[] nodeRgba, boolean solid) {
         double cx = pos.getX() + 0.5;
         double cy = pos.getY() + 0.5;
         double cz = pos.getZ() + 0.5;
@@ -216,50 +216,85 @@ public class PreviewDrawer {
         float[] drawColor = (isNode && nodeRgba != null) ? nodeRgba : rgba;
 
         // Center joint
-        drawThinBox(pose, buffer,
-                cx - half - offset.x, cy - half - offset.y, cz - half - offset.z,
-                cx + half - offset.x, cy + half - offset.y, cz + half - offset.z,
-                drawColor);
+        if (solid) {
+            if (isNode) drawShadedBox(pose, buffer,
+                    cx - half - offset.x, cy - half - offset.y, cz - half - offset.z,
+                    cx + half - offset.x, cy + half - offset.y, cz + half - offset.z,
+                    drawColor);
+            else drawFilledBox(pose, buffer,
+                    cx - half - offset.x, cy - half - offset.y, cz - half - offset.z,
+                    cx + half - offset.x, cy + half - offset.y, cz + half - offset.z,
+                    drawColor);
+        } else {
+            drawWireBox(pose, buffer,
+                    cx - half - offset.x, cy - half - offset.y, cz - half - offset.z,
+                    cx + half - offset.x, cy + half - offset.y, cz + half - offset.z,
+                    drawColor);
+        }
 
         // Connectors
         // West (x-)
         if (previewPositions.contains(pos.relative(Direction.WEST))) {
-            drawThinBox(pose, buffer,
+            if (solid) drawFilledBox(pose, buffer,
+                    pos.getX() - offset.x, cy - half - offset.y, cz - half - offset.z,
+                    cx - half - offset.x, cy + half - offset.y, cz + half - offset.z,
+                    drawColor);
+            else drawWireBox(pose, buffer,
                     pos.getX() - offset.x, cy - half - offset.y, cz - half - offset.z,
                     cx - half - offset.x, cy + half - offset.y, cz + half - offset.z,
                     drawColor);
         }
         // East (x+)
         if (previewPositions.contains(pos.relative(Direction.EAST))) {
-            drawThinBox(pose, buffer,
+            if (solid) drawFilledBox(pose, buffer,
+                    cx + half - offset.x, cy - half - offset.y, cz - half - offset.z,
+                    pos.getX() + 1.0 - offset.x, cy + half - offset.y, cz + half - offset.z,
+                    drawColor);
+            else drawWireBox(pose, buffer,
                     cx + half - offset.x, cy - half - offset.y, cz - half - offset.z,
                     pos.getX() + 1.0 - offset.x, cy + half - offset.y, cz + half - offset.z,
                     drawColor);
         }
         // North (z-)
         if (previewPositions.contains(pos.relative(Direction.NORTH))) {
-            drawThinBox(pose, buffer,
+            if (solid) drawFilledBox(pose, buffer,
+                    cx - half - offset.x, cy - half - offset.y, pos.getZ() - offset.z,
+                    cx + half - offset.x, cy + half - offset.y, cz - half - offset.z,
+                    drawColor);
+            else drawWireBox(pose, buffer,
                     cx - half - offset.x, cy - half - offset.y, pos.getZ() - offset.z,
                     cx + half - offset.x, cy + half - offset.y, cz - half - offset.z,
                     drawColor);
         }
         // South (z+)
         if (previewPositions.contains(pos.relative(Direction.SOUTH))) {
-            drawThinBox(pose, buffer,
+            if (solid) drawFilledBox(pose, buffer,
+                    cx - half - offset.x, cy - half - offset.y, cz + half - offset.z,
+                    cx + half - offset.x, cy + half - offset.y, pos.getZ() + 1.0 - offset.z,
+                    drawColor);
+            else drawWireBox(pose, buffer,
                     cx - half - offset.x, cy - half - offset.y, cz + half - offset.z,
                     cx + half - offset.x, cy + half - offset.y, pos.getZ() + 1.0 - offset.z,
                     drawColor);
         }
         // Down (y-)
         if (previewPositions.contains(pos.relative(Direction.DOWN))) {
-            drawThinBox(pose, buffer,
+            if (solid) drawFilledBox(pose, buffer,
+                    cx - half - offset.x, pos.getY() - offset.y, cz - half - offset.z,
+                    cx + half - offset.x, cy - half - offset.y, cz + half - offset.z,
+                    drawColor);
+            else drawWireBox(pose, buffer,
                     cx - half - offset.x, pos.getY() - offset.y, cz - half - offset.z,
                     cx + half - offset.x, cy - half - offset.y, cz + half - offset.z,
                     drawColor);
         }
         // Up (y+)
         if (previewPositions.contains(pos.relative(Direction.UP))) {
-            drawThinBox(pose, buffer,
+            if (solid) drawFilledBox(pose, buffer,
+                    cx - half - offset.x, cy + half - offset.y, cz - half - offset.z,
+                    cx + half - offset.x, pos.getY() + 1.0 - offset.y, cz + half - offset.z,
+                    drawColor);
+            else drawWireBox(pose, buffer,
                     cx - half - offset.x, cy + half - offset.y, cz - half - offset.z,
                     cx + half - offset.x, pos.getY() + 1.0 - offset.y, cz + half - offset.z,
                     drawColor);
@@ -268,7 +303,137 @@ public class PreviewDrawer {
         // No large full-block outline; nodes are emphasized by thicker center and node-specific color
     }
 
-    private void drawThinBox(PoseStack pose, MultiBufferSource buffer,
+    private void drawFilledBox(PoseStack pose, MultiBufferSource buffer,
+                               double x0, double y0, double z0,
+                               double x1, double y1, double z1,
+                               float[] rgba) {
+        float r = rgba[0], g = rgba[1], b = rgba[2], a = rgba[3];
+        VertexConsumer vc = buffer.getBuffer(PipeConnectorRenderType.QUADS_NO_DEPTH_TEST);
+        org.joml.Matrix4f mat = pose.last().pose();
+
+        float X0 = (float)Math.min(x0, x1);
+        float Y0 = (float)Math.min(y0, y1);
+        float Z0 = (float)Math.min(z0, z1);
+        float X1 = (float)Math.max(x0, x1);
+        float Y1 = (float)Math.max(y0, y1);
+        float Z1 = (float)Math.max(z0, z1);
+
+        // -X
+        v(vc, mat, X0, Y0, Z0, r,g,b,a);
+        v(vc, mat, X0, Y1, Z0, r,g,b,a);
+        v(vc, mat, X0, Y1, Z1, r,g,b,a);
+        v(vc, mat, X0, Y0, Z1, r,g,b,a);
+        // +X
+        v(vc, mat, X1, Y0, Z1, r,g,b,a);
+        v(vc, mat, X1, Y1, Z1, r,g,b,a);
+        v(vc, mat, X1, Y1, Z0, r,g,b,a);
+        v(vc, mat, X1, Y0, Z0, r,g,b,a);
+        // -Y
+        v(vc, mat, X0, Y0, Z1, r,g,b,a);
+        v(vc, mat, X1, Y0, Z1, r,g,b,a);
+        v(vc, mat, X1, Y0, Z0, r,g,b,a);
+        v(vc, mat, X0, Y0, Z0, r,g,b,a);
+        // +Y
+        v(vc, mat, X0, Y1, Z0, r,g,b,a);
+        v(vc, mat, X1, Y1, Z0, r,g,b,a);
+        v(vc, mat, X1, Y1, Z1, r,g,b,a);
+        v(vc, mat, X0, Y1, Z1, r,g,b,a);
+        // -Z
+        v(vc, mat, X1, Y0, Z0, r,g,b,a);
+        v(vc, mat, X1, Y1, Z0, r,g,b,a);
+        v(vc, mat, X0, Y1, Z0, r,g,b,a);
+        v(vc, mat, X0, Y0, Z0, r,g,b,a);
+        // +Z
+        v(vc, mat, X0, Y0, Z1, r,g,b,a);
+        v(vc, mat, X0, Y1, Z1, r,g,b,a);
+        v(vc, mat, X1, Y1, Z1, r,g,b,a);
+        v(vc, mat, X1, Y0, Z1, r,g,b,a);
+
+    }
+
+    private void drawShadedBox(PoseStack pose, MultiBufferSource buffer,
+                                double x0, double y0, double z0,
+                                double x1, double y1, double z1,
+                                float[] rgba) {
+        org.joml.Matrix4f mat = pose.last().pose();
+        VertexConsumer vc = buffer.getBuffer(PipeConnectorRenderType.QUADS_NO_DEPTH_TEST);
+
+        float X0 = (float)Math.min(x0, x1);
+        float Y0 = (float)Math.min(y0, y1);
+        float Z0 = (float)Math.min(z0, z1);
+        float X1 = (float)Math.max(x0, x1);
+        float Y1 = (float)Math.max(y0, y1);
+        float Z1 = (float)Math.max(z0, z1);
+
+        // Fake light from above-front-left
+        org.joml.Vector3f sun = new org.joml.Vector3f(-0.35f, 0.9f, -0.25f).normalize();
+        org.joml.Vector3f[] normals = new org.joml.Vector3f[] {
+                new org.joml.Vector3f(-1,0,0), new org.joml.Vector3f(1,0,0),
+                new org.joml.Vector3f(0,-1,0), new org.joml.Vector3f(0,1,0),
+                new org.joml.Vector3f(0,0,-1), new org.joml.Vector3f(0,0,1)
+        };
+        float[] m = new float[6];
+        for (int i=0;i<6;i++) {
+            float dot = Math.max(0f, normals[i].dot(sun));
+            m[i] = 0.45f + dot * 0.55f; // 0.45..1.0
+        }
+        // Stronger contrast on top face
+        m[3] = Math.min(1.15f, m[3] + 0.15f);
+
+        float r = rgba[0], g = rgba[1], b = rgba[2], a = rgba[3];
+
+        // -X
+        v(vc, mat, X0, Y0, Z0, r*m[0],g*m[0],b*m[0],a);
+        v(vc, mat, X0, Y1, Z0, r*m[0],g*m[0],b*m[0],a);
+        v(vc, mat, X0, Y1, Z1, r*m[0],g*m[0],b*m[0],a);
+        v(vc, mat, X0, Y0, Z1, r*m[0],g*m[0],b*m[0],a);
+        // +X
+        v(vc, mat, X1, Y0, Z1, r*m[1],g*m[1],b*m[1],a);
+        v(vc, mat, X1, Y1, Z1, r*m[1],g*m[1],b*m[1],a);
+        v(vc, mat, X1, Y1, Z0, r*m[1],g*m[1],b*m[1],a);
+        v(vc, mat, X1, Y0, Z0, r*m[1],g*m[1],b*m[1],a);
+        // -Y
+        v(vc, mat, X0, Y0, Z1, r*m[2],g*m[2],b*m[2],a);
+        v(vc, mat, X1, Y0, Z1, r*m[2],g*m[2],b*m[2],a);
+        v(vc, mat, X1, Y0, Z0, r*m[2],g*m[2],b*m[2],a);
+        v(vc, mat, X0, Y0, Z0, r*m[2],g*m[2],b*m[2],a);
+        // +Y (top) — a bit brighter
+        v(vc, mat, X0, Y1, Z0, r*m[3],g*m[3],b*m[3],a);
+        v(vc, mat, X1, Y1, Z0, r*m[3],g*m[3],b*m[3],a);
+        v(vc, mat, X1, Y1, Z1, r*m[3],g*m[3],b*m[3],a);
+        v(vc, mat, X0, Y1, Z1, r*m[3],g*m[3],b*m[3],a);
+        // -Z
+        v(vc, mat, X1, Y0, Z0, r*m[4],g*m[4],b*m[4],a);
+        v(vc, mat, X1, Y1, Z0, r*m[4],g*m[4],b*m[4],a);
+        v(vc, mat, X0, Y1, Z0, r*m[4],g*m[4],b*m[4],a);
+        v(vc, mat, X0, Y0, Z0, r*m[4],g*m[4],b*m[4],a);
+        // +Z
+        v(vc, mat, X0, Y0, Z1, r*m[5],g*m[5],b*m[5],a);
+        v(vc, mat, X0, Y1, Z1, r*m[5],g*m[5],b*m[5],a);
+        v(vc, mat, X1, Y1, Z1, r*m[5],g*m[5],b*m[5],a);
+        v(vc, mat, X1, Y0, Z1, r*m[5],g*m[5],b*m[5],a);
+
+        // Small top highlight inset to enhance 3D read
+        float inset = 0.12f;
+        float eps = 0.0006f;
+        float hx0 = X0 + inset;
+        float hz0 = Z0 + inset;
+        float hx1 = X1 - inset;
+        float hz1 = Z1 - inset;
+        float hr = Math.min(1.0f, r * 1.2f), hg = Math.min(1.0f, g * 1.2f), hb = Math.min(1.0f, b * 1.2f);
+        float ha = Math.min(1.0f, a * 0.8f);
+        v(vc, mat, hx0, Y1 + eps, hz0, hr, hg, hb, ha);
+        v(vc, mat, hx1, Y1 + eps, hz0, hr, hg, hb, ha);
+        v(vc, mat, hx1, Y1 + eps, hz1, hr, hg, hb, ha);
+        v(vc, mat, hx0, Y1 + eps, hz1, hr, hg, hb, ha);
+
+        VertexConsumer lineVC = buffer.getBuffer(PipeConnectorRenderType.THIN_LINES_NO_DEPTH_TEST);
+        double epsOutline = 0.0015;
+        AABB aabb = new AABB(X0 - (float)epsOutline, Y0 - (float)epsOutline, Z0 - (float)epsOutline, X1 + (float)epsOutline, Y1 + (float)epsOutline, Z1 + (float)epsOutline);
+        LevelRenderer.renderLineBox(pose, lineVC, aabb, 0f, 0f, 0f, 1.0f);
+    }
+
+    private void drawWireBox(PoseStack pose, MultiBufferSource buffer,
                               double x0, double y0, double z0,
                               double x1, double y1, double z1,
                               float[] rgba) {
@@ -278,6 +443,19 @@ public class PreviewDrawer {
                 Math.max(x0, x1), Math.max(y0, y1), Math.max(z0, z1)
         );
         LevelRenderer.renderLineBox(pose, builder, aabb, rgba[0], rgba[1], rgba[2], rgba[3]);
+    }
+
+    private void v(VertexConsumer vc, org.joml.Matrix4f mat,
+                   float x, float y, float z,
+                   float r, float g, float b, float a) {
+        org.joml.Vector4f tv = new org.joml.Vector4f(x, y, z, 1.0f).mul(mat);
+        int ri = Math.min(255, Math.max(0, (int)(r * 255f)));
+        int gi = Math.min(255, Math.max(0, (int)(g * 255f)));
+        int bi = Math.min(255, Math.max(0, (int)(b * 255f)));
+        int ai = Math.min(255, Math.max(0, (int)(a * 255f)));
+        int color = (ai << 24) | (ri << 16) | (gi << 8) | bi;
+        // Using addVertex with packed color, uv(0,0), NO_OVERLAY(0), light(15728880), normal up
+        vc.addVertex(tv.x, tv.y, tv.z, color, 0f, 0f, 0, 15728880, 0f, 1f, 0f);
     }
 
     private float[] argbToRgba(int argb) {
