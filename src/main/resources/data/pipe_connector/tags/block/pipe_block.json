@@ -25,6 +25,10 @@
       "required": false
     },
     {
+      "id": "sfm:fancy_cable",
+      "required": false
+    },
+    {
       "id": "mekanism:basic_universal_cable",
       "required": false
     },

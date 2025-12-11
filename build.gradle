@@ -145,7 +145,8 @@ dependencies {
 
 //
 //   implementation "curse.maven:powah-rearchitected-633483:5735677"
-//    implementation "curse.maven:cloth-config-348521:5729127"
+//   implementation "curse.maven:cloth-config-348521:5729127"
+//   implementation "curse.maven:super-factory-manager-306935:7254808"
 
 //    implementation "curse.maven:probejs-585406:5820894"
 //    implementation "curse.maven:kubejs-238086:5810100"
