@@ -3,6 +3,7 @@ package com.heaser.pipeconnector.utils.pathfinding;
 import com.heaser.pipeconnector.PipeConnector;
 import com.heaser.pipeconnector.compatibility.CompatibilityBlockEqualsChecker;
 import com.heaser.pipeconnector.config.PipeConnectorConfig;
+import com.heaser.pipeconnector.utils.TagUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -12,12 +13,9 @@ import net.minecraft.world.level.block.Block;
 import java.util.*;
 
 import static com.heaser.pipeconnector.compatibility.CompatibilityBlockEqualsChecker.isBlockStateSpecificBlock;
-import com.heaser.pipeconnector.compatibility.CompatibilityBlockEqualsChecker;
-import com.heaser.pipeconnector.utils.TagUtils;
 import static com.heaser.pipeconnector.utils.GeneralUtils.*;
 
-public class
-PathfindingAStarAlgorithm {
+public class PathfindingAStarAlgorithm {
 
     public static List<BlockPos> findPathAStar(BlockPos start, BlockPos end, int endY, Level level, Player player, HeuristicChecker checker) {
         PriorityQueue<Node> openSet = new PriorityQueue<>();
@@ -40,6 +38,11 @@ PathfindingAStarAlgorithm {
             Node currentNode = openSet.poll();
             BlockPos currentPos = currentNode.position;
 
+            // If position alrady processed this position with a lower or equal cost, skip it to avoid dupes
+            if (closedSet.contains(currentPos)) {
+                continue;
+            }
+
             if (checker.isGoal(currentPos, end, endY)) {
                 return reconstructPath(nodes, currentNode);
             }
@@ -49,18 +52,22 @@ PathfindingAStarAlgorithm {
             for (BlockPos neighbor : getNeighbors(currentPos, level, start, end, endY, player)) {
                 if (closedSet.contains(neighbor)) continue;
 
-                Node neighborNode = nodes.getOrDefault(neighbor, new Node(neighbor, null, Integer.MAX_VALUE, checker.heuristic(neighbor, end, endY)));
-
                 int tentativeGCost = currentNode.gCost + 1;
-                if (tentativeGCost < neighborNode.gCost) {
+                Node neighborNode = nodes.get(neighbor);
+
+                if (neighborNode == null) {
+                    // New neighbor discovered
+                    neighborNode = new Node(neighbor, currentPos, tentativeGCost, checker.heuristic(neighbor, end, endY));
+                    nodes.put(neighbor, neighborNode);
+                    openSet.add(neighborNode);
+                } else if (tentativeGCost < neighborNode.gCost) {
+                    // Found a better path to an existing neighbor
                     neighborNode.parent = currentPos;
                     neighborNode.gCost = tentativeGCost;
                     neighborNode.fCost = neighborNode.gCost + neighborNode.hCost;
-
-                    if (!openSet.contains(neighborNode)) {
-                        nodes.put(neighbor, neighborNode);
-                        openSet.add(neighborNode);
-                    }
+                    
+                    // Re-add to openSet to update position in priority queue (duplicates handled by closedSet check)
+                    openSet.add(neighborNode);
                 }
             }
         }
@@ -79,7 +86,9 @@ PathfindingAStarAlgorithm {
     }
 
     private static List<BlockPos> getNeighbors(BlockPos pos, Level level, BlockPos start, BlockPos end, int endY, Player player) {
-        List<BlockPos> neighbors = new ArrayList<>();
+        List<BlockPos> neighbors = new ArrayList<>(6);
+        // Direct instantiation to avoid array overhead if possible, but array is cleaner for iteration.
+        // Keeping array for readability as performance impact is minimal compared to other parts.
         BlockPos[] directions = {pos.north(), pos.south(), pos.east(), pos.west(), pos.below(), pos.above()};
 
         for (BlockPos neighbor : directions) {
@@ -92,27 +101,46 @@ PathfindingAStarAlgorithm {
     }
 
     private static boolean shouldAddNeighbor(BlockPos neighbor, BlockPos start, BlockPos end, int endY, Level level, Player player) {
+        // Perform quick checks first
+        boolean isStartOrEnd = isStartOrEnd(neighbor, start, end);
+        if (isStartOrEnd) return true;
+
+        // Check level requirement
+        boolean isAtRequiredLevel = neighbor.getY() == endY;
+        boolean isNotVoidable = !isVoidableBlock(level, neighbor);
+        
+        // If not at required level and voidable, fast fail (unless start/end covered above)
+        // Original logic: (isStartOrEnd || isAtRequiredLevel || isNotVoidable)
+        if (!isAtRequiredLevel && !isNotVoidable) return false;
+
         ItemStack offhandItem = player.getOffhandItem();
         Block block = level.getBlockState(neighbor).getBlock();
 
-        boolean isStartOrEnd = isStartOrEnd(neighbor, start, end);
-        boolean isAtRequiredLevel = neighbor.getY() == endY;
-        boolean isNotVoidable = !isVoidableBlock(level, neighbor);
         boolean canAvoid = !isPipeBlock(level, neighbor) || isOffhandItemAvoidable(level, neighbor, player);
+        if (!canAvoid) return false;
+
         boolean isBlockSpecificBlock = isBlockStateSpecificBlock(neighbor, block, offhandItem, level);
+        if (isBlockSpecificBlock) return true;
+
         boolean isCompatPassable = CompatibilityBlockEqualsChecker.isPassableForPathfinding(neighbor, level, offhandItem);
+        if (isCompatPassable) return true;
 
-        // Optional: avoid blocks with inventories (containers) when A* is selected via GUI.
-        boolean avoidInventories = false;
+        // Inventory check is expensive, do it last and only if needed
         ItemStack connector = heldPipeConnector(player);
-        if (connector != null) {
-            avoidInventories = TagUtils.getAvoidInventoryBlocks(connector);
+        if (connector != null && TagUtils.getAvoidInventoryBlocks(connector)) {
+             if (hasInventoryCapabilities(level, neighbor)) {
+                return false;
+            }
         }
-        if (avoidInventories && hasInventoryCapabilities(level, neighbor)) {
-            return false;
-        }
-
-        return (isStartOrEnd || isAtRequiredLevel || isNotVoidable) && canAvoid && (isBlockSpecificBlock || isCompatPassable);
+        
+        // If we got here, it means (isStartOrEnd || isAtRequiredLevel || isNotVoidable) was true
+        // AND canAvoid was true
+        // BUT (isBlockSpecificBlock || isCompatPassable) was false.
+        // Wait, the original logic was:
+        // return (...) && canAvoid && (isBlockSpecificBlock || isCompatPassable);
+        // So if neither block specific nor compat passable, we return false.
+        
+        return false;
     }
 
     private static boolean isStartOrEnd(BlockPos pos, BlockPos start, BlockPos end) {
@@ -130,7 +158,7 @@ PathfindingAStarAlgorithm {
         private final Block placedBlock;
         private final ItemStack placedItemStack;
         private final Level level;
-        private List<BlockPos> draftPlacements = new ArrayList<>();
+        private final Set<BlockPos> draftPlacements = new HashSet<>();
 
         public PositionHeuristicChecker(boolean useExistingPipes, Block placedBlock, ItemStack placedItemStack, Level level) {
             this.useExistingPipes = useExistingPipes;
@@ -146,12 +174,12 @@ PathfindingAStarAlgorithm {
         public int heuristic(BlockPos current, BlockPos end, int endY) {
             int cost = PathfindingUtils.getCost(current, end);
             boolean isExistingPipe = useExistingPipes && CompatibilityBlockEqualsChecker.getInstance().isBlockStateSpecificBlock(current, placedBlock, placedItemStack, level);
-            boolean isDraftedPosition = this.draftPlacements.stream().anyMatch(current::equals);
+            
             if (isExistingPipe) {
-                cost = (int)((double)cost * 0.3);
+                return (int)(cost * 0.3);
             }
-            else if (isDraftedPosition) {
-                cost = (int)((double)cost * 0.1);
+            if (this.draftPlacements.contains(current)) {
+                return (int)(cost * 0.1);
             }
             return cost;
         }
@@ -166,7 +194,7 @@ PathfindingAStarAlgorithm {
         private final boolean useExistingPipes;
         private final Block placedBlock;
         private final ItemStack placedItemStack;
-        private List<BlockPos> draftPlacements = new ArrayList<>();
+        private final Set<BlockPos> draftPlacements = new HashSet<>();
 
         private final Level level;
 
@@ -184,9 +212,9 @@ PathfindingAStarAlgorithm {
         public int heuristic(BlockPos current, BlockPos end, int endY) {
             int cost = Math.abs(current.getY() - endY);
             boolean isExistingPipe = useExistingPipes && CompatibilityBlockEqualsChecker.getInstance().isBlockStateSpecificBlock(current, placedBlock, placedItemStack, level);
-            boolean isDraftedPosition = this.draftPlacements.stream().anyMatch(current::equals);
-            if (isExistingPipe || isDraftedPosition) {
-                cost = (int)((double)cost * 0.3);
+            
+            if (isExistingPipe || this.draftPlacements.contains(current)) {
+                return (int)(cost * 0.3);
             }
             return cost;
         }
@@ -197,10 +225,10 @@ PathfindingAStarAlgorithm {
     }
 
     static class Node implements Comparable<Node> {
-        BlockPos position;
+        final BlockPos position;
         BlockPos parent;
         int gCost;
-        int hCost;
+        final int hCost;
         int fCost;
 
         Node(BlockPos position, BlockPos parent, int gCost, int hCost) {
