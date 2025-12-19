@@ -33,8 +33,21 @@ public class XNetCompatibility implements IPlacer {
 
         if ((block instanceof GenericCableBlock colorBlock)) {
             if (!isVoidableBlock(level, pos)) {
-                level.addDestroyBlockEffect(pos, level.getBlockState(pos));
-                level.destroyBlock(pos, true, player);
+                // Harvest drops and add to inventory
+                BlockState state = level.getBlockState(pos);
+                net.minecraft.world.level.block.entity.BlockEntity blockEntity = level.getBlockEntity(pos);
+                if (level instanceof net.minecraft.server.level.ServerLevel serverLevel) {
+                    List<ItemStack> drops = Block.getDrops(state, serverLevel, pos, blockEntity, player, heldPipeItem);
+                    for (ItemStack drop : drops) {
+                        if (!player.getInventory().add(drop)) {
+                            player.drop(drop, false);
+                        }
+                    }
+                    // Animation and sound
+                    serverLevel.sendParticles(net.minecraft.core.particles.ParticleTypes.POOF, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 5, 0.1, 0.1, 0.1, 0.05);
+                    level.playSound(null, pos, net.minecraft.sounds.SoundEvents.ITEM_PICKUP, net.minecraft.sounds.SoundSource.PLAYERS, 0.2f, ((player.getRandom().nextFloat() - player.getRandom().nextFloat()) * 0.7f + 1.0f) * 2.0f);
+                }
+                level.removeBlock(pos, false);
             }
 
             BlockHitResult hitResult = new BlockHitResult(new Vec3(pos.getX(), pos.getY(), pos.getZ()), adjacentDirectionSides.getFirst(), pos, false);

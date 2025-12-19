@@ -22,6 +22,7 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -43,8 +44,20 @@ public class AE2Compatiblity implements IBlockGetter, IPlacer, IBlockEqualsCheck
         if (item instanceof IPartItem<?> partItem) {
             BlockEntity blockEntity = level.getBlockEntity(pos);
             if (blockEntity instanceof IPartHost host ? host.getPart(null) != null : !isVoidableBlock(level, pos)) {
-                level.addDestroyBlockEffect(pos, level.getBlockState(pos));
-                level.destroyBlock(pos, true, player);
+                // Harvest drops and add to inventory
+                BlockState state = level.getBlockState(pos);
+                if (level instanceof ServerLevel serverLevel) {
+                    List<ItemStack> drops = Block.getDrops(state, serverLevel, pos, blockEntity, player, heldPipeItem);
+                    for (ItemStack drop : drops) {
+                        if (!player.getInventory().add(drop)) {
+                            player.drop(drop, false);
+                        }
+                    }
+                    // Animation and sound
+                    serverLevel.sendParticles(net.minecraft.core.particles.ParticleTypes.POOF, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 5, 0.1, 0.1, 0.1, 0.05);
+                    level.playSound(null, pos, net.minecraft.sounds.SoundEvents.ITEM_PICKUP, net.minecraft.sounds.SoundSource.PLAYERS, 0.2f, ((player.getRandom().nextFloat() - player.getRandom().nextFloat()) * 0.7f + 1.0f) * 2.0f);
+                }
+                level.removeBlock(pos, false);
             }
             part = PartHelper.setPart((ServerLevel) level, pos, null, player, partItem);
         }
