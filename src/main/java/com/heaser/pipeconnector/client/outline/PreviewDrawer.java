@@ -73,11 +73,19 @@ public class PreviewDrawer {
         java.util.Set<BlockPos> previewPositions = new java.util.HashSet<>();
         for (PreviewInfo pi : previewMap) previewPositions.add(pi.pos);
 
+        // Animation pulse: oscillates between 0.6 and 0.95 for alpha, and 0.98 to 1.02 for scale
+        long time = System.currentTimeMillis();
+        float pulseAlpha = (float) (Math.sin(time / 250.0) * 0.15 + 0.75); // 0.60 .. 0.90
+        float pulseScale = (float) (Math.sin(time / 250.0) * 0.02 + 1.0);  // 0.98 .. 1.02
+
         // Pass 1: draw pipe-like segments (center joint + connectors to neighbors)
         boolean solid = TagUtils.getSolidPreview(pipeConnector);
         for (PreviewInfo previewInfo : previewMap) {
             BlockPos pos = previewInfo.pos;
             float[] color = getColorForPos(player, pos);
+            // Apply pulse to alpha
+            color[3] *= pulseAlpha;
+
             int nodeIdx = nodePositions.indexOf(pos);
             boolean isNode = nodeIdx >= 0;
             float[] nodeColor = null;
@@ -90,8 +98,10 @@ public class PreviewDrawer {
                 } else {
                     nodeColor = argbToRgba(getIndexColor(nodeIdx));
                 }
+                // Nodes pulse a bit brighter/more opaque
+                nodeColor[3] = Math.min(1.0f, nodeColor[3] * (pulseAlpha + 0.2f));
             }
-            drawPipePiece(pose, buffer, pos, offset, previewPositions, color, isNode, nodeColor, solid);
+            drawPipePiece(pose, buffer, pos, offset, previewPositions, color, isNode, nodeColor, solid, pulseScale);
         }
 
         // Pass 2: render node indices so text rendering does not interfere with line buffers
@@ -194,25 +204,27 @@ public class PreviewDrawer {
     private float[] getColorForPos(Player player, BlockPos pos) {
         // Returns RGBA floats for this preview position, matching previous color semantics
         if (isNotBreakable(player.level(), pos) || hasInventoryCapabilities(player.level(), pos)) {
-            return new float[]{1f, 0f, 0f, 1f}; // red
+            return new float[]{1f, 0.2f, 0.2f, 1f}; // Neon Red
         } else if (isVoidableBlock(player.level(), pos)) {
-            return new float[]{1f, 1f, 0f, 1f}; // yellow
+            return new float[]{1f, 0.9f, 0.1f, 1f}; // Bright Yellow
         } else if (CompatibilityBlockEqualsChecker.getInstance().isBlockStateSpecificBlock(pos,
                 CompatibilityBlockGetter.getInstance().getBlock(player.getOffhandItem()),
                 player.getOffhandItem(), player.level())) {
-            return new float[]{0.87f, 0.25f, 0.87f, 0.5f}; // purple-ish
+            return new float[]{0.9f, 0.4f, 1.0f, 0.5f}; // Bright Magenta
         }
-        return new float[]{0f, 1f, 0f, 0.5f}; // green
+        return new float[]{0.2f, 1f, 0.2f, 0.5f}; // Neon Lime
     }
 
     private static final double PIPE_HALF = 0.075; // thickness for regular segments (overall 0.15)
     private static final double NODE_HALF = 0.20;  // thicker joint for nodes (overall 0.40)
 
-    private void drawPipePiece(PoseStack pose, MultiBufferSource buffer, BlockPos pos, Vec3 offset, java.util.Set<BlockPos> previewPositions, float[] rgba, boolean isNode, float[] nodeRgba, boolean solid) {
+    private void drawPipePiece(PoseStack pose, MultiBufferSource buffer, BlockPos pos, Vec3 offset, java.util.Set<BlockPos> previewPositions, float[] rgba, boolean isNode, float[] nodeRgba, boolean solid, float pulseScale) {
         double cx = pos.getX() + 0.5;
         double cy = pos.getY() + 0.5;
         double cz = pos.getZ() + 0.5;
-        double half = isNode ? NODE_HALF : PIPE_HALF; // larger joint for nodes
+        double baseHalf = isNode ? NODE_HALF : PIPE_HALF; // larger joint for nodes
+        double half = baseHalf * pulseScale;
+
         float[] drawColor = (isNode && nodeRgba != null) ? nodeRgba : rgba;
 
         // Center joint
