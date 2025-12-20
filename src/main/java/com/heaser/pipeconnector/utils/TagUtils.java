@@ -112,7 +112,11 @@ public class TagUtils {
         CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
 
         if (tag.contains(ComponentDataTags.kPipeConnectorBridgeType, tag.TAG_STRING)) {
-            return BridgeType.valueOf(tag.getString(ComponentDataTags.kPipeConnectorBridgeType));
+            try {
+                return BridgeType.valueOf(tag.getString(ComponentDataTags.kPipeConnectorBridgeType));
+            } catch (IllegalArgumentException e) {
+                return BridgeType.DEFAULT;
+            }
         }
         return BridgeType.DEFAULT;
     }
