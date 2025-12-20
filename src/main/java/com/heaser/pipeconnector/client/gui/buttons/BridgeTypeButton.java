@@ -34,6 +34,7 @@ public class BridgeTypeButton extends BaseButton {
             this.button.setMessage(this.getLabel());
         }
 
+        TagUtils.setBridgeType(itemStack, bridgeType);
         PacketDistributor.sendToServer(new UpdateBridgeTypePacket(bridgeType.toString()));
     }
 
