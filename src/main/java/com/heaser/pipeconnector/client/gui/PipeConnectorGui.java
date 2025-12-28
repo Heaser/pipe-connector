@@ -2,11 +2,14 @@ package com.heaser.pipeconnector.client.gui;
 
 import com.heaser.pipeconnector.PipeConnector;
 import com.heaser.pipeconnector.client.gui.buttons.*;
+import com.heaser.pipeconnector.client.gui.editbox.DepthEditBox;
 import com.heaser.pipeconnector.client.gui.interfaces.ILabelable;
 import com.heaser.pipeconnector.client.gui.labels.*;
+import com.heaser.pipeconnector.utils.TagUtils;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
@@ -34,6 +37,11 @@ public class PipeConnectorGui extends Screen {
     private BaseButton outlinePreviewButton;
     private BaseButton solidPreviewButton;
 
+    private DepthEditBox depthEditBox;
+    private DecreaseDepthButton decreaseDepthButton;
+    private IncreaseDepthButton increaseDepthButton;
+    private ConfirmDepthButton confirmDepthButton;
+
     public PipeConnectorGui(ItemStack pipeConnectorStack) {
         super(Component.literal("PipeConnectorScreen"));
         this.pipeConnectorStack = pipeConnectorStack;
@@ -47,10 +55,20 @@ public class PipeConnectorGui extends Screen {
         inventoryGuardButton = createButton(0.45, 0.3, new InventoryGuardButton(pipeConnectorStack));
         avoidInventoryBlocksButton = createButton(0.45, 0.4, new AvoidInventoryBlocksButton(pipeConnectorStack));
         utilizeExistingPipesButton = createButton(0.45, 0.5, new UtilizeExistingPipesButton(pipeConnectorStack));
-        outlinePreviewButton = createButton(0.60, 0.5, new OutlinePreviewButton(pipeConnectorStack));
-        solidPreviewButton = createButton(0.78, 0.5, new SolidPreviewButton(pipeConnectorStack));
+        outlinePreviewButton = createButton(0.58, 0.6, new OutlinePreviewButton(pipeConnectorStack));
+        solidPreviewButton = createButton(0.76, 0.6, new SolidPreviewButton(pipeConnectorStack));
         resetBaseButton = createButton(0.62, 0.7, new ResetButton());
         buildPipesButton = createButton(0.60, 0.8, new BuildPipesButton(this.getMinecraft().player));
+
+        // Depth Control Widgets
+        int depthControlY = (int) (imageHeight * 0.6) + getScreenY();
+        int depthControlX = (int) (imageWidth * 0.247) + getScreenX();
+
+        depthEditBox = addRenderableWidget(new DepthEditBox(this.font, depthControlX + 15, depthControlY, 25, 20, pipeConnectorStack));
+
+        decreaseDepthButton = createButton(depthControlX, depthControlY, new DecreaseDepthButton(depthEditBox));
+        increaseDepthButton = createButton(depthControlX + 15 + 25, depthControlY, new IncreaseDepthButton(depthEditBox));
+        confirmDepthButton = createButton(depthControlX + 15 + 27 + 15, depthControlY, new ConfirmDepthButton(depthEditBox));
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -90,8 +108,8 @@ public class PipeConnectorGui extends Screen {
         createLabel(guiGraphics, 0.12, 0.32, new InventoryGuardText());
         createLabel(guiGraphics, 0.08, 0.42, new AvoidInventoryBlocksText());
         createLabel(guiGraphics, 0.08, 0.52, new UtilizeExistingPipesText());
-        createLabel(guiGraphics, 0.60, 0.45, new PreviewStyleText());
-        createLabel(guiGraphics, 0.62, 0.65, new DepthLabel());
+        createLabel(guiGraphics, 0.62, 0.55, new PreviewStyleText());
+        createLabel(guiGraphics, 0.12, 0.62, new DepthLabel());
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -111,24 +129,38 @@ public class PipeConnectorGui extends Screen {
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if ((keyCode == 256 && this.shouldCloseOnEsc()) || keyCode == 69) {
+        if (keyCode == 256 || (this.minecraft.options.keyInventory.matches(keyCode, scanCode))) {
             this.onClose();
             return true;
-        } else {
-            return super.keyPressed(keyCode, scanCode, modifiers);
         }
+
+        if (this.depthEditBox.isFocused()) {
+            if (keyCode == 257 || keyCode == 335) { // Enter
+                confirmDepthButton.onClick(confirmDepthButton.button, pipeConnectorStack);
+                return true;
+            }
+            if (this.depthEditBox.keyPressed(keyCode, scanCode, modifiers) || this.depthEditBox.canConsumeInput()) {
+                return true;
+            }
+        }
+        
+        return super.keyPressed(keyCode, scanCode, modifiers);
     }
 
     // -----------------------------------------------------------------------------------------------------------------
 
-    private BaseButton createButton(double marginXPercent, double marginYPercent, BaseButton baseButton) {
+    private <T extends BaseButton> T createButton(double marginXPercent, double marginYPercent, T baseButton) {
         int marginX = (int) (imageWidth * marginXPercent);
         int marginY = (int) (imageHeight * marginYPercent);
         int drawStartX = this.getScreenX() + marginX;
         int drawStartY = this.getScreenY() + marginY;
 
+        return createButton(drawStartX, drawStartY, baseButton);
+    }
+
+    private <T extends BaseButton> T createButton(int x, int y, T baseButton) {
         Button button = Button.builder(baseButton.label, clickedButton -> onButtonClick(clickedButton, baseButton))
-                .pos(drawStartX, drawStartY)
+                .pos(x, y)
                 .size(baseButton.getButtonWidth(), baseButton.getButtonHeight())
                 .build();
         button.active = baseButton.isActive(pipeConnectorStack);
