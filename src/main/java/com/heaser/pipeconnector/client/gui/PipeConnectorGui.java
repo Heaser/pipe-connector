@@ -135,8 +135,9 @@ public class PipeConnectorGui extends Screen {
         }
 
         if (this.depthEditBox.isFocused()) {
-            if (keyCode == 257 || keyCode == 335) { // Enter
+            if (keyCode == 257 || keyCode == 335) { // Enter and numpad enter
                 confirmDepthButton.onClick(confirmDepthButton.button, pipeConnectorStack);
+                this.depthEditBox.setFocused(false);
                 return true;
             }
             if (this.depthEditBox.keyPressed(keyCode, scanCode, modifiers) || this.depthEditBox.canConsumeInput()) {
