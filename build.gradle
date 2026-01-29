@@ -137,7 +137,7 @@ dependencies {
 //    implementation "curse.maven:ender-io-64578:5981524"
 
 
-//   xnet Stuff
+//    xnet Stuff
 //    implementation("curse.maven:xnet-260912:6310525")
 //    implementation("curse.maven:mcjtylib-233105:6541819")
 //    implementation("curse.maven:rftools-base-326041:6362247")
@@ -152,8 +152,12 @@ dependencies {
 //    implementation "curse.maven:kubejs-238086:5810100"
 //    implementation "curse.maven:rhino-416294:5691686"
 
+//    Replication Mod
+//    implementation "curse.maven:replication-638351:7331983"
+//    implementation "curse.maven:titanium-287342:6875285"
 
-    // Oritech stuff
+
+//    Oritech stuff
 //    implementation "curse.maven:oritech-1030830:6548040"
 //    implementation "curse.maven:architectury-api-419699:5553800"
 //    implementation "curse.maven:geckolib-388172:6304958"
