@@ -24,6 +24,7 @@ public class ClientEvents {
             Entity cameraEntity = event.getCamera().getEntity();
             if (cameraEntity instanceof Player) {
                 ClientSetup.PREVIEW_DRAWER.handleOnRenderLevel(stack, buffer, (Player)cameraEntity);
+                ClientSetup.PIPE_VISION_RENDERER.handleOnRenderLevel(stack, buffer, (Player)cameraEntity);
             }
         }
     }

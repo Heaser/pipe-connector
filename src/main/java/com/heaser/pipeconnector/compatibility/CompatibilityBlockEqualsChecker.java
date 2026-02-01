@@ -1,13 +1,15 @@
 package com.heaser.pipeconnector.compatibility;
 
 import com.heaser.pipeconnector.compatibility.ae2.AE2Compatiblity;
-//import com.heaser.pipeconnector.compatibility.enderio.EnderIoCompatibility;
+import com.heaser.pipeconnector.compatibility.interfaces.IColorProvider;
 import com.heaser.pipeconnector.compatibility.interfaces.IBlockEqualsChecker;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.fml.ModList;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -34,6 +36,32 @@ public class CompatibilityBlockEqualsChecker {
         }
 
         return INSTANCE;
+    }
+
+    @Nullable
+    public static Integer getColor(BlockPos pos, Level level) {
+        IBlockEqualsChecker checker = null;
+        Block currentBlock = level.getBlockState(pos).getBlock();
+        for (Map.Entry<Class<? extends Block>, IBlockEqualsChecker> set : classToCheckerMap.entrySet()) {
+            if (set.getKey().isAssignableFrom(currentBlock.getClass())) {
+                checker = set.getValue();
+                break;
+            }
+        }
+        if (checker instanceof IColorProvider colorProvider) {
+            return colorProvider.getColor(level, pos);
+        }
+        return null;
+    }
+
+    public static boolean isSupportedBlock(BlockState state) {
+        Block block = state.getBlock();
+        for (Class<? extends Block> supportedClass : classToCheckerMap.keySet()) {
+            if (supportedClass.isAssignableFrom(block.getClass())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static boolean defaultIsBlockStateSpecificBlock(BlockPos pos, Block specificBlock, ItemStack placedItemStack, Level level) {

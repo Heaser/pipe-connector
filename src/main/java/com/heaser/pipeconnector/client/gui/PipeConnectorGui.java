@@ -34,6 +34,7 @@ public class PipeConnectorGui extends Screen {
     private BaseButton utilizeExistingPipesButton;
     private BaseButton inventoryGuardButton;
     private BaseButton avoidInventoryBlocksButton;
+    private BaseButton pipeVisionButton;
     private BaseButton outlinePreviewButton;
     private BaseButton solidPreviewButton;
 
@@ -55,13 +56,14 @@ public class PipeConnectorGui extends Screen {
         inventoryGuardButton = createButton(0.45, 0.3, new InventoryGuardButton(pipeConnectorStack));
         avoidInventoryBlocksButton = createButton(0.45, 0.4, new AvoidInventoryBlocksButton(pipeConnectorStack));
         utilizeExistingPipesButton = createButton(0.45, 0.5, new UtilizeExistingPipesButton(pipeConnectorStack));
+        pipeVisionButton = createButton(0.45, 0.6, new PipeVisionButton(pipeConnectorStack));
         outlinePreviewButton = createButton(0.58, 0.6, new OutlinePreviewButton(pipeConnectorStack));
         solidPreviewButton = createButton(0.76, 0.6, new SolidPreviewButton(pipeConnectorStack));
         resetBaseButton = createButton(0.62, 0.7, new ResetButton());
         buildPipesButton = createButton(0.60, 0.8, new BuildPipesButton(this.getMinecraft().player));
 
         // Depth Control Widgets
-        int depthControlY = (int) (imageHeight * 0.6) + getScreenY();
+        int depthControlY = (int) (imageHeight * 0.7) + getScreenY();
         int depthControlX = (int) (imageWidth * 0.247) + getScreenX();
 
         depthEditBox = addRenderableWidget(new DepthEditBox(this.font, depthControlX + 15, depthControlY, 25, 20, pipeConnectorStack));
@@ -90,10 +92,12 @@ public class PipeConnectorGui extends Screen {
         drawTooltip(guiGraphics, mouseX, mouseY, inventoryGuardButton);
         drawTooltipList(guiGraphics, mouseX, mouseY, utilizeExistingPipesButton);
         drawTooltipList(guiGraphics, mouseX, mouseY, avoidInventoryBlocksButton);
+        drawTooltip(guiGraphics, mouseX, mouseY, pipeVisionButton);
         guiGraphics.blit(PIPE_CONNECTOR_TEXTURE, drawStartX, drawStartY, 0, 0, imageWidth, imageHeight);
         super.render(guiGraphics, mouseX, mouseY, partialTick);
         utilizeExistingPipesButton.button.active = utilizeExistingPipesButton.isActive(pipeConnectorStack);
         avoidInventoryBlocksButton.button.active = avoidInventoryBlocksButton.isActive(pipeConnectorStack);
+        pipeVisionButton.button.active = pipeVisionButton.isActive(pipeConnectorStack);
 
         buildPipesButton.button.active = buildPipesButton.isActive(pipeConnectorStack);
         if (outlinePreviewButton instanceof OutlinePreviewButton opb) {
@@ -108,8 +112,9 @@ public class PipeConnectorGui extends Screen {
         createLabel(guiGraphics, 0.12, 0.32, new InventoryGuardText());
         createLabel(guiGraphics, 0.08, 0.42, new AvoidInventoryBlocksText());
         createLabel(guiGraphics, 0.08, 0.52, new UtilizeExistingPipesText());
+        createLabel(guiGraphics, 0.08, 0.62, new PipeVisionText());
         createLabel(guiGraphics, 0.62, 0.55, new PreviewStyleText());
-        createLabel(guiGraphics, 0.12, 0.62, new DepthLabel());
+        createLabel(guiGraphics, 0.12, 0.72, new DepthLabel());
     }
 
     // -----------------------------------------------------------------------------------------------------------------

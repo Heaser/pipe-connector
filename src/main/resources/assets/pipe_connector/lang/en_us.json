@@ -60,5 +60,6 @@
   "item.pipe_connector.gui.button.preview_outline": "Outline",
   "item.pipe_connector.gui.button.preview_solid": "Solid",
   "item.pipe_connector.gui.tooltip.comingSoon": "Coming SoonTM...",
-  "item.pipe_connector.gui.label.preview_style": "Preview Style"
+  "item.pipe_connector.gui.label.preview_style": "Preview Style",
+  "item.pipe_connector.gui.label.pipe_vision": "Pipe Vision"
 }

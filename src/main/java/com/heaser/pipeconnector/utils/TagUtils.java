@@ -249,4 +249,21 @@ public class TagUtils {
     }
 
     // -----------------------------------------------------------------------------------------------------------------
+    // Pipe Vision: Toggleable visualization of existing pipes. Default is off.
+    // -----------------------------------------------------------------------------------------------------------------
+    public static boolean getPipeVision(ItemStack stack) {
+        CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+        if (tag.contains(ComponentDataTags.kPipeConnectorPipeVision, tag.TAG_BYTE)) {
+            return tag.getBoolean(ComponentDataTags.kPipeConnectorPipeVision);
+        }
+        return false;
+    }
+
+    public static void setPipeVision(ItemStack stack, boolean enabled) {
+        CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> {
+            tag.putBoolean(ComponentDataTags.kPipeConnectorPipeVision, enabled);
+        });
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
 }

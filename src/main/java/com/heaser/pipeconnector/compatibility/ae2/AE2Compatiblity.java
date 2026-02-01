@@ -8,8 +8,10 @@ import appeng.block.networking.CableBusBlock;
 import appeng.core.definitions.AEBlocks;
 import appeng.items.parts.ColoredPartItem;
 import appeng.items.parts.PartItem;
+import appeng.api.util.AEColor;
 import com.heaser.pipeconnector.compatibility.interfaces.IBlockEqualsChecker;
 import com.heaser.pipeconnector.compatibility.interfaces.IBlockGetter;
+import com.heaser.pipeconnector.compatibility.interfaces.IColorProvider;
 import com.heaser.pipeconnector.compatibility.interfaces.IDirectionGetter;
 import com.heaser.pipeconnector.compatibility.interfaces.IPlacer;
 import net.minecraft.core.BlockPos;
@@ -30,13 +32,52 @@ import java.util.List;
 import static com.heaser.pipeconnector.utils.GeneralUtils.isVoidableBlock;
 
 
-public class AE2Compatiblity implements IBlockGetter, IPlacer, IBlockEqualsChecker, IDirectionGetter {
+public class AE2Compatiblity implements IBlockGetter, IPlacer, IBlockEqualsChecker, IDirectionGetter, IColorProvider {
     static public Class<? extends Item> getItemStackClassToRegister() {
         return PartItem.class;
     }
     static public Class<? extends Block> getBlockToRegister() { return CableBusBlock.class; }
     public Block getBlock(ItemStack placedStack) {
         return AEBlocks.CABLE_BUS.block();
+    }
+
+    @Override
+    public @Nullable Integer getColor(Level level, BlockPos pos) {
+        BlockEntity blockEntity = level.getBlockEntity(pos);
+        if (blockEntity instanceof IPartHost host) {
+            IPart part = host.getPart(null);
+            if (part != null) {
+                IPartItem<?> partItem = part.getPartItem();
+                if (partItem instanceof ColoredPartItem<?> coloredPartItem) {
+                    AEColor aeColor = coloredPartItem.getColor();
+                    return getAeColorInt(aeColor);
+                }
+            }
+        }
+        return null;
+    }
+
+    private int getAeColorInt(AEColor aeColor) {
+        return switch (aeColor) {
+            case WHITE -> 0xFFFFFFFF;
+            case ORANGE -> 0xFFD87F33;
+            case MAGENTA -> 0xFFB24CD8;
+            case LIGHT_BLUE -> 0xFF6699D8;
+            case YELLOW -> 0xFFE5E533;
+            case LIME -> 0xFF7FCC19;
+            case PINK -> 0xFFF27FA5;
+            case GRAY -> 0xFF4C4C4C;
+            case LIGHT_GRAY -> 0xFF999999;
+            case CYAN -> 0xFF4C7F99;
+            case PURPLE -> 0xFF7F3FB2;
+            case BLUE -> 0xFF334CB2;
+            case BROWN -> 0xFF664C33;
+            case GREEN -> 0xFF667F33;
+            case RED -> 0xFF993333;
+            case BLACK -> 0xFF191919;
+            case TRANSPARENT -> 0x80FFFFFF;
+            default -> 0xFFFFFFFF;
+        };
     }
 
     public boolean place(Level level, BlockPos pos, Player player, Item item, List<Direction> adjacentDirectionSides, ItemStack heldPipeItem) {

@@ -18,6 +18,7 @@ public class NetworkHandler {
         serverbound(registrar, UpdateDepthPacket.TYPE, UpdateDepthPacket.STREAM_CODEC);
         serverbound(registrar, UpdateBridgeTypePacket.TYPE, UpdateBridgeTypePacket.STREAM_CODEC);
         serverbound(registrar, UpdateSolidPreview.TYPE, UpdateSolidPreview.STREAM_CODEC);
+        serverbound(registrar, UpdatePipeVision.TYPE, UpdatePipeVision.STREAM_CODEC);
         serverbound(registrar, ResetPacket.TYPE, ResetPacket.STREAM_CODEC);
         serverbound(registrar, BuildPipesPacket.TYPE, BuildPipesPacket.STREAM_CODEC);
 
