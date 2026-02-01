@@ -40,6 +40,7 @@ public class CompatibilityBlockEqualsChecker {
 
     @Nullable
     public static Integer getColor(BlockPos pos, Level level) {
+        getInstance();
         IBlockEqualsChecker checker = null;
         Block currentBlock = level.getBlockState(pos).getBlock();
         for (Map.Entry<Class<? extends Block>, IBlockEqualsChecker> set : classToCheckerMap.entrySet()) {
@@ -55,6 +56,7 @@ public class CompatibilityBlockEqualsChecker {
     }
 
     public static boolean isSupportedBlock(BlockState state) {
+        getInstance();
         Block block = state.getBlock();
         for (Class<? extends Block> supportedClass : classToCheckerMap.keySet()) {
             if (supportedClass.isAssignableFrom(block.getClass())) {
@@ -69,6 +71,7 @@ public class CompatibilityBlockEqualsChecker {
     }
 
     public static boolean isBlockStateSpecificBlock(BlockPos pos, Block specificBlock, ItemStack placedItemStack, Level level) {
+        getInstance();
         IBlockEqualsChecker checker = null;
         for (Map.Entry<Class<? extends Block>, IBlockEqualsChecker> set : classToCheckerMap.entrySet()) {
             if (set.getKey().isAssignableFrom(specificBlock.getClass())) {
@@ -85,6 +88,7 @@ public class CompatibilityBlockEqualsChecker {
     }
 
     public static boolean isPlacementAlreadySatisfied(BlockPos pos, Block specificBlock, ItemStack placedItemStack, Level level) {
+        getInstance();
         IBlockEqualsChecker checker = null;
         for (Map.Entry<Class<? extends Block>, IBlockEqualsChecker> set : classToCheckerMap.entrySet()) {
             if (set.getKey().isAssignableFrom(specificBlock.getClass())) {
@@ -100,6 +104,7 @@ public class CompatibilityBlockEqualsChecker {
     }
 
     public static boolean isPassableForPathfinding(BlockPos pos, Level level, ItemStack placedItemStack) {
+        getInstance();
         IBlockEqualsChecker checker = null;
         Block currentBlock = level.getBlockState(pos).getBlock();
         for (Map.Entry<Class<? extends Block>, IBlockEqualsChecker> set : classToCheckerMap.entrySet()) {
