@@ -460,14 +460,12 @@ public class PreviewDrawer {
     private void v(VertexConsumer vc, org.joml.Matrix4f mat,
                    float x, float y, float z,
                    float r, float g, float b, float a) {
-        org.joml.Vector4f tv = new org.joml.Vector4f(x, y, z, 1.0f).mul(mat);
         int ri = Math.min(255, Math.max(0, (int)(r * 255f)));
         int gi = Math.min(255, Math.max(0, (int)(g * 255f)));
         int bi = Math.min(255, Math.max(0, (int)(b * 255f)));
         int ai = Math.min(255, Math.max(0, (int)(a * 255f)));
         int color = (ai << 24) | (ri << 16) | (gi << 8) | bi;
-        // Using addVertex with packed color, uv(0,0), NO_OVERLAY(0), light(15728880), normal up
-        vc.addVertex(tv.x, tv.y, tv.z, color, 0f, 0f, 0, 15728880, 0f, 1f, 0f);
+        vc.addVertex(mat, x, y, z).setColor(color);
     }
 
     private float[] argbToRgba(int argb) {

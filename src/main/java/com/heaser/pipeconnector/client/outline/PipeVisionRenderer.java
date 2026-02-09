@@ -189,35 +189,35 @@ public class PipeVisionRenderer {
         int color = (ai << 24) | (ri << 16) | (gi << 8) | bi;
         
         // -X
-        vc.addVertex(mat, X0, Y0, Z0).setColor(color).setUv(0, 0).setOverlay(0).setLight(15728880).setNormal(-1, 0, 0);
-        vc.addVertex(mat, X0, Y1, Z0).setColor(color).setUv(0, 0).setOverlay(0).setLight(15728880).setNormal(-1, 0, 0);
-        vc.addVertex(mat, X0, Y1, Z1).setColor(color).setUv(0, 0).setOverlay(0).setLight(15728880).setNormal(-1, 0, 0);
-        vc.addVertex(mat, X0, Y0, Z1).setColor(color).setUv(0, 0).setOverlay(0).setLight(15728880).setNormal(-1, 0, 0);
+        vc.addVertex(mat, X0, Y0, Z0).setColor(color);
+        vc.addVertex(mat, X0, Y1, Z0).setColor(color);
+        vc.addVertex(mat, X0, Y1, Z1).setColor(color);
+        vc.addVertex(mat, X0, Y0, Z1).setColor(color);
         // +X
-        vc.addVertex(mat, X1, Y0, Z1).setColor(color).setUv(0, 0).setOverlay(0).setLight(15728880).setNormal(1, 0, 0);
-        vc.addVertex(mat, X1, Y1, Z1).setColor(color).setUv(0, 0).setOverlay(0).setLight(15728880).setNormal(1, 0, 0);
-        vc.addVertex(mat, X1, Y1, Z0).setColor(color).setUv(0, 0).setOverlay(0).setLight(15728880).setNormal(1, 0, 0);
-        vc.addVertex(mat, X1, Y0, Z0).setColor(color).setUv(0, 0).setOverlay(0).setLight(15728880).setNormal(1, 0, 0);
+        vc.addVertex(mat, X1, Y0, Z1).setColor(color);
+        vc.addVertex(mat, X1, Y1, Z1).setColor(color);
+        vc.addVertex(mat, X1, Y1, Z0).setColor(color);
+        vc.addVertex(mat, X1, Y0, Z0).setColor(color);
         // -Y
-        vc.addVertex(mat, X0, Y0, Z1).setColor(color).setUv(0, 0).setOverlay(0).setLight(15728880).setNormal(0, -1, 0);
-        vc.addVertex(mat, X1, Y0, Z1).setColor(color).setUv(0, 0).setOverlay(0).setLight(15728880).setNormal(0, -1, 0);
-        vc.addVertex(mat, X1, Y0, Z0).setColor(color).setUv(0, 0).setOverlay(0).setLight(15728880).setNormal(0, -1, 0);
-        vc.addVertex(mat, X0, Y0, Z0).setColor(color).setUv(0, 0).setOverlay(0).setLight(15728880).setNormal(0, -1, 0);
+        vc.addVertex(mat, X0, Y0, Z1).setColor(color);
+        vc.addVertex(mat, X1, Y0, Z1).setColor(color);
+        vc.addVertex(mat, X1, Y0, Z0).setColor(color);
+        vc.addVertex(mat, X0, Y0, Z0).setColor(color);
         // +Y
-        vc.addVertex(mat, X0, Y1, Z0).setColor(color).setUv(0, 0).setOverlay(0).setLight(15728880).setNormal(0, 1, 0);
-        vc.addVertex(mat, X1, Y1, Z0).setColor(color).setUv(0, 0).setOverlay(0).setLight(15728880).setNormal(0, 1, 0);
-        vc.addVertex(mat, X1, Y1, Z1).setColor(color).setUv(0, 0).setOverlay(0).setLight(15728880).setNormal(0, 1, 0);
-        vc.addVertex(mat, X0, Y1, Z1).setColor(color).setUv(0, 0).setOverlay(0).setLight(15728880).setNormal(0, 1, 0);
+        vc.addVertex(mat, X0, Y1, Z0).setColor(color);
+        vc.addVertex(mat, X1, Y1, Z0).setColor(color);
+        vc.addVertex(mat, X1, Y1, Z1).setColor(color);
+        vc.addVertex(mat, X0, Y1, Z1).setColor(color);
         // -Z
-        vc.addVertex(mat, X1, Y0, Z0).setColor(color).setUv(0, 0).setOverlay(0).setLight(15728880).setNormal(0, 0, -1);
-        vc.addVertex(mat, X1, Y1, Z0).setColor(color).setUv(0, 0).setOverlay(0).setLight(15728880).setNormal(0, 0, -1);
-        vc.addVertex(mat, X0, Y1, Z0).setColor(color).setUv(0, 0).setOverlay(0).setLight(15728880).setNormal(0, 0, -1);
-        vc.addVertex(mat, X0, Y0, Z0).setColor(color).setUv(0, 0).setOverlay(0).setLight(15728880).setNormal(0, 0, -1);
+        vc.addVertex(mat, X1, Y0, Z0).setColor(color);
+        vc.addVertex(mat, X1, Y1, Z0).setColor(color);
+        vc.addVertex(mat, X0, Y1, Z0).setColor(color);
+        vc.addVertex(mat, X0, Y0, Z0).setColor(color);
         // +Z
-        vc.addVertex(mat, X0, Y0, Z1).setColor(color).setUv(0, 0).setOverlay(0).setLight(15728880).setNormal(0, 0, 1);
-        vc.addVertex(mat, X0, Y1, Z1).setColor(color).setUv(0, 0).setOverlay(0).setLight(15728880).setNormal(0, 0, 1);
-        vc.addVertex(mat, X1, Y1, Z1).setColor(color).setUv(0, 0).setOverlay(0).setLight(15728880).setNormal(0, 0, 1);
-        vc.addVertex(mat, X1, Y0, Z1).setColor(color).setUv(0, 0).setOverlay(0).setLight(15728880).setNormal(0, 0, 1);
+        vc.addVertex(mat, X0, Y0, Z1).setColor(color);
+        vc.addVertex(mat, X0, Y1, Z1).setColor(color);
+        vc.addVertex(mat, X1, Y1, Z1).setColor(color);
+        vc.addVertex(mat, X1, Y0, Z1).setColor(color);
     }
 
     private static class PipeRenderInfo {

@@ -1,6 +1,7 @@
 package com.heaser.pipeconnector.client;
 
 import com.heaser.pipeconnector.PipeConnector;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -18,13 +19,20 @@ public class ClientEvents {
     @SubscribeEvent(priority = EventPriority.LOW)
     public static void onRenderWorld(RenderLevelStageEvent event) {
 
-        if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_BLOCK_ENTITIES) {
+        if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_WEATHER) {
             PoseStack stack = event.getPoseStack();
             MultiBufferSource.BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
             Entity cameraEntity = event.getCamera().getEntity();
             if (cameraEntity instanceof Player) {
+                RenderSystem.disableDepthTest();
+                
                 ClientSetup.PREVIEW_DRAWER.handleOnRenderLevel(stack, buffer, (Player)cameraEntity);
                 ClientSetup.PIPE_VISION_RENDERER.handleOnRenderLevel(stack, buffer, (Player)cameraEntity);
+                
+                // Flush everything while depth test is disabled
+                buffer.endBatch();
+                
+                RenderSystem.enableDepthTest();
             }
         }
     }
