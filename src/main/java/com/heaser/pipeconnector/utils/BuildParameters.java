@@ -15,6 +15,7 @@ public class BuildParameters {
     public BridgeType bridgeType;
     public boolean utilizeExistingPipes;
     public boolean avoidInventoryBlocks;
+    public boolean mirrorManhattan;
     public String dimension;
 
     public BuildParameters() {
@@ -24,6 +25,7 @@ public class BuildParameters {
         this.bridgeType = BridgeType.DEFAULT;
         this.utilizeExistingPipes = true;
         this.avoidInventoryBlocks = false;
+        this.mirrorManhattan = false;
     }
 
     public BuildParameters(ItemStack pipeConnectorItem) {
@@ -33,6 +35,7 @@ public class BuildParameters {
         this.bridgeType = TagUtils.getBridgeType(pipeConnectorItem);
         this.utilizeExistingPipes = TagUtils.getUtilizeExistingPipes(pipeConnectorItem);
         this.avoidInventoryBlocks = TagUtils.getAvoidInventoryBlocks(pipeConnectorItem);
+        this.mirrorManhattan = TagUtils.getMirrorManhattan(pipeConnectorItem);
     }
 
     public BuildParameters(int depth,
@@ -40,13 +43,15 @@ public class BuildParameters {
                            String dimension,
                            BridgeType bridgeType,
                            boolean utilizeExistingPipes,
-                           boolean avoidInventoryBlocks) {
+                           boolean avoidInventoryBlocks,
+                           boolean mirrorManhattan) {
         this.depth = depth;
         this.nodes = (List<NodeParameter>) new ArrayList<>(nodes).clone();
         this.dimension = dimension;
         this.bridgeType = bridgeType;
         this.utilizeExistingPipes = utilizeExistingPipes;
         this.avoidInventoryBlocks = avoidInventoryBlocks;
+        this.mirrorManhattan = mirrorManhattan;
     }
 
     public boolean equals(BuildParameters other) {
@@ -55,6 +60,7 @@ public class BuildParameters {
         boolean isBridgeTypeEqual = other.bridgeType == this.bridgeType;
         boolean isUtilizeExistingPipesEqual = other.utilizeExistingPipes == this.utilizeExistingPipes;
         boolean isAvoidInventoryBlocksEqual = other.avoidInventoryBlocks == this.avoidInventoryBlocks;
+        boolean isMirrorManhattanEqual = other.mirrorManhattan == this.mirrorManhattan;
         boolean nodesEqual;
         nodesEqual = other.nodes.size() == this.nodes.size();
         if (nodesEqual) {
@@ -65,6 +71,7 @@ public class BuildParameters {
             }
         }
         return depthEqual && nodesEqual && isDimensionEqual
-                && isBridgeTypeEqual && isUtilizeExistingPipesEqual && isAvoidInventoryBlocksEqual;
+                && isBridgeTypeEqual && isUtilizeExistingPipesEqual 
+                && isAvoidInventoryBlocksEqual && isMirrorManhattanEqual;
     }
 }

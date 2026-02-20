@@ -266,4 +266,21 @@ public class TagUtils {
     }
 
     // -----------------------------------------------------------------------------------------------------------------
+    // Manhattan Mirror: Toggleable mirroring of Manhattan pathfinding. Default is off.
+    // -----------------------------------------------------------------------------------------------------------------
+    public static boolean getMirrorManhattan(ItemStack stack) {
+        CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+        if (tag.contains(ComponentDataTags.kPipeConnectorMirrorManhattan, tag.TAG_BYTE)) {
+            return tag.getBoolean(ComponentDataTags.kPipeConnectorMirrorManhattan);
+        }
+        return false;
+    }
+
+    public static void setMirrorManhattan(ItemStack stack, boolean mirrored) {
+        CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> {
+            tag.putBoolean(ComponentDataTags.kPipeConnectorMirrorManhattan, mirrored);
+        });
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
 }

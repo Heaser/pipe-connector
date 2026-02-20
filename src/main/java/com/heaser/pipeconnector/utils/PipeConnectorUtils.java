@@ -40,7 +40,8 @@ public class PipeConnectorUtils {
         Level level = player.level();
         ItemStack itemToPlace = player.getOffhandItem();
         Block blockToPlace = CompatibilityBlockGetter.getInstance().getBlock(itemToPlace);
-        Map<BlockPos, BlockState> blockPosMap = getBlockPosMap(nodes, depth, level, bridgeType, blockToPlace, itemToPlace, utilizeExistingPipes, player);
+        boolean mirrorManhattan = TagUtils.getMirrorManhattan(context.getItemInHand());
+        Map<BlockPos, BlockState> blockPosMap = getBlockPosMap(nodes, depth, level, bridgeType, blockToPlace, itemToPlace, utilizeExistingPipes, mirrorManhattan, player);
         PipeConnector.LOGGER.debug(blockPosMap.toString());
 
         int pipeLimit = PipeConnectorConfig.MAX_ALLOWED_PIPES_TO_PLACE.get();
@@ -170,7 +171,7 @@ public class PipeConnectorUtils {
         return blockHashMap;
     }
 
-    public static  Map<BlockPos, BlockState> useManhattan(Map<BlockPos, BlockState> blockHashMap, Edge edge, Level level, int depth) {
+    public static  Map<BlockPos, BlockState> useManhattan(Map<BlockPos, BlockState> blockHashMap, Edge edge, Level level, int depth, boolean mirror) {
         BlockPos startPos = edge.nodePosition;
         BlockPos endPos = edge.nextNodePosition;
         int deltaY = Math.abs(startPos.getY() - endPos.getY());
@@ -184,7 +185,7 @@ public class PipeConnectorUtils {
         startPos = moveAndStoreStates(startPos, depth, 0, -1, 0, level, blockHashMap);
         endPos = moveAndStoreStates(endPos, nextDepth, 0, -1, 0, level, blockHashMap);
 
-        List<BlockPos> blockPosPath = ManhattanAlgorithm.findPathManhattan(startPos, endPos, level);
+        List<BlockPos> blockPosPath = ManhattanAlgorithm.findPathManhattan(startPos, endPos, level, mirror);
 
         for (BlockPos pos : blockPosPath) {
             blockHashMap.putIfAbsent(pos, level.getBlockState(pos));
@@ -197,7 +198,7 @@ public class PipeConnectorUtils {
     // This Method returns a Map of BlockPos & And BlockStates which will eventually be used to bridge between the
     // two locations clicked by the Player.
     // -----------------------------------------------------------------------------------------------------------------
-    public static Map<BlockPos, BlockState> getBlockPosMap(List<NodeParameter> nodes, int depth, Level level, BridgeType bridgeType, Block placedBlock, ItemStack placedItemStack, boolean utilizeExistingPipes, Player player) {
+    public static Map<BlockPos, BlockState> getBlockPosMap(List<NodeParameter> nodes, int depth, Level level, BridgeType bridgeType, Block placedBlock, ItemStack placedItemStack, boolean utilizeExistingPipes, boolean mirrorManhattan, Player player) {
         Map<BlockPos, BlockState> blockHashMap = new HashMap<>();
         PathfindingAStarAlgorithm.PositionHeuristicChecker PositionAlgorithm = new PathfindingAStarAlgorithm.PositionHeuristicChecker(utilizeExistingPipes, placedBlock, placedItemStack, level);
         PathfindingAStarAlgorithm.DepthHeuristicChecker DepthAlgorithm = new PathfindingAStarAlgorithm.DepthHeuristicChecker(utilizeExistingPipes, placedBlock, placedItemStack, level);
@@ -218,7 +219,7 @@ public class PipeConnectorUtils {
 
             switch (bridgeType) {
                 case A_STAR -> useAStar(blockHashMap, edge, level, relativeDepth, player, PositionAlgorithm, DepthAlgorithm);
-                case DEFAULT -> useManhattan(blockHashMap, edge, level, relativeDepth);
+                case DEFAULT -> useManhattan(blockHashMap, edge, level, relativeDepth, mirrorManhattan);
             }
         }
 

@@ -27,6 +27,13 @@ public abstract class BaseButton  {
         this.label = Component.translatable(name).withStyle(chatFormatting);
     }
 
+    public void setButtonWidth(int width) {
+        this.buttonWidth = width;
+        if (this.button != null) {
+            this.button.setWidth(width);
+        }
+    }
+
     public Component getLabel() {
         return label;
     }

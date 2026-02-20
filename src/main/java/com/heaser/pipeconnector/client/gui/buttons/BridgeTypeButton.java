@@ -14,9 +14,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BridgeTypeButton extends BaseButton {
+    private static final int MANHATTAN_WIDTH = 123;
+    private static final int ASTAR_WIDTH = 123;
 
     public BridgeTypeButton(ItemStack itemStack) {
-        super(getInitialLabel(itemStack), 20, 123);
+        super(getInitialLabel(itemStack), 20, getInitialWidth(itemStack));
     }
 
 
@@ -28,10 +30,12 @@ public class BridgeTypeButton extends BaseButton {
             bridgeType = BridgeType.A_STAR;
             this.setLabel("item.pipe_connector.gui.button.aStarPathfinding", null);
             this.button.setMessage(this.getLabel());
+            this.setButtonWidth(ASTAR_WIDTH);
         } else if(bridgeType == BridgeType.A_STAR) {
             bridgeType = BridgeType.DEFAULT;
             this.setLabel("item.pipe_connector.gui.button.defaultPathfinding", null);
             this.button.setMessage(this.getLabel());
+            this.setButtonWidth(MANHATTAN_WIDTH);
         }
 
         TagUtils.setBridgeType(itemStack, bridgeType);
@@ -45,6 +49,23 @@ public class BridgeTypeButton extends BaseButton {
             case A_STAR -> Component.translatable("item.pipe_connector.gui.button.aStarPathfinding");
             default -> Component.translatable("item.pipe_connector.gui.button.defaultPathfinding");
         };
+    }
+
+    private static int getInitialWidth(ItemStack itemStack) {
+        BridgeType bridgeType = TagUtils.getBridgeType(itemStack);
+        return bridgeType == BridgeType.A_STAR ? ASTAR_WIDTH : MANHATTAN_WIDTH;
+    }
+
+    public void updateLabel(ItemStack itemStack) {
+        BridgeType bridgeType = TagUtils.getBridgeType(itemStack);
+        if (bridgeType == BridgeType.A_STAR) {
+            this.setLabel("item.pipe_connector.gui.button.aStarPathfinding", null);
+            this.setButtonWidth(ASTAR_WIDTH);
+        } else {
+            this.setLabel("item.pipe_connector.gui.button.defaultPathfinding", null);
+            this.setButtonWidth(MANHATTAN_WIDTH);
+        }
+        this.button.setMessage(this.getLabel());
     }
 
     @Override

@@ -37,6 +37,7 @@ public class PipeConnectorGui extends Screen {
     private BaseButton pipeVisionButton;
     private BaseButton outlinePreviewButton;
     private BaseButton solidPreviewButton;
+    private BaseButton manhattanMirrorButton;
 
     private DepthEditBox depthEditBox;
     private DecreaseDepthButton decreaseDepthButton;
@@ -53,6 +54,7 @@ public class PipeConnectorGui extends Screen {
     @Override
     protected void init() {
         bridgeTypeButton = createButton(0.05, 0.2, new BridgeTypeButton(pipeConnectorStack));
+        manhattanMirrorButton = createButton(0.05, 0.2, new ManhattanMirrorButton(pipeConnectorStack));
         inventoryGuardButton = createButton(0.45, 0.3, new InventoryGuardButton(pipeConnectorStack));
         avoidInventoryBlocksButton = createButton(0.45, 0.4, new AvoidInventoryBlocksButton(pipeConnectorStack));
         utilizeExistingPipesButton = createButton(0.45, 0.5, new UtilizeExistingPipesButton(pipeConnectorStack));
@@ -77,9 +79,6 @@ public class PipeConnectorGui extends Screen {
 
     @Override
     public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        if (this.getMinecraft().player != null && isHoldingPipeConnector(this.getMinecraft().player)) {
-            pipeConnectorStack = this.getMinecraft().player.getMainHandItem();
-        }
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShaderTexture(0, PIPE_CONNECTOR_TEXTURE);
@@ -93,11 +92,25 @@ public class PipeConnectorGui extends Screen {
         drawTooltipList(guiGraphics, mouseX, mouseY, utilizeExistingPipesButton);
         drawTooltipList(guiGraphics, mouseX, mouseY, avoidInventoryBlocksButton);
         drawTooltip(guiGraphics, mouseX, mouseY, pipeVisionButton);
+        drawTooltip(guiGraphics, mouseX, mouseY, manhattanMirrorButton);
         guiGraphics.blit(PIPE_CONNECTOR_TEXTURE, drawStartX, drawStartY, 0, 0, imageWidth, imageHeight);
         super.render(guiGraphics, mouseX, mouseY, partialTick);
         utilizeExistingPipesButton.button.active = utilizeExistingPipesButton.isActive(pipeConnectorStack);
         avoidInventoryBlocksButton.button.active = avoidInventoryBlocksButton.isActive(pipeConnectorStack);
         pipeVisionButton.button.active = pipeVisionButton.isActive(pipeConnectorStack);
+
+        if (bridgeTypeButton instanceof BridgeTypeButton btb) {
+            btb.updateLabel(pipeConnectorStack);
+        }
+        
+        boolean isDefaultPathfinding = TagUtils.getBridgeType(pipeConnectorStack) == com.heaser.pipeconnector.constants.BridgeType.DEFAULT;
+        manhattanMirrorButton.button.visible = isDefaultPathfinding;
+        if (isDefaultPathfinding) {
+            manhattanMirrorButton.button.setX(bridgeTypeButton.button.getX() + bridgeTypeButton.button.getWidth() + 5);
+            if (manhattanMirrorButton instanceof ManhattanMirrorButton mmb) {
+                mmb.updateLabel(pipeConnectorStack);
+            }
+        }
 
         buildPipesButton.button.active = buildPipesButton.isActive(pipeConnectorStack);
         if (outlinePreviewButton instanceof OutlinePreviewButton opb) {

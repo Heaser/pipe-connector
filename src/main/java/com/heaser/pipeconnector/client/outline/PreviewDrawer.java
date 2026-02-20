@@ -50,6 +50,7 @@ public class PreviewDrawer {
         }
         int depth = TagUtils.getDepthFromStack(pipeConnector);
         boolean utilizeExitingPipes = TagUtils.getUtilizeExistingPipes(pipeConnector);
+        boolean mirrorManhattan = TagUtils.getMirrorManhattan(pipeConnector);
         return PipeConnectorUtils.getBlockPosSet(
                 PipeConnectorUtils.getBlockPosMap(
                         nodes,
@@ -59,6 +60,7 @@ public class PreviewDrawer {
                         CompatibilityBlockGetter.getInstance().getBlock(player.getOffhandItem()),
                         player.getOffhandItem(),
                         utilizeExitingPipes,
+                        mirrorManhattan,
                         player));
     }
 

@@ -61,5 +61,6 @@
   "item.pipe_connector.gui.button.preview_solid": "Solid",
   "item.pipe_connector.gui.tooltip.comingSoon": "Coming SoonTM...",
   "item.pipe_connector.gui.label.preview_style": "Preview Style",
-  "item.pipe_connector.gui.label.pipe_vision": "Pipe Vision"
+  "item.pipe_connector.gui.label.pipe_vision": "Pipe Vision",
+  "item.pipe_connector.gui.button.tooltip.manhattanMirror": "Mirrors the path - Only works for Manhattan Pathfinding."
 }

@@ -12,7 +12,7 @@ import static com.heaser.pipeconnector.utils.PipeConnectorUtils.moveAndStoreStat
 
 public class ManhattanAlgorithm {
 
-    public static List<BlockPos> findPathManhattan(BlockPos start, BlockPos end, Level level) {
+    public static List<BlockPos> findPathManhattan(BlockPos start, BlockPos end, Level level, boolean mirror) {
 
         Set<BlockPos> blockHashSet = new HashSet<>();
 
@@ -33,8 +33,13 @@ public class ManhattanAlgorithm {
         BlockPos currentPos = start;
 
         currentPos = moveAndStoreStates(currentPos, ySteps, 0, yDirection, 0, level, blockHashSet);
-        currentPos = moveAndStoreStates(currentPos, xSteps, xDirection, 0, 0, level, blockHashSet);
-        moveAndStoreStates(currentPos, zSteps, 0, 0, zDirection, level, blockHashSet);
+        if (mirror) {
+            currentPos = moveAndStoreStates(currentPos, zSteps, 0, 0, zDirection, level, blockHashSet);
+            moveAndStoreStates(currentPos, xSteps, xDirection, 0, 0, level, blockHashSet);
+        } else {
+            currentPos = moveAndStoreStates(currentPos, xSteps, xDirection, 0, 0, level, blockHashSet);
+            moveAndStoreStates(currentPos, zSteps, 0, 0, zDirection, level, blockHashSet);
+        }
 
         blockHashSet.add(end);
 

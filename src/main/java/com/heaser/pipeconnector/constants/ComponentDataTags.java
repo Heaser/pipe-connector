@@ -13,6 +13,7 @@ public class ComponentDataTags {
     public static String kPipeConnectorCustomModelData = PipeConnector.MODID + "_CustomModelData";
     public static String kPipeConnectorSolidPreview = PipeConnector.MODID + "_SolidPreview";
     public static String kPipeConnectorPipeVision = PipeConnector.MODID + "_PipeVision";
+    public static String kPipeConnectorMirrorManhattan = PipeConnector.MODID + "_MirrorManhattan";
 
     // Node Compound Tags
     public static String kPipeConnectorNodePositionX = PipeConnector.MODID + "_X";
