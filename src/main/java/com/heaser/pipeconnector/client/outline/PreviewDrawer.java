@@ -220,6 +220,14 @@ public class PreviewDrawer {
     private static final double PIPE_HALF = 0.075; // thickness for regular segments (overall 0.15)
     private static final double NODE_HALF = 0.20;  // thicker joint for nodes (overall 0.40)
 
+    private void drawBox(PoseStack pose, MultiBufferSource buffer, boolean solid,
+                         double x0, double y0, double z0,
+                         double x1, double y1, double z1,
+                         float[] rgba) {
+        if (solid) drawFilledBox(pose, buffer, x0, y0, z0, x1, y1, z1, rgba);
+        else drawWireBox(pose, buffer, x0, y0, z0, x1, y1, z1, rgba);
+    }
+
     private void drawPipePiece(PoseStack pose, MultiBufferSource buffer, BlockPos pos, Vec3 offset, java.util.Set<BlockPos> previewPositions, float[] rgba, boolean isNode, float[] nodeRgba, boolean solid, float pulseScale) {
         double cx = pos.getX() + 0.5;
         double cy = pos.getY() + 0.5;
@@ -230,17 +238,13 @@ public class PreviewDrawer {
         float[] drawColor = (isNode && nodeRgba != null) ? nodeRgba : rgba;
 
         // Center joint
-        if (solid) {
-            if (isNode) drawShadedBox(pose, buffer,
-                    cx - half - offset.x, cy - half - offset.y, cz - half - offset.z,
-                    cx + half - offset.x, cy + half - offset.y, cz + half - offset.z,
-                    drawColor);
-            else drawFilledBox(pose, buffer,
+        if (solid && isNode) {
+            drawShadedBox(pose, buffer,
                     cx - half - offset.x, cy - half - offset.y, cz - half - offset.z,
                     cx + half - offset.x, cy + half - offset.y, cz + half - offset.z,
                     drawColor);
         } else {
-            drawWireBox(pose, buffer,
+            drawBox(pose, buffer, solid,
                     cx - half - offset.x, cy - half - offset.y, cz - half - offset.z,
                     cx + half - offset.x, cy + half - offset.y, cz + half - offset.z,
                     drawColor);
@@ -249,72 +253,46 @@ public class PreviewDrawer {
         // Connectors
         // West (x-)
         if (previewPositions.contains(pos.relative(Direction.WEST))) {
-            if (solid) drawFilledBox(pose, buffer,
-                    pos.getX() - offset.x, cy - half - offset.y, cz - half - offset.z,
-                    cx - half - offset.x, cy + half - offset.y, cz + half - offset.z,
-                    drawColor);
-            else drawWireBox(pose, buffer,
+            drawBox(pose, buffer, solid,
                     pos.getX() - offset.x, cy - half - offset.y, cz - half - offset.z,
                     cx - half - offset.x, cy + half - offset.y, cz + half - offset.z,
                     drawColor);
         }
         // East (x+)
         if (previewPositions.contains(pos.relative(Direction.EAST))) {
-            if (solid) drawFilledBox(pose, buffer,
-                    cx + half - offset.x, cy - half - offset.y, cz - half - offset.z,
-                    pos.getX() + 1.0 - offset.x, cy + half - offset.y, cz + half - offset.z,
-                    drawColor);
-            else drawWireBox(pose, buffer,
+            drawBox(pose, buffer, solid,
                     cx + half - offset.x, cy - half - offset.y, cz - half - offset.z,
                     pos.getX() + 1.0 - offset.x, cy + half - offset.y, cz + half - offset.z,
                     drawColor);
         }
         // North (z-)
         if (previewPositions.contains(pos.relative(Direction.NORTH))) {
-            if (solid) drawFilledBox(pose, buffer,
-                    cx - half - offset.x, cy - half - offset.y, pos.getZ() - offset.z,
-                    cx + half - offset.x, cy + half - offset.y, cz - half - offset.z,
-                    drawColor);
-            else drawWireBox(pose, buffer,
+            drawBox(pose, buffer, solid,
                     cx - half - offset.x, cy - half - offset.y, pos.getZ() - offset.z,
                     cx + half - offset.x, cy + half - offset.y, cz - half - offset.z,
                     drawColor);
         }
         // South (z+)
         if (previewPositions.contains(pos.relative(Direction.SOUTH))) {
-            if (solid) drawFilledBox(pose, buffer,
-                    cx - half - offset.x, cy - half - offset.y, cz + half - offset.z,
-                    cx + half - offset.x, cy + half - offset.y, pos.getZ() + 1.0 - offset.z,
-                    drawColor);
-            else drawWireBox(pose, buffer,
+            drawBox(pose, buffer, solid,
                     cx - half - offset.x, cy - half - offset.y, cz + half - offset.z,
                     cx + half - offset.x, cy + half - offset.y, pos.getZ() + 1.0 - offset.z,
                     drawColor);
         }
         // Down (y-)
         if (previewPositions.contains(pos.relative(Direction.DOWN))) {
-            if (solid) drawFilledBox(pose, buffer,
-                    cx - half - offset.x, pos.getY() - offset.y, cz - half - offset.z,
-                    cx + half - offset.x, cy - half - offset.y, cz + half - offset.z,
-                    drawColor);
-            else drawWireBox(pose, buffer,
+            drawBox(pose, buffer, solid,
                     cx - half - offset.x, pos.getY() - offset.y, cz - half - offset.z,
                     cx + half - offset.x, cy - half - offset.y, cz + half - offset.z,
                     drawColor);
         }
         // Up (y+)
         if (previewPositions.contains(pos.relative(Direction.UP))) {
-            if (solid) drawFilledBox(pose, buffer,
-                    cx - half - offset.x, cy + half - offset.y, cz - half - offset.z,
-                    cx + half - offset.x, pos.getY() + 1.0 - offset.y, cz + half - offset.z,
-                    drawColor);
-            else drawWireBox(pose, buffer,
+            drawBox(pose, buffer, solid,
                     cx - half - offset.x, cy + half - offset.y, cz - half - offset.z,
                     cx + half - offset.x, pos.getY() + 1.0 - offset.y, cz + half - offset.z,
                     drawColor);
         }
-
-        // No large full-block outline; nodes are emphasized by thicker center and node-specific color
     }
 
     private void drawFilledBox(PoseStack pose, MultiBufferSource buffer,
