@@ -25,8 +25,8 @@ import static com.heaser.pipeconnector.utils.GeneralUtils.isHoldingPipeConnector
 
 public class PipeConnectorGui extends Screen {
     public static final ResourceLocation PIPE_CONNECTOR_TEXTURE = ResourceLocation.fromNamespaceAndPath(PipeConnector.MODID, "textures/gui/settings.png");
-    protected static final Integer imageWidth = 256;
-    protected static final Integer imageHeight = 256;
+    protected static final int imageWidth = 256;
+    protected static final int imageHeight = 256;
     private ItemStack pipeConnectorStack;
     private BaseButton resetBaseButton;
     private BaseButton buildPipesButton;
@@ -196,7 +196,7 @@ public class PipeConnectorGui extends Screen {
         int drawStartX = this.getScreenX() + marginX;
         int drawStartY = this.getScreenY() + marginY;
 
-        guiGraphics.drawString(this.font, label.getLabel(pipeConnectorStack), drawStartX, drawStartY, 0x00000000, false);
+        guiGraphics.drawString(this.font, label.getLabel(pipeConnectorStack), drawStartX, drawStartY, 0xFF000000, false);
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -209,7 +209,7 @@ public class PipeConnectorGui extends Screen {
 
         guiGraphics.pose().pushPose();
         guiGraphics.pose().scale(scale,scale,scale);
-        guiGraphics.drawString(this.font, label.getLabel(pipeConnectorStack), drawStartX, drawStartY, 0x00000000, false);
+        guiGraphics.drawString(this.font, label.getLabel(pipeConnectorStack), drawStartX, drawStartY, 0xFF000000, false);
         guiGraphics.pose().popPose();
     }
 
