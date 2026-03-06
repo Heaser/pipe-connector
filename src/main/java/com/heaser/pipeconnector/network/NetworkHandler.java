@@ -22,6 +22,7 @@ public class NetworkHandler {
         serverbound(registrar, UpdateManhattanMirrorPacket.TYPE, UpdateManhattanMirrorPacket.STREAM_CODEC);
         serverbound(registrar, ResetPacket.TYPE, ResetPacket.STREAM_CODEC);
         serverbound(registrar, BuildPipesPacket.TYPE, BuildPipesPacket.STREAM_CODEC);
+        clientbound(registrar, BuildAnimationPacket.TYPE, BuildAnimationPacket.STREAM_CODEC);
 
         PipeConnector.LOGGER.debug("Registered {} Packets for {}", packetId, PipeConnector.MODID);
     }

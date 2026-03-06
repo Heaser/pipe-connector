@@ -7,6 +7,7 @@ import com.heaser.pipeconnector.compatibility.CompatibilityBlockGetter;
 import com.heaser.pipeconnector.compatibility.CompatibilityPlacer;
 import com.heaser.pipeconnector.config.PipeConnectorConfig;
 import com.heaser.pipeconnector.constants.BridgeType;
+import com.heaser.pipeconnector.network.BuildAnimationPacket;
 import com.heaser.pipeconnector.particles.ParticleHelper;
 import com.heaser.pipeconnector.utils.pathfinding.ManhattanAlgorithm;
 import com.heaser.pipeconnector.utils.pathfinding.PathfindingAStarAlgorithm;
@@ -17,6 +18,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -28,6 +30,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.common.util.BlockSnapshot;
 import net.neoforged.neoforge.event.level.BlockEvent;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.*;
 
@@ -96,7 +99,47 @@ public class PipeConnectorUtils {
                 breakAndSetBlock(level, position, blockToPlace, player, context, directions);
             }
         }
+
+        if (player instanceof ServerPlayer serverPlayer) {
+            List<BlockPos> ordered = toOrderedPath(blockPosMap, nodes.getFirst().getRelativePosition());
+            PacketDistributor.sendToPlayer(serverPlayer, new BuildAnimationPacket(ordered));
+        }
+
         return true;
+    }
+
+    private static List<BlockPos> toOrderedPath(Map<BlockPos, BlockState> map, BlockPos startHint) {
+        if (map.isEmpty()) return new ArrayList<>();
+
+        Set<BlockPos> remaining = new HashSet<>(map.keySet());
+        List<BlockPos> ordered = new ArrayList<>(remaining.size());
+
+        BlockPos current = remaining.contains(startHint) ? startHint
+                : remaining.stream().min(Comparator.comparingDouble(p -> p.distSqr(startHint))).orElse(remaining.iterator().next());
+
+        while (!remaining.isEmpty()) {
+            remaining.remove(current);
+            ordered.add(current);
+
+            BlockPos next = null;
+            for (Direction dir : Direction.values()) {
+                BlockPos candidate = current.relative(dir);
+                if (remaining.contains(candidate)) {
+                    next = candidate;
+                    break;
+                }
+            }
+
+            if (next == null && !remaining.isEmpty()) {
+                final BlockPos cur = current;
+                next = remaining.stream().min(Comparator.comparingDouble(p -> p.distSqr(cur))).orElse(null);
+            }
+
+            if (next == null) break;
+            current = next;
+        }
+
+        return ordered;
     }
 
     // -----------------------------------------------------------------------------------------------------------------

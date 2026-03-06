@@ -28,6 +28,7 @@ public class ClientEvents {
                 
                 ClientSetup.PREVIEW_DRAWER.handleOnRenderLevel(stack, buffer, (Player)cameraEntity);
                 ClientSetup.PIPE_VISION_RENDERER.handleOnRenderLevel(stack, buffer, (Player)cameraEntity);
+                ClientSetup.BUILD_ANIMATION_RENDERER.handleOnRenderLevel(stack, buffer);
                 
                 // Flush everything while depth test is disabled
                 buffer.endBatch();
