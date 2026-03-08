@@ -2843,6 +2843,70 @@
     {
       "id": "replication:matter_network_pipe",
       "required": false
+    },
+    {
+      "id": "pipe_networks:white_pipe",
+      "required": false
+    },
+    {
+      "id": "pipe_networks:orange_pipe",
+      "required": false
+    },
+    {
+      "id": "pipe_networks:magenta_pipe",
+      "required": false
+    },
+    {
+      "id": "pipe_networks:light_blue_pipe",
+      "required": false
+    },
+    {
+      "id": "pipe_networks:yellow_pipe",
+      "required": false
+    },
+    {
+      "id": "pipe_networks:lime_pipe",
+      "required": false
+    },
+    {
+      "id": "pipe_networks:pink_pipe",
+      "required": false
+    },
+    {
+      "id": "pipe_networks:gray_pipe",
+      "required": false
+    },
+    {
+      "id": "pipe_networks:light_gray_pipe",
+      "required": false
+    },
+    {
+      "id": "pipe_networks:cyan_pipe",
+      "required": false
+    },
+    {
+      "id": "pipe_networks:purple_pipe",
+      "required": false
+    },
+    {
+      "id": "pipe_networks:blue_pipe",
+      "required": false
+    },
+    {
+      "id": "pipe_networks:brown_pipe",
+      "required": false
+    },
+    {
+      "id": "pipe_networks:green_pipe",
+      "required": false
+    },
+    {
+      "id": "pipe_networks:red_pipe",
+      "required": false
+    },
+    {
+      "id": "pipe_networks:black_pipe",
+      "required": false
     }
   ]
 }
