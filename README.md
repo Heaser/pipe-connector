@@ -28,6 +28,7 @@ Supported Pipes:
 * Refined Storage Cable
 * Pipes from Pretty Pipes
 * Create Pipe
+* Colored pipes from Create: Pipe Networks
 * Thermal Dynamics Ducts
 * Simple Storage Network Cable
 
