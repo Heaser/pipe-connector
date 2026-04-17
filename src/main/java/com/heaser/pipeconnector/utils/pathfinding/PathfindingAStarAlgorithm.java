@@ -107,13 +107,15 @@ public class PathfindingAStarAlgorithm {
                                              int endY, Level level, Player player, ItemStack connector) {
         if (isStartOrEnd(neighbor, start, end)) return true;
         if (!isAtRequiredLevel(neighbor, endY) && isVoidableBlock(level, neighbor)) return false;
-        if (!canAvoidPipe(level, neighbor, player)) return false;
 
         ItemStack offhandItem = player.getOffhandItem();
         Block block = level.getBlockState(neighbor).getBlock();
 
-        if (isBlockStateSpecificBlock(neighbor, block, offhandItem, level)) return true;
+        // Check passability before pipe avoidance - mods like MI allow multiple pipe types per block
         if (CompatibilityBlockEqualsChecker.isPassableForPathfinding(neighbor, level, offhandItem)) return true;
+        if (isBlockStateSpecificBlock(neighbor, block, offhandItem, level)) return true;
+
+        if (!canAvoidPipe(level, neighbor, player)) return false;
 
         if (connector != null && TagUtils.getAvoidInventoryBlocks(connector)
                 && hasInventoryCapabilities(level, neighbor)) return false;

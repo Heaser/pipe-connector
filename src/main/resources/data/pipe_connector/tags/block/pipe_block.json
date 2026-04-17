@@ -2843,6 +2843,10 @@
     {
       "id": "replication:matter_network_pipe",
       "required": false
+    },
+    {
+      "id": "modern_industrialization:pipe",
+      "required": false
     }
   ]
 }

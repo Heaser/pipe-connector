@@ -12,7 +12,9 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -25,6 +27,7 @@ import static com.heaser.pipeconnector.utils.GeneralUtils.*;
 public class PreviewDrawer {
     public HashSet<PreviewInfo> previewMap = new HashSet<>();
     private BuildParameters cachedParameters = new BuildParameters();
+    private Item cachedOffhandItem = Items.AIR;
 
     public PreviewDrawer() {
     }
@@ -33,7 +36,15 @@ public class PreviewDrawer {
         ItemStack heldItem = GeneralUtils.heldPipeConnector(player);
         if (heldItem == null) {
             return;
-        } else if (shouldUpdatePreview(heldItem)) {
+        }
+
+        Item offhandItem = player.getOffhandItem().getItem();
+        boolean offhandChanged = offhandItem != cachedOffhandItem;
+        cachedOffhandItem = offhandItem;
+
+        if (!GeneralUtils.isPlaceableBlock(player)) {
+            previewMap.clear();
+        } else if (shouldUpdatePreview(heldItem) || offhandChanged) {
             Level currentLevel = player.level();
             previewMap = getNewPreview(heldItem, currentLevel, player);
         }

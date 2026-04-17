@@ -2843,6 +2843,182 @@
     {
       "id": "replication:matter_network_pipe",
       "required": false
+    },
+    {
+      "id": "modern_industrialization:item_pipe",
+      "required": false
+    },
+    {
+      "id": "modern_industrialization:white_item_pipe",
+      "required": false
+    },
+    {
+      "id": "modern_industrialization:light_gray_item_pipe",
+      "required": false
+    },
+    {
+      "id": "modern_industrialization:gray_item_pipe",
+      "required": false
+    },
+    {
+      "id": "modern_industrialization:black_item_pipe",
+      "required": false
+    },
+    {
+      "id": "modern_industrialization:brown_item_pipe",
+      "required": false
+    },
+    {
+      "id": "modern_industrialization:red_item_pipe",
+      "required": false
+    },
+    {
+      "id": "modern_industrialization:orange_item_pipe",
+      "required": false
+    },
+    {
+      "id": "modern_industrialization:yellow_item_pipe",
+      "required": false
+    },
+    {
+      "id": "modern_industrialization:lime_item_pipe",
+      "required": false
+    },
+    {
+      "id": "modern_industrialization:green_item_pipe",
+      "required": false
+    },
+    {
+      "id": "modern_industrialization:cyan_item_pipe",
+      "required": false
+    },
+    {
+      "id": "modern_industrialization:light_blue_item_pipe",
+      "required": false
+    },
+    {
+      "id": "modern_industrialization:blue_item_pipe",
+      "required": false
+    },
+    {
+      "id": "modern_industrialization:purple_item_pipe",
+      "required": false
+    },
+    {
+      "id": "modern_industrialization:magenta_item_pipe",
+      "required": false
+    },
+    {
+      "id": "modern_industrialization:pink_item_pipe",
+      "required": false
+    },
+    {
+      "id": "modern_industrialization:fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "modern_industrialization:white_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "modern_industrialization:light_gray_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "modern_industrialization:gray_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "modern_industrialization:black_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "modern_industrialization:brown_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "modern_industrialization:red_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "modern_industrialization:orange_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "modern_industrialization:yellow_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "modern_industrialization:lime_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "modern_industrialization:green_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "modern_industrialization:cyan_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "modern_industrialization:light_blue_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "modern_industrialization:blue_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "modern_industrialization:purple_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "modern_industrialization:magenta_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "modern_industrialization:pink_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "modern_industrialization:tin_cable",
+      "required": false
+    },
+    {
+      "id": "modern_industrialization:copper_cable",
+      "required": false
+    },
+    {
+      "id": "modern_industrialization:cupronickel_cable",
+      "required": false
+    },
+    {
+      "id": "modern_industrialization:silver_cable",
+      "required": false
+    },
+    {
+      "id": "modern_industrialization:electrum_cable",
+      "required": false
+    },
+    {
+      "id": "modern_industrialization:aluminum_cable",
+      "required": false
+    },
+    {
+      "id": "modern_industrialization:annealed_copper_cable",
+      "required": false
+    },
+    {
+      "id": "modern_industrialization:kanthal_cable",
+      "required": false
+    },
+    {
+      "id": "modern_industrialization:platinum_cable",
+      "required": false
+    },
+    {
+      "id": "modern_industrialization:superconductor_cable",
+      "required": false
     }
   ]
 }

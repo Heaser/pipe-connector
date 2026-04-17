@@ -1,7 +1,7 @@
 package com.heaser.pipeconnector.client.outline;
 
 import com.heaser.pipeconnector.compatibility.CompatibilityBlockEqualsChecker;
-import com.heaser.pipeconnector.compatibility.interfaces.IColorProvider;
+import com.heaser.pipeconnector.compatibility.interfaces.PipeRenderEntry;
 import com.heaser.pipeconnector.constants.TagKeys;
 import com.heaser.pipeconnector.utils.TagUtils;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -16,7 +16,10 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static com.heaser.pipeconnector.utils.GeneralUtils.isHoldingPipeConnector;
@@ -31,6 +34,7 @@ public class PipeVisionRenderer {
 
     private static final float PIPE_RADIUS = 0.04f;
     private static final float ENDPOINT_RADIUS = 0.05f;
+    private static final float MULTI_PIPE_OFFSET_STEP = 0.15f;
 
     public void handleOnRenderLevel(PoseStack pose, MultiBufferSource buffer, Player player) {
         if (!isHoldingPipeConnector(player)) {
@@ -49,7 +53,7 @@ public class PipeVisionRenderer {
     }
 
     private void updateCacheIfNeeded(Player player) {
-        long now = System.currentTimeMillis() / 50; // approx ticks
+        long now = System.currentTimeMillis() / 50;
         Vec3 playerPos = player.position();
         boolean moved = playerPos.distanceToSqr(lastPlayerPos) > UPDATE_DIST_SQR;
         boolean timeToUpdate = now - lastUpdateTime > UPDATE_INTERVAL;
@@ -74,50 +78,67 @@ public class PipeVisionRenderer {
                     boolean isPipe = state.is(TagKeys.PIPE_BLOCK) || CompatibilityBlockEqualsChecker.isSupportedBlock(state);
 
                     if (isPipe) {
-                        int color = getPipeColor(level, pos, state);
-                        cachedPipes.put(pos.immutable(), new PipeRenderInfo(color));
+                        List<SubPipe> subPipes = resolveSubPipes(level, pos.immutable(), state);
+                        if (!subPipes.isEmpty()) {
+                            cachedPipes.put(pos.immutable(), new PipeRenderInfo(subPipes));
+                        }
                     }
                 }
             }
         }
 
-        // Second pass for connections
+        // Second pass: connect sub-pipes that share a typeKey with a neighbour sub-pipe
         for (Map.Entry<BlockPos, PipeRenderInfo> entry : cachedPipes.entrySet()) {
             BlockPos currentPos = entry.getKey();
             PipeRenderInfo info = entry.getValue();
-            
-            for (Direction dir : Direction.values()) {
-                BlockPos neighborPos = currentPos.relative(dir);
-                PipeRenderInfo neighborInfo = cachedPipes.get(neighborPos);
 
-                if (neighborInfo != null) {
-                    // Connect if same color (proxy for same type/variant)
-                    if (neighborInfo.color == info.color) {
-                        info.connections |= (1 << dir.ordinal());
+            for (SubPipe sp : info.subPipes) {
+                for (Direction dir : Direction.values()) {
+                    PipeRenderInfo neighbor = cachedPipes.get(currentPos.relative(dir));
+                    if (neighbor == null) continue;
+                    for (SubPipe nsp : neighbor.subPipes) {
+                        if (sp.typeKey.equals(nsp.typeKey)) {
+                            sp.connections |= (1 << dir.ordinal());
+                            break;
+                        }
                     }
                 }
             }
         }
     }
 
-    private int getPipeColor(Level level, BlockPos pos, BlockState state) {
-        Integer compatColor = CompatibilityBlockEqualsChecker.getColor(pos, level);
-        if (compatColor != null) {
-            return compatColor;
-        }
-        // Deterministic color from BlockState hash or Block hash
-        // Use a consistent hash to generate a stable color
-        int hash = state.getBlock().getDescriptionId().hashCode();
+    private List<SubPipe> resolveSubPipes(Level level, BlockPos pos, BlockState state) {
+        List<PipeRenderEntry> entries = CompatibilityBlockEqualsChecker.getPipeRenderEntries(pos, level);
 
+        if (entries.isEmpty()) {
+            // Fallback: single pipe using hash-based color, keyed by block (same block = connects)
+            int color = hashColorForBlock(state);
+            List<SubPipe> single = new ArrayList<>(1);
+            single.add(new SubPipe(state.getBlock(), color, 0f));
+            return single;
+        }
+
+        List<PipeRenderEntry> sorted = new ArrayList<>(entries);
+        sorted.sort(Comparator.comparingInt(e -> System.identityHashCode(e.typeKey())));
+
+        List<SubPipe> subPipes = new ArrayList<>(sorted.size());
+        int n = sorted.size();
+        for (int i = 0; i < n; i++) {
+            PipeRenderEntry entry = sorted.get(i);
+            float yOffset = (n == 1) ? 0f : (i - (n - 1) / 2f) * MULTI_PIPE_OFFSET_STEP;
+            subPipes.add(new SubPipe(entry.typeKey(), entry.color(), yOffset));
+        }
+        return subPipes;
+    }
+
+    private int hashColorForBlock(BlockState state) {
+        int hash = state.getBlock().getDescriptionId().hashCode();
         int r = (hash & 0xFF0000) >> 16;
         int g = (hash & 0x00FF00) >> 8;
         int b = (hash & 0x0000FF);
-        
-        // Boost brightness to ensure visibility
         if (r < 50) r += 100;
         if (g < 50) g += 100;
         if (b < 50) b += 100;
-
         return 0xFF000000 | (r << 16) | (g << 8) | b;
     }
 
@@ -128,35 +149,34 @@ public class PipeVisionRenderer {
         for (Map.Entry<BlockPos, PipeRenderInfo> entry : cachedPipes.entrySet()) {
             BlockPos pos = entry.getKey();
             PipeRenderInfo info = entry.getValue();
-            
+
             double x = pos.getX() - cameraPos.x;
             double y = pos.getY() - cameraPos.y;
             double z = pos.getZ() - cameraPos.z;
 
-            float a = 1.0f;
-            float r = ((info.color >> 16) & 0xFF) / 255f;
-            float g = ((info.color >> 8) & 0xFF) / 255f;
-            float b = (info.color & 0xFF) / 255f;
+            for (SubPipe sp : info.subPipes) {
+                float a = 1.0f;
+                float r = ((sp.color >> 16) & 0xFF) / 255f;
+                float g = ((sp.color >> 8) & 0xFF) / 255f;
+                float b = (sp.color & 0xFF) / 255f;
 
-            renderPipe(pose, vc, x, y, z, info.connections, r, g, b, a);
+                renderPipe(pose, vc, x, y, z, sp.yOffset, sp.connections, r, g, b, a);
+            }
         }
     }
 
-    private void renderPipe(PoseStack pose, VertexConsumer vc, double x, double y, double z, int connections, float r, float g, float b, float a) {
+    private void renderPipe(PoseStack pose, VertexConsumer vc, double x, double y, double z, float yOffset, int connections, float r, float g, float b, float a) {
         org.joml.Matrix4f mat = pose.last().pose();
         double cx = x + 0.5;
-        double cy = y + 0.5;
+        double cy = y + 0.5 + yOffset;
         double cz = z + 0.5;
 
-        // Center Node
+        // Center node
         drawBox(vc, mat, cx - PIPE_RADIUS, cy - PIPE_RADIUS, cz - PIPE_RADIUS, cx + PIPE_RADIUS, cy + PIPE_RADIUS, cz + PIPE_RADIUS, r, g, b, a);
-
-        boolean hasConnection = false;
 
         // Arms
         for (Direction dir : Direction.values()) {
             if ((connections & (1 << dir.ordinal())) != 0) {
-                hasConnection = true;
                 double x0 = cx - PIPE_RADIUS;
                 double y0 = cy - PIPE_RADIUS;
                 double z0 = cz - PIPE_RADIUS;
@@ -181,13 +201,13 @@ public class PipeVisionRenderer {
     private void drawBox(VertexConsumer vc, org.joml.Matrix4f mat, double x0, double y0, double z0, double x1, double y1, double z1, float r, float g, float b, float a) {
         float X0 = (float)x0; float Y0 = (float)y0; float Z0 = (float)z0;
         float X1 = (float)x1; float Y1 = (float)y1; float Z1 = (float)z1;
-        
+
         int ri = (int)(r * 255);
         int gi = (int)(g * 255);
         int bi = (int)(b * 255);
         int ai = (int)(a * 255);
         int color = (ai << 24) | (ri << 16) | (gi << 8) | bi;
-        
+
         // -X
         vc.addVertex(mat, X0, Y0, Z0).setColor(color);
         vc.addVertex(mat, X0, Y1, Z0).setColor(color);
@@ -221,11 +241,23 @@ public class PipeVisionRenderer {
     }
 
     private static class PipeRenderInfo {
-        int color;
+        final List<SubPipe> subPipes;
+
+        PipeRenderInfo(List<SubPipe> subPipes) {
+            this.subPipes = subPipes;
+        }
+    }
+
+    private static class SubPipe {
+        final Object typeKey;
+        final int color;
+        final float yOffset;
         int connections; // Bitmask of Direction.ordinal()
 
-        public PipeRenderInfo(int color) {
+        SubPipe(Object typeKey, int color, float yOffset) {
+            this.typeKey = typeKey;
             this.color = color;
+            this.yOffset = yOffset;
             this.connections = 0;
         }
     }

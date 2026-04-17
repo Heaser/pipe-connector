@@ -3,6 +3,7 @@ package com.heaser.pipeconnector.compatibility;
 import com.heaser.pipeconnector.compatibility.ae2.AE2Compatiblity;
 //import com.heaser.pipeconnector.compatibility.enderio.EnderIoCompatibility;
 import com.heaser.pipeconnector.compatibility.gtceu.GTCEUCompatibility;
+import com.heaser.pipeconnector.compatibility.mi.MICompatibility;
 import com.heaser.pipeconnector.compatibility.interfaces.IPlacer;
 import com.heaser.pipeconnector.compatibility.prettypipes.PrettyPipesCompatibility;
 import com.heaser.pipeconnector.compatibility.prettypipes.PrettyPipesFluidsCompatibility;
@@ -50,6 +51,9 @@ public class CompatibilityPlacer {
 //      }
         if (isModLoaded("xnet")) {
             blockClassToPlacerMap.put(XNetCompatibility.getBlockToRegister(), new XNetCompatibility());
+        }
+        if (isModLoaded("modern_industrialization")) {
+            itemClassToPlacerMap.put(MICompatibility.getItemToRegister(), new MICompatibility());
         }
     }
 

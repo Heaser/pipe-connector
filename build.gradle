@@ -165,7 +165,9 @@ dependencies {
 //    implementation "curse.maven:geckolib-388172:6304958"
 //    implementation "curse.maven:owo-lib-532610:6313308"
 //    implementation "curse.maven:stitch-841890:5629395"
-    // End of Oritech stuff
+// End of Oritech stuff
+
+//    implementation ("curse.maven:guideme-1173950:7127444")
 
 
     // Required
@@ -177,6 +179,11 @@ dependencies {
     compileOnly("curse.maven:mcjtylib-233105:6541819")
     compileOnly("curse.maven:xnet-260912:6310525")
     compileOnly ("curse.maven:jei-238222:5775467")
+    compileOnly ("curse.maven:modern-industrialization-405388:7309662")
+
+
+
+
 
 //    compileOnly("com.enderio:enderio-conduits:8.0.4-alpha")  TODO: Fix after ender io finishes their conduit API updates
 

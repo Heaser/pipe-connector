@@ -3,6 +3,9 @@ package com.heaser.pipeconnector.compatibility;
 import com.heaser.pipeconnector.compatibility.ae2.AE2Compatiblity;
 import com.heaser.pipeconnector.compatibility.interfaces.IColorProvider;
 import com.heaser.pipeconnector.compatibility.interfaces.IBlockEqualsChecker;
+import com.heaser.pipeconnector.compatibility.interfaces.IMultiPipeColorProvider;
+import com.heaser.pipeconnector.compatibility.interfaces.PipeRenderEntry;
+import com.heaser.pipeconnector.compatibility.mi.MICompatibility;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -12,6 +15,7 @@ import net.neoforged.fml.ModList;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class CompatibilityBlockEqualsChecker {
@@ -24,6 +28,9 @@ public class CompatibilityBlockEqualsChecker {
 //      if (isModLoaded("enderio_conduits")) {
 //          classToCheckerMap.put(EnderIoCompatibility.getBlockToRegister(), new EnderIoCompatibility());
 //      }
+        if (isModLoaded("modern_industrialization")) {
+            classToCheckerMap.put(MICompatibility.getBlockToRegister(), new MICompatibility());
+        }
     }
 
     private boolean isModLoaded(String modId) {
@@ -53,6 +60,28 @@ public class CompatibilityBlockEqualsChecker {
             return colorProvider.getColor(level, pos);
         }
         return null;
+    }
+
+    public static List<PipeRenderEntry> getPipeRenderEntries(BlockPos pos, Level level) {
+        getInstance();
+        IBlockEqualsChecker checker = null;
+        Block currentBlock = level.getBlockState(pos).getBlock();
+        for (Map.Entry<Class<? extends Block>, IBlockEqualsChecker> set : classToCheckerMap.entrySet()) {
+            if (set.getKey().isAssignableFrom(currentBlock.getClass())) {
+                checker = set.getValue();
+                break;
+            }
+        }
+        if (checker instanceof IMultiPipeColorProvider multi) {
+            return multi.getPipeEntries(level, pos);
+        }
+        if (checker instanceof IColorProvider colorProvider) {
+            Integer color = colorProvider.getColor(level, pos);
+            if (color != null) {
+                return List.of(new PipeRenderEntry(color, color));
+            }
+        }
+        return List.of();
     }
 
     public static boolean isSupportedBlock(BlockState state) {

@@ -2,6 +2,7 @@ package com.heaser.pipeconnector.compatibility;
 
 import com.heaser.pipeconnector.compatibility.ae2.AE2Compatiblity;
 import com.heaser.pipeconnector.compatibility.interfaces.IBlockGetter;
+import com.heaser.pipeconnector.compatibility.mi.MICompatibility;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
@@ -15,6 +16,9 @@ public class CompatibilityBlockGetter {
     private CompatibilityBlockGetter() {
         if (isModLoaded("ae2")) {
             classToGetterMap.put(AE2Compatiblity.getItemStackClassToRegister(), new AE2Compatiblity());
+        }
+        if (isModLoaded("modern_industrialization")) {
+            classToGetterMap.put(MICompatibility.getItemToRegister(), new MICompatibility());
         }
     }
 
