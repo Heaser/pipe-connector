@@ -84,6 +84,7 @@ public class MICompatibility implements IPlacer, IBlockEqualsChecker, IBlockGett
                 }
                 pipeBlockEntity.addPipe(type, pipeItem.defaultData.clone());
                 level.blockUpdated(pos, Blocks.AIR);
+                openFacesForInventories(pipeBlockEntity, type, player, pos);
                 return true;
             }
 
@@ -126,6 +127,7 @@ public class MICompatibility implements IPlacer, IBlockEqualsChecker, IBlockGett
             if (newEntity instanceof PipeBlockEntity newPipeEntity) {
                 newPipeEntity.addPipe(type, pipeItem.defaultData.clone());
                 level.blockUpdated(pos, Blocks.AIR);
+                openFacesForInventories(newPipeEntity, type, player, pos);
                 return true;
             }
 
@@ -226,5 +228,22 @@ public class MICompatibility implements IPlacer, IBlockEqualsChecker, IBlockGett
 
     private int getPipeCount(PipeBlockEntity entity) {
         return getNetworkTypes(entity).size();
+    }
+
+    // simulates wrench use
+    private void openFacesForInventories(PipeBlockEntity pipeBlockEntity, PipeNetworkType type, Player player, BlockPos pos) {
+        try {
+            Level level = pipeBlockEntity.getLevel();
+            if (level == null) return;
+            for (Direction dir : Direction.values()) {
+                BlockPos neighborPos = pos.relative(dir);
+                if (level.getBlockState(neighborPos).getBlock() instanceof PipeBlock) {
+                    continue;
+                }
+                pipeBlockEntity.addConnection(player, type, dir);
+            }
+        } catch (Exception e) {
+            PipeConnector.LOGGER.warn("MI compatibility error in openFacesForInventories at {}: {}", pos, e.getMessage());
+        }
     }
 }
