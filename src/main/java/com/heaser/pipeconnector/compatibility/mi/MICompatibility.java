@@ -21,6 +21,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluids;
@@ -82,6 +83,7 @@ public class MICompatibility implements IPlacer, IBlockEqualsChecker, IBlockGett
                     return false; // Block is full (max 3 pipe types)
                 }
                 pipeBlockEntity.addPipe(type, pipeItem.defaultData.clone());
+                level.blockUpdated(pos, Blocks.AIR);
                 return true;
             }
 
@@ -123,6 +125,7 @@ public class MICompatibility implements IPlacer, IBlockEqualsChecker, IBlockGett
             BlockEntity newEntity = level.getBlockEntity(pos);
             if (newEntity instanceof PipeBlockEntity newPipeEntity) {
                 newPipeEntity.addPipe(type, pipeItem.defaultData.clone());
+                level.blockUpdated(pos, Blocks.AIR);
                 return true;
             }
 
