@@ -1,0 +1,6 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "pipe_connector:item/pipe_connector"
+  }
+}

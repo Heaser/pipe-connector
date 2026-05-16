@@ -6,7 +6,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +22,7 @@ public class ManhattanMirrorButton extends BaseButton {
         boolean newState = !currentState;
         
         TagUtils.setMirrorManhattan(itemStack, newState);
-        PacketDistributor.sendToServer(new UpdateManhattanMirrorPacket(newState));
+        ClientPacketDistributor.sendToServer(new UpdateManhattanMirrorPacket(newState));
 
         this.label = Component.literal("<>").withStyle(newState ? ChatFormatting.GREEN : ChatFormatting.RED);
         this.button.setMessage(this.getLabel());

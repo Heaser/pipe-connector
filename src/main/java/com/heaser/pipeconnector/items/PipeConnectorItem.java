@@ -23,12 +23,12 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.HitResult;
@@ -48,24 +48,18 @@ public class PipeConnectorItem extends Item {
 
     public PipeConnectorItem(Properties properties) {
         super(properties);
-        if (FMLLoader.getDist() == Dist.CLIENT) {
+        if (FMLLoader.getCurrent().getDist() == Dist.CLIENT) {
             itemProxy = new PipeConnectorItemProxy();
             clientProxy = new GeneralClientProxy();
         }
     }
 
-    @Override
-    public void verifyComponentsAfterLoad(ItemStack itemStack) {
-        CompoundTag tag = itemStack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
-        TagUtils.setCustomModelData(tag, GeneralUtils.isAprilFoolsDay());
-    }
-
     @NotNull
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+    public InteractionResult use(Level level, Player player, InteractionHand hand) {
         ItemStack heldItem = player.getItemInHand(hand);
         if (!level.isClientSide() || itemProxy == null) {
-            return InteractionResultHolder.pass(heldItem);
+            return InteractionResult.PASS;
         }
 
         HitResult targetHitResult = player.pick(player.blockInteractionRange() - 1, 0.0F, false);
@@ -79,7 +73,7 @@ public class PipeConnectorItem extends Item {
             itemProxy.openPipeConnectorGui(heldItem);
         }
 
-        return InteractionResultHolder.pass(heldItem);
+        return InteractionResult.PASS;
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -90,10 +84,8 @@ public class PipeConnectorItem extends Item {
         Level level = context.getLevel();
         ItemStack interactedItem = context.getItemInHand();
 
-        // Handle logic for both client and server
         handleCommonUseOn(interactedItem);
 
-        // Handle Server logic
         if(GeneralUtils.isServerSide(level)) {
             return handleServerSideUseOn(context);
         }
@@ -128,13 +120,13 @@ public class PipeConnectorItem extends Item {
 
         if (isShiftKeyDown) {
             if (!GeneralUtils.isPlaceableBlock(usingPlayer)) {
-                usingPlayer.displayClientMessage(Component.translatable("item.pipe_connector.message.holdValidItem")
-                        .withStyle(ChatFormatting.GOLD), true);
+                usingPlayer.sendOverlayMessage(Component.translatable("item.pipe_connector.message.holdValidItem")
+                        .withStyle(ChatFormatting.GOLD));
                 return InteractionResult.FAIL;
             }
             if (clickedFace == Direction.UP) {
-                usingPlayer.displayClientMessage(Component.translatable("item.pipe_connector.message.UpSideNotAllowed")
-                        .withStyle(ChatFormatting.BOLD, ChatFormatting.GREEN), true);
+                usingPlayer.sendOverlayMessage(Component.translatable("item.pipe_connector.message.UpSideNotAllowed")
+                        .withStyle(ChatFormatting.BOLD, ChatFormatting.GREEN));
                 return InteractionResult.FAIL;
             }
             List<NodeParameter> currentNodes = TagUtils.getNodesFromStack(interactedItem);
@@ -149,8 +141,8 @@ public class PipeConnectorItem extends Item {
                 return InteractionResult.SUCCESS;
             }
             else if (hasReachedMaxNodes) {
-                usingPlayer.displayClientMessage(Component.translatable("item.pipe_connector.message.maxNodesReached")
-                        .withStyle(ChatFormatting.BOLD, ChatFormatting.RED), true);
+                usingPlayer.sendOverlayMessage(Component.translatable("item.pipe_connector.message.maxNodesReached")
+                        .withStyle(ChatFormatting.BOLD, ChatFormatting.RED));
 
                 return InteractionResult.FAIL;
             } else {
@@ -161,7 +153,6 @@ public class PipeConnectorItem extends Item {
                 TagUtils.setDimension(interactedItem, level.dimensionTypeRegistration().getRegisteredName());
                 ParticleHelper.serverSpawnMarkerParticle((ServerLevel) level, relativePosition);
                 TagUtils.setNodesToStack(interactedItem, currentNodes);
-                // Alternate beep/boop
                 level.playSound(null, relativePosition, com.heaser.pipeconnector.ModSounds.nextAlternating(usingPlayer.getUUID()), net.minecraft.sounds.SoundSource.PLAYERS, 1.0f, 1.0f);
             }
         }
@@ -170,18 +161,19 @@ public class PipeConnectorItem extends Item {
 
     // -----------------------------------------------------------------------------------------------------------------
 
-    @Nullable
-    public void appendHoverText(ItemStack pStack, TooltipContext pContext, List<Component> pTooltipComponents, TooltipFlag pTooltipFlag) {
+    @Override
+    public void appendHoverText(ItemStack pStack, Item.TooltipContext pContext, TooltipDisplay pTooltipDisplay,
+                                java.util.function.Consumer<Component> pTooltipAdder, TooltipFlag pTooltipFlag) {
         if (clientProxy != null) {
             if (clientProxy.hasShiftDown()) {
-                pTooltipComponents.add(Component.translatable("item.pipe_connector.tooltip.usageExplanation").withStyle(ChatFormatting.DARK_AQUA));
-                pTooltipComponents.add(Component.translatable("item.pipe_connector.tooltip.openGui").withStyle(ChatFormatting.BLUE));
-                pTooltipComponents.add(Component.translatable("item.pipe_connector.tooltip.changeDepthExplanation").withStyle(ChatFormatting.LIGHT_PURPLE));
+                pTooltipAdder.accept(Component.translatable("item.pipe_connector.tooltip.usageExplanation").withStyle(ChatFormatting.DARK_AQUA));
+                pTooltipAdder.accept(Component.translatable("item.pipe_connector.tooltip.openGui").withStyle(ChatFormatting.BLUE));
+                pTooltipAdder.accept(Component.translatable("item.pipe_connector.tooltip.changeDepthExplanation").withStyle(ChatFormatting.LIGHT_PURPLE));
             } else {
-                pTooltipComponents.add(Component.translatable("item.pipe_connector.tooltip.shiftForMoreInfo").withStyle(ChatFormatting.GOLD));
+                pTooltipAdder.accept(Component.translatable("item.pipe_connector.tooltip.shiftForMoreInfo").withStyle(ChatFormatting.GOLD));
             }
         }
-        super.appendHoverText(pStack, pContext, pTooltipComponents, pTooltipFlag);
+        super.appendHoverText(pStack, pContext, pTooltipDisplay, pTooltipAdder, pTooltipFlag);
     }
 
     // -----------------------------------------------------------------------------------------------------------------

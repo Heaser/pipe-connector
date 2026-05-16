@@ -1,9 +1,12 @@
 package com.heaser.pipeconnector.client.proxy;
 
-import net.minecraft.client.gui.screens.Screen;
+import com.mojang.blaze3d.platform.InputConstants;
+import net.minecraft.client.Minecraft;
 
 public class GeneralClientProxy implements IClientProxy {
     public boolean hasShiftDown() {
-        return Screen.hasShiftDown();
+        var window = Minecraft.getInstance().getWindow();
+        return InputConstants.isKeyDown(window, InputConstants.KEY_LSHIFT)
+                || InputConstants.isKeyDown(window, InputConstants.KEY_RSHIFT);
     }
 }

@@ -1,7 +1,7 @@
 package com.heaser.pipeconnector;
 
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -14,10 +14,10 @@ public final class ModSounds {
             DeferredRegister.create(Registries.SOUND_EVENT, PipeConnector.MODID);
 
     public static final DeferredHolder<SoundEvent, SoundEvent> BEEP = SOUND_EVENTS.register("beep_emma",
-            () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(PipeConnector.MODID, "beep_emma")));
+            () -> SoundEvent.createVariableRangeEvent(Identifier.fromNamespaceAndPath(PipeConnector.MODID, "beep_emma")));
 
     public static final DeferredHolder<SoundEvent, SoundEvent> BOOP = SOUND_EVENTS.register("boop_emma",
-            () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(PipeConnector.MODID, "boop_emma")));
+            () -> SoundEvent.createVariableRangeEvent(Identifier.fromNamespaceAndPath(PipeConnector.MODID, "boop_emma")));
 
     private static final ConcurrentHashMap<UUID, Boolean> nextBeep = new ConcurrentHashMap<>();
 

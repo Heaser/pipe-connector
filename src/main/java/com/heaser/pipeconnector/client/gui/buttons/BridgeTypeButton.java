@@ -8,7 +8,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +39,7 @@ public class BridgeTypeButton extends BaseButton {
         }
 
         TagUtils.setBridgeType(itemStack, bridgeType);
-        PacketDistributor.sendToServer(new UpdateBridgeTypePacket(bridgeType.toString()));
+        ClientPacketDistributor.sendToServer(new UpdateBridgeTypePacket(bridgeType.toString()));
     }
 
 

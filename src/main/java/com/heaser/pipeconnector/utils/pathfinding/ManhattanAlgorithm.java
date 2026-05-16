@@ -16,7 +16,6 @@ public class ManhattanAlgorithm {
 
         Set<BlockPos> blockHashSet = new HashSet<>();
 
-        // Create bridgeW
         int dx = end.getX() - start.getX();
         int dy = end.getY() - start.getY();
         int dz = end.getZ() - start.getZ();

@@ -1,11 +1,12 @@
 package com.heaser.pipeconnector.compatibility;
 
 import com.heaser.pipeconnector.compatibility.ae2.AE2Compatiblity;
+// Disabled (mod not on this MC version):
+// import com.heaser.pipeconnector.compatibility.mi.MICompatibility;
 import com.heaser.pipeconnector.compatibility.interfaces.IColorProvider;
 import com.heaser.pipeconnector.compatibility.interfaces.IBlockEqualsChecker;
 import com.heaser.pipeconnector.compatibility.interfaces.IMultiPipeColorProvider;
 import com.heaser.pipeconnector.compatibility.interfaces.PipeRenderEntry;
-import com.heaser.pipeconnector.compatibility.mi.MICompatibility;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -25,12 +26,12 @@ public class CompatibilityBlockEqualsChecker {
         if (isModLoaded("ae2")) {
             classToCheckerMap.put(AE2Compatiblity.getBlockToRegister(), new AE2Compatiblity());
         }
-//      if (isModLoaded("enderio_conduits")) {
-//          classToCheckerMap.put(EnderIoCompatibility.getBlockToRegister(), new EnderIoCompatibility());
-//      }
-        if (isModLoaded("modern_industrialization")) {
-            classToCheckerMap.put(MICompatibility.getBlockToRegister(), new MICompatibility());
-        }
+        // if (isModLoaded("enderio_conduits")) {
+        //     classToCheckerMap.put(EnderIoCompatibility.getBlockToRegister(), new EnderIoCompatibility());
+        // }
+        // if (isModLoaded("modern_industrialization")) {
+        //     classToCheckerMap.put(MICompatibility.getBlockToRegister(), new MICompatibility());
+        // }
     }
 
     private boolean isModLoaded(String modId) {
@@ -50,9 +51,9 @@ public class CompatibilityBlockEqualsChecker {
         getInstance();
         IBlockEqualsChecker checker = null;
         Block currentBlock = level.getBlockState(pos).getBlock();
-        for (Map.Entry<Class<? extends Block>, IBlockEqualsChecker> set : classToCheckerMap.entrySet()) {
-            if (set.getKey().isAssignableFrom(currentBlock.getClass())) {
-                checker = set.getValue();
+        for (Map.Entry<Class<? extends Block>, IBlockEqualsChecker> entry : classToCheckerMap.entrySet()) {
+            if (entry.getKey().isAssignableFrom(currentBlock.getClass())) {
+                checker = entry.getValue();
                 break;
             }
         }
@@ -66,9 +67,9 @@ public class CompatibilityBlockEqualsChecker {
         getInstance();
         IBlockEqualsChecker checker = null;
         Block currentBlock = level.getBlockState(pos).getBlock();
-        for (Map.Entry<Class<? extends Block>, IBlockEqualsChecker> set : classToCheckerMap.entrySet()) {
-            if (set.getKey().isAssignableFrom(currentBlock.getClass())) {
-                checker = set.getValue();
+        for (Map.Entry<Class<? extends Block>, IBlockEqualsChecker> entry : classToCheckerMap.entrySet()) {
+            if (entry.getKey().isAssignableFrom(currentBlock.getClass())) {
+                checker = entry.getValue();
                 break;
             }
         }
@@ -102,9 +103,9 @@ public class CompatibilityBlockEqualsChecker {
     public static boolean isBlockStateSpecificBlock(BlockPos pos, Block specificBlock, ItemStack placedItemStack, Level level) {
         getInstance();
         IBlockEqualsChecker checker = null;
-        for (Map.Entry<Class<? extends Block>, IBlockEqualsChecker> set : classToCheckerMap.entrySet()) {
-            if (set.getKey().isAssignableFrom(specificBlock.getClass())) {
-                checker = set.getValue();
+        for (Map.Entry<Class<? extends Block>, IBlockEqualsChecker> entry : classToCheckerMap.entrySet()) {
+            if (entry.getKey().isAssignableFrom(specificBlock.getClass())) {
+                checker = entry.getValue();
                 break;
             }
         }
@@ -119,9 +120,9 @@ public class CompatibilityBlockEqualsChecker {
     public static boolean isPlacementAlreadySatisfied(BlockPos pos, Block specificBlock, ItemStack placedItemStack, Level level) {
         getInstance();
         IBlockEqualsChecker checker = null;
-        for (Map.Entry<Class<? extends Block>, IBlockEqualsChecker> set : classToCheckerMap.entrySet()) {
-            if (set.getKey().isAssignableFrom(specificBlock.getClass())) {
-                checker = set.getValue();
+        for (Map.Entry<Class<? extends Block>, IBlockEqualsChecker> entry : classToCheckerMap.entrySet()) {
+            if (entry.getKey().isAssignableFrom(specificBlock.getClass())) {
+                checker = entry.getValue();
                 break;
             }
         }
@@ -136,9 +137,9 @@ public class CompatibilityBlockEqualsChecker {
         getInstance();
         IBlockEqualsChecker checker = null;
         Block currentBlock = level.getBlockState(pos).getBlock();
-        for (Map.Entry<Class<? extends Block>, IBlockEqualsChecker> set : classToCheckerMap.entrySet()) {
-            if (set.getKey().isAssignableFrom(currentBlock.getClass())) {
-                checker = set.getValue();
+        for (Map.Entry<Class<? extends Block>, IBlockEqualsChecker> entry : classToCheckerMap.entrySet()) {
+            if (entry.getKey().isAssignableFrom(currentBlock.getClass())) {
+                checker = entry.getValue();
                 break;
             }
         }

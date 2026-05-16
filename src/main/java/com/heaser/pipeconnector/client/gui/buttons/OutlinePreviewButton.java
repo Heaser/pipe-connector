@@ -15,7 +15,7 @@ public class OutlinePreviewButton extends BaseButton {
     @Override
     public void onClick(Button clickedButton, ItemStack itemStack) {
         TagUtils.setSolidPreview(itemStack, false);
-        net.neoforged.neoforge.network.PacketDistributor.sendToServer(new com.heaser.pipeconnector.network.UpdateSolidPreview(false));
+        net.neoforged.neoforge.client.network.ClientPacketDistributor.sendToServer(new com.heaser.pipeconnector.network.UpdateSolidPreview(false));
         updateLabel(itemStack);
     }
 

@@ -143,7 +143,7 @@ public class PipeVisionRenderer {
     }
 
     private void render(PoseStack pose, MultiBufferSource buffer, Player player) {
-        Vec3 cameraPos = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
+        Vec3 cameraPos = Minecraft.getInstance().gameRenderer.getMainCamera().position();
         VertexConsumer vc = buffer.getBuffer(PipeConnectorRenderType.QUADS_NO_DEPTH_TEST);
 
         for (Map.Entry<BlockPos, PipeRenderInfo> entry : cachedPipes.entrySet()) {

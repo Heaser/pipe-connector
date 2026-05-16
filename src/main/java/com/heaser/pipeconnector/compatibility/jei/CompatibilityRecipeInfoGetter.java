@@ -32,10 +32,10 @@ public class CompatibilityRecipeInfoGetter {
     }
 
     public Stream<ItemStack> getSupportedPipeItems(ItemStack supportedBaseItemStack) {
-        for (Map.Entry<Class<? extends Item>, IRecipeInfoGetter> set : classToGetterMap.entrySet()) {
+        for (Map.Entry<Class<? extends Item>, IRecipeInfoGetter> entry : classToGetterMap.entrySet()) {
             Item supportedBaseItem = supportedBaseItemStack.getItem();
-            if (set.getKey().isAssignableFrom(supportedBaseItem.getClass())) {
-                return set.getValue().getSupportedPipeItems(supportedBaseItemStack).stream();
+            if (entry.getKey().isAssignableFrom(supportedBaseItem.getClass())) {
+                return entry.getValue().getSupportedPipeItems(supportedBaseItemStack).stream();
             }
         }
         ArrayList<ItemStack> result = new ArrayList<>();

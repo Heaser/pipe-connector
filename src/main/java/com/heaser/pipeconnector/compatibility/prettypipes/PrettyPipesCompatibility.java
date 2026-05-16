@@ -1,5 +1,12 @@
 package com.heaser.pipeconnector.compatibility.prettypipes;
 
+//  Pretty Pipes not yet available for 26.2.1.
+public final class PrettyPipesCompatibility {
+    private PrettyPipesCompatibility() {}
+}
+
+/*
+
 import com.heaser.pipeconnector.compatibility.interfaces.IPlacer;
 import de.ellpeck.prettypipes.items.PipeFrameItem;
 import de.ellpeck.prettypipes.pipe.PipeBlock;
@@ -72,3 +79,5 @@ public class PrettyPipesCompatibility implements IPlacer {
         return level.getBlockState(pos).getValue(BlockStateProperties.LEVEL) > 0;
     }
 }
+
+*/

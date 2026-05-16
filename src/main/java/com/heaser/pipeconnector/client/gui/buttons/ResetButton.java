@@ -5,7 +5,7 @@ import com.heaser.pipeconnector.utils.TagUtils;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 
 public class ResetButton extends BaseButton {
     public ResetButton() {
@@ -14,7 +14,7 @@ public class ResetButton extends BaseButton {
 
     @Override
     public void onClick(Button clickedButton, ItemStack itemStack) {
-        PacketDistributor.sendToServer(new ResetPacket());
+        ClientPacketDistributor.sendToServer(new ResetPacket());
     }
 
     @Override

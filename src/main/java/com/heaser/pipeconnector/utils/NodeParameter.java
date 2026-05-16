@@ -15,14 +15,14 @@ public class NodeParameter {
     }
 
     public NodeParameter(CompoundTag nodeTag) {
-        int x = nodeTag.getInt(ComponentDataTags.kPipeConnectorNodePositionX);
-        int y = nodeTag.getInt(ComponentDataTags.kPipeConnectorNodePositionY);
-        int z = nodeTag.getInt(ComponentDataTags.kPipeConnectorNodePositionZ);
+        int x = nodeTag.getIntOr(ComponentDataTags.kPipeConnectorNodePositionX, 0);
+        int y = nodeTag.getIntOr(ComponentDataTags.kPipeConnectorNodePositionY, 0);
+        int z = nodeTag.getIntOr(ComponentDataTags.kPipeConnectorNodePositionZ, 0);
         this.position = new BlockPos(x, y, z);
         if (!nodeTag.contains(ComponentDataTags.kPipeConnectorNodeDirection)) {
             this.direction = null;
         } else {
-            this.direction = Direction.from3DDataValue(nodeTag.getByte(ComponentDataTags.kPipeConnectorNodeDirection));
+            this.direction = Direction.from3DDataValue(nodeTag.getByteOr(ComponentDataTags.kPipeConnectorNodeDirection, (byte) 0));
         }
     }
 

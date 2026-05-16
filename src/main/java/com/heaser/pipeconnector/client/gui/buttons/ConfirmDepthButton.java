@@ -7,7 +7,7 @@ import com.heaser.pipeconnector.utils.TagUtils;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 
 public class ConfirmDepthButton extends BaseButton {
     private final DepthEditBox depthEditBox;
@@ -30,7 +30,7 @@ public class ConfirmDepthButton extends BaseButton {
             if (depth < 0) depth = 0;
             if (depth > max) depth = max;
 
-            PacketDistributor.sendToServer(new UpdateDepthPacket(depth));
+            ClientPacketDistributor.sendToServer(new UpdateDepthPacket(depth));
             TagUtils.setDepthToStack(itemStack, depth);
             depthEditBox.updateValue(depth);
         } catch (NumberFormatException e) {

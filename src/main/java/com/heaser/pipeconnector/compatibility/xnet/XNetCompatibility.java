@@ -1,5 +1,12 @@
 package com.heaser.pipeconnector.compatibility.xnet;
 
+// Disabled: XNet (+ mcjtylib) not yet available for 26.2.1 :(
+public final class XNetCompatibility {
+    private XNetCompatibility() {}
+}
+
+/*
+
 import com.heaser.pipeconnector.compatibility.interfaces.IPlacer;
 import mcjty.xnet.modules.cables.CableColor;
 import mcjty.xnet.modules.cables.blocks.GenericCableBlock;
@@ -66,3 +73,5 @@ public class XNetCompatibility implements IPlacer {
         return false;
     }
 }
+
+*/

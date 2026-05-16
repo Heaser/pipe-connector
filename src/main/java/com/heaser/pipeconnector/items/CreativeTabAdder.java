@@ -6,7 +6,7 @@ import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 
-@EventBusSubscriber(modid = PipeConnector.MODID, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = PipeConnector.MODID)
 public class CreativeTabAdder {
     @SubscribeEvent
     public static void buildContents(BuildCreativeModeTabContentsEvent event) {

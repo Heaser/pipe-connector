@@ -1,8 +1,8 @@
 package com.heaser.pipeconnector.client;
 
 import com.heaser.pipeconnector.PipeConnector;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.world.entity.Entity;
@@ -14,27 +14,19 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 
 
-@EventBusSubscriber(modid = PipeConnector.MODID, bus = EventBusSubscriber.Bus.GAME, value = Dist.CLIENT)
+@EventBusSubscriber(modid = PipeConnector.MODID, value = Dist.CLIENT)
 public class ClientEvents {
     @SubscribeEvent(priority = EventPriority.LOW)
-    public static void onRenderWorld(RenderLevelStageEvent event) {
-
-        if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_WEATHER) {
-            PoseStack stack = event.getPoseStack();
-            MultiBufferSource.BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
-            Entity cameraEntity = event.getCamera().getEntity();
-            if (cameraEntity instanceof Player) {
-                RenderSystem.disableDepthTest();
-                
-                ClientSetup.PREVIEW_DRAWER.handleOnRenderLevel(stack, buffer, (Player)cameraEntity);
-                ClientSetup.PIPE_VISION_RENDERER.handleOnRenderLevel(stack, buffer, (Player)cameraEntity);
-                ClientSetup.BUILD_ANIMATION_RENDERER.handleOnRenderLevel(stack, buffer);
-                
-                // Flush everything while depth test is disabled
-                buffer.endBatch();
-                
-                RenderSystem.enableDepthTest();
-            }
+    public static void onRenderWorld(RenderLevelStageEvent.AfterWeather event) {
+        PoseStack stack = event.getPoseStack();
+        MultiBufferSource.BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
+        Camera camera = Minecraft.getInstance().gameRenderer.getMainCamera();
+        Entity cameraEntity = camera.entity();
+        if (cameraEntity instanceof Player) {
+            ClientSetup.PREVIEW_DRAWER.handleOnRenderLevel(stack, buffer, (Player)cameraEntity);
+            ClientSetup.PIPE_VISION_RENDERER.handleOnRenderLevel(stack, buffer, (Player)cameraEntity);
+            ClientSetup.BUILD_ANIMATION_RENDERER.handleOnRenderLevel(stack, buffer);
+            buffer.endBatch();
         }
     }
 }

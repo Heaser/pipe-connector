@@ -6,25 +6,20 @@ import com.heaser.pipeconnector.client.gui.editbox.DepthEditBox;
 import com.heaser.pipeconnector.client.gui.interfaces.ILabelable;
 import com.heaser.pipeconnector.client.gui.labels.*;
 import com.heaser.pipeconnector.utils.TagUtils;
-import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.client.event.ScreenEvent;
-import net.neoforged.neoforge.common.NeoForge;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-import static com.heaser.pipeconnector.utils.GeneralUtils.isHoldingPipeConnector;
-
 public class PipeConnectorGui extends Screen {
-    public static final ResourceLocation PIPE_CONNECTOR_TEXTURE = ResourceLocation.fromNamespaceAndPath(PipeConnector.MODID, "textures/gui/settings.png");
+    public static final Identifier PIPE_CONNECTOR_TEXTURE = Identifier.fromNamespaceAndPath(PipeConnector.MODID, "textures/gui/settings.png");
     protected static final int imageWidth = 256;
     protected static final int imageHeight = 256;
     private ItemStack pipeConnectorStack;
@@ -49,8 +44,6 @@ public class PipeConnectorGui extends Screen {
         this.pipeConnectorStack = pipeConnectorStack;
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
-
     @Override
     protected void init() {
         bridgeTypeButton = createButton(0.05, 0.2, new BridgeTypeButton(pipeConnectorStack));
@@ -64,7 +57,6 @@ public class PipeConnectorGui extends Screen {
         resetBaseButton = createButton(0.62, 0.7, new ResetButton());
         buildPipesButton = createButton(0.60, 0.8, new BuildPipesButton(this.getMinecraft().player));
 
-        // Depth Control Widgets
         int depthControlY = (int) (imageHeight * 0.7) + getScreenY();
         int depthControlX = (int) (imageWidth * 0.247) + getScreenX();
 
@@ -75,26 +67,25 @@ public class PipeConnectorGui extends Screen {
         confirmDepthButton = createButton(depthControlX + 15 + 27 + 15, depthControlY, new ConfirmDepthButton(depthEditBox));
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
-
     @Override
-    public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        RenderSystem.setShaderTexture(0, PIPE_CONNECTOR_TEXTURE);
+    public void extractRenderState(@NotNull GuiGraphicsExtractor extractor, int mouseX, int mouseY, float partialTick) {
         int drawStartX = getScreenX();
         int drawStartY = getScreenY();
-        // Tooltips
-        drawTooltip(guiGraphics, mouseX, mouseY, resetBaseButton);
-        drawTooltip(guiGraphics, mouseX, mouseY, buildPipesButton);
-        drawTooltipList(guiGraphics, mouseX, mouseY, bridgeTypeButton);
-        drawTooltip(guiGraphics, mouseX, mouseY, inventoryGuardButton);
-        drawTooltipList(guiGraphics, mouseX, mouseY, utilizeExistingPipesButton);
-        drawTooltipList(guiGraphics, mouseX, mouseY, avoidInventoryBlocksButton);
-        drawTooltip(guiGraphics, mouseX, mouseY, pipeVisionButton);
-        drawTooltip(guiGraphics, mouseX, mouseY, manhattanMirrorButton);
-        guiGraphics.blit(PIPE_CONNECTOR_TEXTURE, drawStartX, drawStartY, 0, 0, imageWidth, imageHeight);
-        super.render(guiGraphics, mouseX, mouseY, partialTick);
+
+        drawTooltip(extractor, mouseX, mouseY, resetBaseButton);
+        drawTooltip(extractor, mouseX, mouseY, buildPipesButton);
+        drawTooltipList(extractor, mouseX, mouseY, bridgeTypeButton);
+        drawTooltip(extractor, mouseX, mouseY, inventoryGuardButton);
+        drawTooltipList(extractor, mouseX, mouseY, utilizeExistingPipesButton);
+        drawTooltipList(extractor, mouseX, mouseY, avoidInventoryBlocksButton);
+        drawTooltip(extractor, mouseX, mouseY, pipeVisionButton);
+        drawTooltip(extractor, mouseX, mouseY, manhattanMirrorButton);
+
+        extractor.blit(RenderPipelines.GUI_TEXTURED, PIPE_CONNECTOR_TEXTURE,
+                drawStartX, drawStartY, 0, 0, imageWidth, imageHeight, imageWidth, imageHeight);
+
+        super.extractRenderState(extractor, mouseX, mouseY, partialTick);
+
         utilizeExistingPipesButton.button.active = utilizeExistingPipesButton.isActive(pipeConnectorStack);
         avoidInventoryBlocksButton.button.active = avoidInventoryBlocksButton.isActive(pipeConnectorStack);
         pipeVisionButton.button.active = pipeVisionButton.isActive(pipeConnectorStack);
@@ -102,7 +93,7 @@ public class PipeConnectorGui extends Screen {
         if (bridgeTypeButton instanceof BridgeTypeButton btb) {
             btb.updateLabel(pipeConnectorStack);
         }
-        
+
         boolean isDefaultPathfinding = TagUtils.getBridgeType(pipeConnectorStack) == com.heaser.pipeconnector.constants.BridgeType.DEFAULT;
         manhattanMirrorButton.button.visible = isDefaultPathfinding;
         if (isDefaultPathfinding) {
@@ -120,34 +111,19 @@ public class PipeConnectorGui extends Screen {
             spb.updateLabel(pipeConnectorStack);
         }
 
-        // Labels
-        createLabel(guiGraphics, 0.07, 0.05, new TitleLabelText(), 3f);
-        createLabel(guiGraphics, 0.12, 0.32, new InventoryGuardText());
-        createLabel(guiGraphics, 0.08, 0.42, new AvoidInventoryBlocksText());
-        createLabel(guiGraphics, 0.08, 0.52, new UtilizeExistingPipesText());
-        createLabel(guiGraphics, 0.08, 0.62, new PipeVisionText());
-        createLabel(guiGraphics, 0.62, 0.55, new PreviewStyleText());
-        createLabel(guiGraphics, 0.12, 0.72, new DepthLabel());
+        createLabel(extractor, 0.07, 0.05, new TitleLabelText(), 3f);
+        createLabel(extractor, 0.12, 0.32, new InventoryGuardText());
+        createLabel(extractor, 0.08, 0.42, new AvoidInventoryBlocksText());
+        createLabel(extractor, 0.08, 0.52, new UtilizeExistingPipesText());
+        createLabel(extractor, 0.08, 0.62, new PipeVisionText());
+        createLabel(extractor, 0.62, 0.55, new PreviewStyleText());
+        createLabel(extractor, 0.12, 0.72, new DepthLabel());
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
-
     @Override
-    public void renderBackground(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
-        if (this.minecraft.level == null) {
-            this.renderPanorama(pGuiGraphics, pPartialTick);
-        }
-
-        this.renderMenuBackground(pGuiGraphics);
-
-        NeoForge.EVENT_BUS.post(new ScreenEvent.Render.Post(this, pGuiGraphics, pMouseX, pMouseY, pPartialTick));
-    }
-
-    // -----------------------------------------------------------------------------------------------------------------
-
-    @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (keyCode == 256 || (this.minecraft.options.keyInventory.matches(keyCode, scanCode))) {
+    public boolean keyPressed(KeyEvent event) {
+        int keyCode = event.key();
+        if (keyCode == 256 || this.minecraft.options.keyInventory.matches(event)) {
             this.onClose();
             return true;
         }
@@ -158,22 +134,19 @@ public class PipeConnectorGui extends Screen {
                 this.depthEditBox.setFocused(false);
                 return true;
             }
-            if (this.depthEditBox.keyPressed(keyCode, scanCode, modifiers) || this.depthEditBox.canConsumeInput()) {
+            if (this.depthEditBox.keyPressed(event) || this.depthEditBox.canConsumeInput()) {
                 return true;
             }
         }
-        
-        return super.keyPressed(keyCode, scanCode, modifiers);
-    }
 
-    // -----------------------------------------------------------------------------------------------------------------
+        return super.keyPressed(event);
+    }
 
     private <T extends BaseButton> T createButton(double marginXPercent, double marginYPercent, T baseButton) {
         int marginX = (int) (imageWidth * marginXPercent);
         int marginY = (int) (imageHeight * marginYPercent);
         int drawStartX = this.getScreenX() + marginX;
         int drawStartY = this.getScreenY() + marginY;
-
         return createButton(drawStartX, drawStartY, baseButton);
     }
 
@@ -188,51 +161,39 @@ public class PipeConnectorGui extends Screen {
         return baseButton;
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
-
-    private void createLabel(GuiGraphics guiGraphics, double marginXPercent, double marginYPercent, ILabelable label) {
+    private void createLabel(GuiGraphicsExtractor extractor, double marginXPercent, double marginYPercent, ILabelable label) {
         int marginX = (int) (imageWidth * marginXPercent);
         int marginY = (int) (imageHeight * marginYPercent);
         int drawStartX = this.getScreenX() + marginX;
         int drawStartY = this.getScreenY() + marginY;
-
-        guiGraphics.drawString(this.font, label.getLabel(pipeConnectorStack), drawStartX, drawStartY, 0xFF000000, false);
+        extractor.text(this.font, label.getLabel(pipeConnectorStack), drawStartX, drawStartY, 0xFF000000, false);
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
-
-    private void createLabel(GuiGraphics guiGraphics, double marginXPercent, double marginYPercent, ILabelable label, float scale) {
+    private void createLabel(GuiGraphicsExtractor extractor, double marginXPercent, double marginYPercent, ILabelable label, float scale) {
         int marginX = (int) (imageWidth * marginXPercent);
         int marginY = (int) (imageHeight * marginYPercent);
-        int drawStartX = (this.getScreenX() + marginX) / (int)scale;
-        int drawStartY = (this.getScreenY() + marginY) / (int)scale;
+        int drawStartX = (this.getScreenX() + marginX) / (int) scale;
+        int drawStartY = (this.getScreenY() + marginY) / (int) scale;
 
-        guiGraphics.pose().pushPose();
-        guiGraphics.pose().scale(scale,scale,scale);
-        guiGraphics.drawString(this.font, label.getLabel(pipeConnectorStack), drawStartX, drawStartY, 0xFF000000, false);
-        guiGraphics.pose().popPose();
+        extractor.pose().pushMatrix();
+        extractor.pose().scale(scale, scale);
+        extractor.text(this.font, label.getLabel(pipeConnectorStack), drawStartX, drawStartY, 0xFF000000, false);
+        extractor.pose().popMatrix();
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
-
-    private void drawTooltip(GuiGraphics guiGraphics, int mouseX, int mouseY, BaseButton baseButton) {
+    private void drawTooltip(GuiGraphicsExtractor extractor, int mouseX, int mouseY, BaseButton baseButton) {
         Component tooltipText = baseButton.getTooltip(pipeConnectorStack);
-        if(tooltipText != null && baseButton.button.isHovered()) {
-            guiGraphics.renderTooltip(this.font, tooltipText, mouseX, mouseY);
+        if (tooltipText != null && baseButton.button.isHovered()) {
+            extractor.setTooltipForNextFrame(this.font, tooltipText, mouseX, mouseY);
         }
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
-
-    private void drawTooltipList(GuiGraphics guiGraphics, int mouseX, int mouseY, BaseButton baseButton) {
+    private void drawTooltipList(GuiGraphicsExtractor extractor, int mouseX, int mouseY, BaseButton baseButton) {
         List<Component> tooltipTextList = baseButton.getTooltipList(pipeConnectorStack);
-        if(tooltipTextList != null && baseButton.button.isHovered()) {
-            guiGraphics.renderTooltip(this.font, tooltipTextList,
-                    java.util.Optional.empty(),  mouseX, mouseY);
+        if (tooltipTextList != null && baseButton.button.isHovered()) {
+            extractor.setComponentTooltipForNextFrame(this.font, tooltipTextList, mouseX, mouseY);
         }
     }
-
-    // -----------------------------------------------------------------------------------------------------------------
 
     private void onButtonClick(Button clickedButton, BaseButton baseButton) {
         baseButton.onClick(clickedButton, pipeConnectorStack);
@@ -241,19 +202,13 @@ public class PipeConnectorGui extends Screen {
         }
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
-
     private int getScreenX() {
         return (this.width - imageWidth) / 2;
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
-
     private int getScreenY() {
         return (this.height - imageHeight) / 2;
     }
-
-    // -----------------------------------------------------------------------------------------------------------------
 
     @Override
     public boolean isPauseScreen() {

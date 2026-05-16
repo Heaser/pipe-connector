@@ -7,7 +7,7 @@ import com.heaser.pipeconnector.utils.TagUtils;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 
 public class DecreaseDepthButton extends BaseButton {
     private final DepthEditBox depthEditBox;
@@ -29,7 +29,7 @@ public class DecreaseDepthButton extends BaseButton {
             newDepth = 0;
         }
 
-        PacketDistributor.sendToServer(new UpdateDepthPacket(newDepth));
+        ClientPacketDistributor.sendToServer(new UpdateDepthPacket(newDepth));
         TagUtils.setDepthToStack(itemStack, newDepth); // Update client-side stack immediately
         if (depthEditBox != null) {
             depthEditBox.updateValue(newDepth);

@@ -2,6 +2,7 @@ package com.heaser.pipeconnector.utils.pathfinding;
 
 import com.heaser.pipeconnector.PipeConnector;
 import com.heaser.pipeconnector.compatibility.CompatibilityBlockEqualsChecker;
+import com.heaser.pipeconnector.compatibility.CompatibilityBlockGetter;
 import com.heaser.pipeconnector.config.PipeConnectorConfig;
 import com.heaser.pipeconnector.utils.TagUtils;
 import net.minecraft.core.BlockPos;
@@ -109,18 +110,18 @@ public class PathfindingAStarAlgorithm {
         if (!isAtRequiredLevel(neighbor, endY) && isVoidableBlock(level, neighbor)) return false;
 
         ItemStack offhandItem = player.getOffhandItem();
-        Block block = level.getBlockState(neighbor).getBlock();
+        Block placedBlock = CompatibilityBlockGetter.getInstance().getBlock(offhandItem);
 
         // Check passability before pipe avoidance - mods like MI allow multiple pipe types per block
         if (CompatibilityBlockEqualsChecker.isPassableForPathfinding(neighbor, level, offhandItem)) return true;
-        if (isBlockStateSpecificBlock(neighbor, block, offhandItem, level)) return true;
+        if (isBlockStateSpecificBlock(neighbor, placedBlock, offhandItem, level)) return true;
 
         if (!canAvoidPipe(level, neighbor, player)) return false;
 
         if (connector != null && TagUtils.getAvoidInventoryBlocks(connector)
                 && hasInventoryCapabilities(level, neighbor)) return false;
 
-        return false;
+        return true;
     }
 
     // -----------------------------------------------------------------------------------------------------------------

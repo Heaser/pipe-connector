@@ -7,7 +7,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +28,7 @@ public class AvoidInventoryBlocksButton extends BaseButton {
             this.button.setMessage(this.getLabel());
             TagUtils.setAvoidInventoryBlocks(itemStack, true);
         }
-        PacketDistributor.sendToServer(new UpdateAvoidInventoryBlocks(TagUtils.getAvoidInventoryBlocks(itemStack)));
+        ClientPacketDistributor.sendToServer(new UpdateAvoidInventoryBlocks(TagUtils.getAvoidInventoryBlocks(itemStack)));
     }
 
     @Override

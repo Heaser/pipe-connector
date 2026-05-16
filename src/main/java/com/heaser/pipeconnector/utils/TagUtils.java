@@ -1,10 +1,8 @@
 package com.heaser.pipeconnector.utils;
 
-import com.heaser.pipeconnector.PipeConnector;
 import com.heaser.pipeconnector.config.PipeConnectorConfig;
 import com.heaser.pipeconnector.constants.BridgeType;
 import com.heaser.pipeconnector.constants.ComponentDataTags;
-import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -14,7 +12,6 @@ import net.minecraft.world.item.ItemStack;
 
 import net.minecraft.world.item.component.CustomData;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,18 +19,13 @@ public class TagUtils {
     public static List<NodeParameter> getNodesFromStack(ItemStack stack) {
         CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
         List<NodeParameter> nodes = new ArrayList<>();
-        if (tag.contains(ComponentDataTags.kPipeConnectorNodes, tag.TAG_LIST)) {
-            ListTag nodeTags = tag.getList(ComponentDataTags.kPipeConnectorNodes, tag.TAG_COMPOUND);
-            for (int index = 0; index < nodeTags.size(); index++) {
-                CompoundTag nodeTag = nodeTags.getCompound((index));
-                nodes.add(new NodeParameter(nodeTag));
-            }
+        ListTag nodeTags = tag.getListOrEmpty(ComponentDataTags.kPipeConnectorNodes);
+        for (int index = 0; index < nodeTags.size(); index++) {
+            CompoundTag nodeTag = nodeTags.getCompoundOrEmpty(index);
+            nodes.add(new NodeParameter(nodeTag));
         }
-
         return nodes;
     }
-
-    // -----------------------------------------------------------------------------------------------------------------
 
     public static void setNodesToStack(ItemStack stack, List<NodeParameter> nodes) {
         CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> {
@@ -46,8 +38,6 @@ public class TagUtils {
         });
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
-
     public static CompoundTag convertNodeToTag(NodeParameter node) {
         CompoundTag nodeTag = new CompoundTag();
         nodeTag.putInt(ComponentDataTags.kPipeConnectorNodePositionX, node.position.getX());
@@ -59,18 +49,10 @@ public class TagUtils {
         return nodeTag;
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
-
     public static int getDepthFromStack(ItemStack stack) {
         CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
-        if (tag.contains(ComponentDataTags.kPipeConnectorDepth, tag.TAG_INT)) {
-            return tag.getInt(ComponentDataTags.kPipeConnectorDepth);
-        }
-
-        return 0; // Default depth value if the tag is missing
+        return tag.getIntOr(ComponentDataTags.kPipeConnectorDepth, 0);
     }
-
-    // -----------------------------------------------------------------------------------------------------------------
 
     public static void setDepthToStack(ItemStack stack, int depth) {
         CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> {
@@ -87,18 +69,10 @@ public class TagUtils {
         });
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
-
     public static String getDimension(ItemStack stack) {
         CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
-        if (tag.contains(ComponentDataTags.kPipeConnectorDimensionName)) {
-            return tag.getString(ComponentDataTags.kPipeConnectorDimensionName);
-        }
-
-        return "";
+        return tag.getStringOr(ComponentDataTags.kPipeConnectorDimensionName, "");
     }
-
-    // -----------------------------------------------------------------------------------------------------------------
 
     public static void setDimension(ItemStack stack, String dimensionName) {
         CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> {
@@ -106,22 +80,18 @@ public class TagUtils {
         });
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
-
     public static BridgeType getBridgeType(ItemStack stack) {
         CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
-
-        if (tag.contains(ComponentDataTags.kPipeConnectorBridgeType, tag.TAG_STRING)) {
-            try {
-                return BridgeType.valueOf(tag.getString(ComponentDataTags.kPipeConnectorBridgeType));
-            } catch (IllegalArgumentException e) {
-                return BridgeType.DEFAULT;
-            }
-        }
-        return BridgeType.DEFAULT;
+        return tag.getString(ComponentDataTags.kPipeConnectorBridgeType)
+                .map(name -> {
+                    try {
+                        return BridgeType.valueOf(name);
+                    } catch (IllegalArgumentException e) {
+                        return BridgeType.DEFAULT;
+                    }
+                })
+                .orElse(BridgeType.DEFAULT);
     }
-
-    // -----------------------------------------------------------------------------------------------------------------
 
     public static void setBridgeType(ItemStack stack, BridgeType bridgeType) {
         CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> {
@@ -129,18 +99,10 @@ public class TagUtils {
         });
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
-
     public static boolean getUtilizeExistingPipes(ItemStack stack) {
         CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
-
-        if (tag.contains(ComponentDataTags.kPipeConnectorUtilizeExistingPipes, tag.TAG_BYTE)) {
-            return tag.getBoolean(ComponentDataTags.kPipeConnectorUtilizeExistingPipes);
-        }
-        return false;
+        return tag.getBooleanOr(ComponentDataTags.kPipeConnectorUtilizeExistingPipes, false);
     }
-
-    // -----------------------------------------------------------------------------------------------------------------
 
     public static void setUtilizeExistingPipes(ItemStack stack, boolean utilizeExistingPipes) {
         CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> {
@@ -148,18 +110,10 @@ public class TagUtils {
         });
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
-
     public static boolean getPreventInventoryBlockBreaking(ItemStack stack) {
         CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
-
-        if (tag.contains(ComponentDataTags.kPipeConnectorInventoryGuard, tag.TAG_BYTE)) {
-            return tag.getBoolean(ComponentDataTags.kPipeConnectorInventoryGuard);
-        }
-        return true;
+        return tag.getBooleanOr(ComponentDataTags.kPipeConnectorInventoryGuard, true);
     }
-
-    // -----------------------------------------------------------------------------------------------------------------
 
     public static void setInventoryGuard(ItemStack stack, boolean shouldBreakInventoryBlocks) {
         CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> {
@@ -167,18 +121,10 @@ public class TagUtils {
         });
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
-
     public static boolean getAvoidInventoryBlocks(ItemStack stack) {
         CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
-
-        if (tag.contains(ComponentDataTags.kPipeConnectorAvoidInventoryBlocks, tag.TAG_BYTE)) {
-            return tag.getBoolean(ComponentDataTags.kPipeConnectorAvoidInventoryBlocks);
-        }
-        return false;
+        return tag.getBooleanOr(ComponentDataTags.kPipeConnectorAvoidInventoryBlocks, false);
     }
-
-    // -----------------------------------------------------------------------------------------------------------------
 
     public static void setAvoidInventoryBlocks(ItemStack stack, boolean avoidInventoryBlocks) {
         CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> {
@@ -186,60 +132,18 @@ public class TagUtils {
         });
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
-
     public static void resetPositionAndDirectionTags(ItemStack stack, Player player, boolean shouldShowMessage) {
         CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> {
             tag.remove(ComponentDataTags.kPipeConnectorNodes);
         });
         if (shouldShowMessage) {
-            player.displayClientMessage(Component.translatable("item.pipe_connector.message.resettingPositions"), true);
+            player.sendOverlayMessage(Component.translatable("item.pipe_connector.message.resettingPositions"));
         }
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
-    // Sets the custom model data tag to the item stack, which is used to determine if the item should use custom model
-    // data. If useCustomModelData is true, the custom model will load, otherwise the default model will load.
-    // -----------------------------------------------------------------------------------------------------------------
-    public static void setCustomModelData(ItemStack stack, boolean useCustomModelData) {
-        CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
-
-        if (useCustomModelData) {
-            tag.putInt(ComponentDataTags.kPipeConnectorCustomModelData, 1);
-        } else {
-            tag.putInt(ComponentDataTags.kPipeConnectorCustomModelData, 0);
-        }
-    }
-
-    // -----------------------------------------------------------------------------------------------------------------
-
-    public static void setCustomModelData(CompoundTag tag, boolean useCustomModelData) {
-        if (useCustomModelData) {
-            tag.putInt(ComponentDataTags.kPipeConnectorCustomModelData, 1);
-        } else {
-            tag.putInt(ComponentDataTags.kPipeConnectorCustomModelData, 0);
-        }
-    }
-
-    // -----------------------------------------------------------------------------------------------------------------
-    public static int getCustomModelData(ItemStack stack) {
-        CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
-
-        if (tag.contains(ComponentDataTags.kPipeConnectorCustomModelData, tag.TAG_INT)) {
-            return tag.getInt(ComponentDataTags.kPipeConnectorCustomModelData);
-        }
-        return 0;
-    }
-
-    // -----------------------------------------------------------------------------------------------------------------
-    // Preview mode: solid vs outline-only. Default is outline (solid=false)
-    // -----------------------------------------------------------------------------------------------------------------
     public static boolean getSolidPreview(ItemStack stack) {
         CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
-        if (tag.contains(ComponentDataTags.kPipeConnectorSolidPreview, tag.TAG_BYTE)) {
-            return tag.getBoolean(ComponentDataTags.kPipeConnectorSolidPreview);
-        }
-        return false;
+        return tag.getBooleanOr(ComponentDataTags.kPipeConnectorSolidPreview, false);
     }
 
     public static void setSolidPreview(ItemStack stack, boolean solid) {
@@ -248,15 +152,9 @@ public class TagUtils {
         });
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
-    // Pipe Vision: Toggleable visualization of existing pipes. Default is off.
-    // -----------------------------------------------------------------------------------------------------------------
     public static boolean getPipeVision(ItemStack stack) {
         CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
-        if (tag.contains(ComponentDataTags.kPipeConnectorPipeVision, tag.TAG_BYTE)) {
-            return tag.getBoolean(ComponentDataTags.kPipeConnectorPipeVision);
-        }
-        return false;
+        return tag.getBooleanOr(ComponentDataTags.kPipeConnectorPipeVision, false);
     }
 
     public static void setPipeVision(ItemStack stack, boolean enabled) {
@@ -265,15 +163,9 @@ public class TagUtils {
         });
     }
 
-    // -----------------------------------------------------------------------------------------------------------------
-    // Manhattan Mirror: Toggleable mirroring of Manhattan pathfinding. Default is off.
-    // -----------------------------------------------------------------------------------------------------------------
     public static boolean getMirrorManhattan(ItemStack stack) {
         CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
-        if (tag.contains(ComponentDataTags.kPipeConnectorMirrorManhattan, tag.TAG_BYTE)) {
-            return tag.getBoolean(ComponentDataTags.kPipeConnectorMirrorManhattan);
-        }
-        return false;
+        return tag.getBooleanOr(ComponentDataTags.kPipeConnectorMirrorManhattan, false);
     }
 
     public static void setMirrorManhattan(ItemStack stack, boolean mirrored) {
@@ -281,6 +173,4 @@ public class TagUtils {
             tag.putBoolean(ComponentDataTags.kPipeConnectorMirrorManhattan, mirrored);
         });
     }
-
-    // -----------------------------------------------------------------------------------------------------------------
 }

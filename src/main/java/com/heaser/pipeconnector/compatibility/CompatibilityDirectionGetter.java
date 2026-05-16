@@ -40,10 +40,10 @@ public class CompatibilityDirectionGetter {
     @Nullable
     public Direction getDirection(UseOnContext context) {
         IDirectionGetter getter = null;
-        for (Map.Entry<Class<? extends Item>, IDirectionGetter> set : classToGetterMap.entrySet()) {
+        for (Map.Entry<Class<? extends Item>, IDirectionGetter> entry : classToGetterMap.entrySet()) {
             Player player = context.getPlayer();
-            if (player != null && set.getKey().isAssignableFrom(player.getOffhandItem().getItem().getClass())) {
-                getter = set.getValue();
+            if (player != null && entry.getKey().isAssignableFrom(player.getOffhandItem().getItem().getClass())) {
+                getter = entry.getValue();
                 break;
             }
         }

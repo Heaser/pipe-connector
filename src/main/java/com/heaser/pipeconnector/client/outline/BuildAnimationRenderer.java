@@ -3,7 +3,6 @@ package com.heaser.pipeconnector.client.outline;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -49,7 +48,7 @@ public class BuildAnimationRenderer {
             return;
         }
 
-        Vec3 camera = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
+        Vec3 camera = Minecraft.getInstance().gameRenderer.getMainCamera().position();
         int n = animationPath.size();
 
         for (int i = 0; i < n; i++) {
@@ -102,7 +101,38 @@ public class BuildAnimationRenderer {
         VertexConsumer lineVC = buffer.getBuffer(PipeConnectorRenderType.LINES_NO_DEPTH_TEST);
         AABB aabb = new AABB(cx - h - 0.002, cy - h - 0.002, cz - h - 0.002,
                 cx + h + 0.002, cy + h + 0.002, cz + h + 0.002);
-        LevelRenderer.renderLineBox(pose, lineVC, aabb, GLOW_R, GLOW_G, GLOW_B, alpha);
+        renderLineBox(pose, lineVC, aabb, GLOW_R, GLOW_G, GLOW_B, alpha, PipeConnectorRenderType.LINE_WIDTH_THICK);
+    }
+
+    private static void renderLineBox(PoseStack pose, VertexConsumer vc, AABB aabb, float r, float g, float b, float a, float width) {
+        float x0 = (float) aabb.minX, y0 = (float) aabb.minY, z0 = (float) aabb.minZ;
+        float x1 = (float) aabb.maxX, y1 = (float) aabb.maxY, z1 = (float) aabb.maxZ;
+        PoseStack.Pose p = pose.last();
+        line(vc, p, x0, y0, z0, x1, y0, z0, r, g, b, a, 1, 0, 0, width);
+        line(vc, p, x1, y0, z0, x1, y0, z1, r, g, b, a, 0, 0, 1, width);
+        line(vc, p, x1, y0, z1, x0, y0, z1, r, g, b, a, -1, 0, 0, width);
+        line(vc, p, x0, y0, z1, x0, y0, z0, r, g, b, a, 0, 0, -1, width);
+        line(vc, p, x0, y1, z0, x1, y1, z0, r, g, b, a, 1, 0, 0, width);
+        line(vc, p, x1, y1, z0, x1, y1, z1, r, g, b, a, 0, 0, 1, width);
+        line(vc, p, x1, y1, z1, x0, y1, z1, r, g, b, a, -1, 0, 0, width);
+        line(vc, p, x0, y1, z1, x0, y1, z0, r, g, b, a, 0, 0, -1, width);
+        line(vc, p, x0, y0, z0, x0, y1, z0, r, g, b, a, 0, 1, 0, width);
+        line(vc, p, x1, y0, z0, x1, y1, z0, r, g, b, a, 0, 1, 0, width);
+        line(vc, p, x1, y0, z1, x1, y1, z1, r, g, b, a, 0, 1, 0, width);
+        line(vc, p, x0, y0, z1, x0, y1, z1, r, g, b, a, 0, 1, 0, width);
+    }
+
+    private static void line(VertexConsumer vc, PoseStack.Pose pose,
+                             float x0, float y0, float z0, float x1, float y1, float z1,
+                             float r, float g, float b, float a,
+                             float nx, float ny, float nz, float width) {
+        int ri = Math.min(255, Math.max(0, (int)(r * 255f)));
+        int gi = Math.min(255, Math.max(0, (int)(g * 255f)));
+        int bi = Math.min(255, Math.max(0, (int)(b * 255f)));
+        int ai = Math.min(255, Math.max(0, (int)(a * 255f)));
+        int color = (ai << 24) | (ri << 16) | (gi << 8) | bi;
+        vc.addVertex(pose, x0, y0, z0).setColor(color).setNormal(pose, nx, ny, nz).setLineWidth(width);
+        vc.addVertex(pose, x1, y1, z1).setColor(color).setNormal(pose, nx, ny, nz).setLineWidth(width);
     }
 
     private void drawFilledBox(PoseStack pose, MultiBufferSource buffer,

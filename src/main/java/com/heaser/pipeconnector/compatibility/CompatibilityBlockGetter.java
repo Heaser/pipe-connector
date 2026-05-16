@@ -1,8 +1,9 @@
 package com.heaser.pipeconnector.compatibility;
 
 import com.heaser.pipeconnector.compatibility.ae2.AE2Compatiblity;
+// Disabled (mod not on this MC version):
+// import com.heaser.pipeconnector.compatibility.mi.MICompatibility;
 import com.heaser.pipeconnector.compatibility.interfaces.IBlockGetter;
-import com.heaser.pipeconnector.compatibility.mi.MICompatibility;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
@@ -17,9 +18,9 @@ public class CompatibilityBlockGetter {
         if (isModLoaded("ae2")) {
             classToGetterMap.put(AE2Compatiblity.getItemStackClassToRegister(), new AE2Compatiblity());
         }
-        if (isModLoaded("modern_industrialization")) {
-            classToGetterMap.put(MICompatibility.getItemToRegister(), new MICompatibility());
-        }
+        // if (isModLoaded("modern_industrialization")) {
+        //     classToGetterMap.put(MICompatibility.getItemToRegister(), new MICompatibility());
+        // }
     }
 
     private boolean isModLoaded(String modId) {
@@ -40,9 +41,9 @@ public class CompatibilityBlockGetter {
 
     public Block getBlock(ItemStack placedStack) {
         IBlockGetter getter = null;
-        for (Map.Entry<Class<? extends Item>, IBlockGetter> set : classToGetterMap.entrySet()) {
-            if (set.getKey().isAssignableFrom(placedStack.getItem().getClass())) {
-                getter = set.getValue();
+        for (Map.Entry<Class<? extends Item>, IBlockGetter> entry : classToGetterMap.entrySet()) {
+            if (entry.getKey().isAssignableFrom(placedStack.getItem().getClass())) {
+                getter = entry.getValue();
                 break;
             }
         }

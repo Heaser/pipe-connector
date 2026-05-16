@@ -16,12 +16,12 @@ import net.neoforged.neoforge.client.event.InputEvent;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 
 import static com.heaser.pipeconnector.utils.TagUtils.getDepthFromStack;
 import static com.heaser.pipeconnector.utils.TagUtils.setDepthToStack;
 
-@EventBusSubscriber(modid = PipeConnector.MODID, bus = EventBusSubscriber.Bus.GAME, value = Dist.CLIENT)
+@EventBusSubscriber(modid = PipeConnector.MODID, value = Dist.CLIENT)
 public class DepthSetterEvent {
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void MouseScrollEvent(InputEvent.MouseScrollingEvent event) {
@@ -42,8 +42,8 @@ public class DepthSetterEvent {
         depth = getDepthFromStack(pipeConnectorStack);
 
         // Syncs with server to prevent cases where the client and server are out of sync
-        PacketDistributor.sendToServer(new UpdateDepthPacket(depth));
-        player.displayClientMessage(Component.translatable("item.pipe_connector.message.newDepth", depth).withStyle(ChatFormatting.YELLOW), true);
+        ClientPacketDistributor.sendToServer(new UpdateDepthPacket(depth));
+        player.sendOverlayMessage(Component.translatable("item.pipe_connector.message.newDepth", depth).withStyle(ChatFormatting.YELLOW));
 
         event.setCanceled(true);
     }

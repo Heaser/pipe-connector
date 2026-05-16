@@ -4,16 +4,17 @@ import com.heaser.pipeconnector.config.PipeConnectorConfig;
 import com.heaser.pipeconnector.constants.TagKeys;
 import com.heaser.pipeconnector.items.PipeConnectorItem;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.Container;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.item.ItemResource;
 
-import java.time.LocalDateTime;
 import java.util.List;
-
-import static net.neoforged.neoforge.capabilities.Capabilities.ItemHandler;
 
 public class GeneralUtils {
     public static boolean isServerSide(Level level) {
@@ -66,22 +67,20 @@ public class GeneralUtils {
     // -----------------------------------------------------------------------------------------------------------------
 
     public static boolean hasInventoryCapabilities(Level level, BlockPos pos) {
-        if (level.getBlockEntity(pos) != null) {
-            // TODO: double check this works with testing the inventory guard feature
-            IItemHandler capabilities = level.getCapability(ItemHandler.BLOCK, pos, null);
-            if (capabilities != null) {
-                int slotNum = capabilities.getSlots();
-                return slotNum != 0;
+        if (level.getBlockEntity(pos) instanceof Container container && container.getContainerSize() > 0) {
+            return true;
+        }
+        ResourceHandler<ItemResource> handler = level.getCapability(Capabilities.Item.BLOCK, pos, null);
+        if (handler != null && handler.size() > 0) {
+            return true;
+        }
+        for (Direction dir : Direction.values()) {
+            handler = level.getCapability(Capabilities.Item.BLOCK, pos, dir);
+            if (handler != null && handler.size() > 0) {
+                return true;
             }
         }
         return false;
-    }
-
-    // -----------------------------------------------------------------------------------------------------------------
-
-    public static boolean isAprilFoolsDay() {
-        LocalDateTime now = LocalDateTime.now();
-        return now.getMonthValue() == 4 && now.getDayOfMonth() == 1;
     }
 
     // -----------------------------------------------------------------------------------------------------------------

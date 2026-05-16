@@ -1,5 +1,12 @@
 package com.heaser.pipeconnector.compatibility.mi;
 
+//  Modern Industrialization not yet available for 26.2.1
+public final class MICompatibility {
+    private MICompatibility() {}
+}
+
+/*
+
 import aztech.modern_industrialization.pipes.MIPipes;
 import aztech.modern_industrialization.pipes.api.PipeNetworkNode;
 import aztech.modern_industrialization.pipes.api.PipeNetworkType;
@@ -247,3 +254,5 @@ public class MICompatibility implements IPlacer, IBlockEqualsChecker, IBlockGett
         }
     }
 }
+
+*/

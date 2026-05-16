@@ -4,8 +4,7 @@ plugins {
     id 'maven-publish'
     id 'idea'
 //    id "xyz.wagyourtail.unimined" version "1.2.6"
-    id 'net.neoforged.moddev' version '0.1.99'
-//    id 'org.parchmentmc.librarian.neoforgegradle' version '1.+'
+    id 'net.neoforged.moddev' version '2.0.141'
 }
 
 tasks.named('wrapper', Wrapper).configure {
@@ -24,7 +23,7 @@ base {
     archivesName = mod_id
 }
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+java.toolchain.languageVersion = JavaLanguageVersion.of(25)
 
 println "Java: ${System.getProperty 'java.version'}, JVM: ${System.getProperty 'java.vm.version'} (${System.getProperty 'java.vendor'}), Arch: ${System.getProperty 'os.arch'}"
 
@@ -34,11 +33,6 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 neoForge {
     version = project.neo_version
-
-    parchment {
-        mappingsVersion = project.parchment_mappings_version
-        minecraftVersion = project.parchment_minecraft_version
-    }
 
     runs {
         client {
@@ -60,16 +54,6 @@ neoForge {
         gameTestServer {
             type = "gameTestServer"
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
-        }
-
-        data {
-            data()
-
-            // example of overriding the workingDirectory set in configureEach above, uncomment if you want to use it
-            // gameDirectory = project.file('run-data')
-
-            // Specify the modid for data generation, where to output the resulting resource, and where to look for existing resources.
-            programArguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
         }
 
         // applies to all the run configs above
@@ -128,7 +112,7 @@ configurations {
 dependencies {
 //
 //    implementation "curse.maven:toms-storage-378609:6418144"
-//    implementation "curse.maven:pipez-443900:5465392"
+//      implementation "curse.maven:pipez-443900:8053422"
 //    implementation "curse.maven:modern-dynamics-552758:5465437"
 //    implementation "curse.maven:mekanism-268560:6327955"
 //    implementation "curse.maven:mekanism-extras-1026040:6381324"
@@ -157,7 +141,7 @@ dependencies {
 //    implementation "curse.maven:titanium-287342:6875285"
 
 //   Refined Storage
-//    implementation "curse.maven:refined-storage-243076:7039043"
+//    implementation "curse.maven:refined-storage-243076:8086589"
 
 //    Oritech stuff
 //    implementation "curse.maven:oritech-1030830:6548040"
@@ -171,15 +155,17 @@ dependencies {
 
 
     // Required
-    compileOnly("curse.maven:gregtechceu-modern-890405:5812613")
-    compileOnly("curse.maven:ldlib-626676:5782845")
-    compileOnly("curse.maven:pretty-pipes-376737:6900504")
-    compileOnly("curse.maven:pretty-pipes-fluids-479142:7093193")
-    compileOnly("curse.maven:applied-energistics-2-223794:5480501")
-    compileOnly("curse.maven:mcjtylib-233105:6541819")
-    compileOnly("curse.maven:xnet-260912:6310525")
-    compileOnly ("curse.maven:jei-238222:5775467")
-    compileOnly ("curse.maven:modern-industrialization-405388:7309662")
+    compileOnly("curse.maven:jei-238222:8014757")
+    // implementation ("curse.maven:guideme-1173950:7929350")
+    compileOnly("curse.maven:applied-energistics-2-223794:8059221")
+    // The following are commented out  cause they aren't on 26.2.1 yet
+    // compileOnly("curse.maven:mcjtylib-233105:6541819")
+    // compileOnly("curse.maven:xnet-260912:6310525")
+    // compileOnly ("curse.maven:modern-industrialization-405388:7309662")
+    // compileOnly("curse.maven:pretty-pipes-376737:6900504")
+    // compileOnly("curse.maven:pretty-pipes-fluids-479142:7093193")
+    // compileOnly("curse.maven:ldlib-626676:5782845") - Actually has a 26.2.1 version but only used by gregtech eu modern and that one doesn't have a 26.2.1 version yet
+    // compileOnly("curse.maven:gregtechceu-modern-890405:5812613")
 
 
 

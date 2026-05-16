@@ -6,7 +6,6 @@ import com.heaser.pipeconnector.utils.*;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.gui.Font;
 import net.minecraft.core.BlockPos;
@@ -76,7 +75,7 @@ public class PreviewDrawer {
     }
 
     private void draw(PoseStack pose, MultiBufferSource buffer, Player player, ItemStack pipeConnector) {
-        Vec3 offset = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
+        Vec3 offset = Minecraft.getInstance().gameRenderer.getMainCamera().position();
         // Prepare node index lookup (1-based indexing in preview)
         java.util.List<NodeParameter> nodes = TagUtils.getNodesFromStack(pipeConnector);
         java.util.List<net.minecraft.core.BlockPos> nodePositions = nodes.stream().map(NodeParameter::getRelativePosition).toList();
@@ -433,7 +432,7 @@ public class PreviewDrawer {
         VertexConsumer lineVC = buffer.getBuffer(PipeConnectorRenderType.THIN_LINES_NO_DEPTH_TEST);
         double epsOutline = 0.0015;
         AABB aabb = new AABB(X0 - (float)epsOutline, Y0 - (float)epsOutline, Z0 - (float)epsOutline, X1 + (float)epsOutline, Y1 + (float)epsOutline, Z1 + (float)epsOutline);
-        LevelRenderer.renderLineBox(pose, lineVC, aabb, 0f, 0f, 0f, 1.0f);
+        renderLineBox(pose, lineVC, aabb, 0f, 0f, 0f, 1.0f, PipeConnectorRenderType.LINE_WIDTH_THIN);
     }
 
     private void drawWireBox(PoseStack pose, MultiBufferSource buffer,
@@ -445,7 +444,41 @@ public class PreviewDrawer {
                 Math.min(x0, x1), Math.min(y0, y1), Math.min(z0, z1),
                 Math.max(x0, x1), Math.max(y0, y1), Math.max(z0, z1)
         );
-        LevelRenderer.renderLineBox(pose, builder, aabb, rgba[0], rgba[1], rgba[2], rgba[3]);
+        renderLineBox(pose, builder, aabb, rgba[0], rgba[1], rgba[2], rgba[3], PipeConnectorRenderType.LINE_WIDTH_THICK);
+    }
+
+    private static void renderLineBox(PoseStack pose, VertexConsumer vc, AABB aabb, float r, float g, float b, float a, float width) {
+        float x0 = (float) aabb.minX, y0 = (float) aabb.minY, z0 = (float) aabb.minZ;
+        float x1 = (float) aabb.maxX, y1 = (float) aabb.maxY, z1 = (float) aabb.maxZ;
+        PoseStack.Pose p = pose.last();
+        // Bottom rectangle
+        line(vc, p, x0, y0, z0, x1, y0, z0, r, g, b, a, 1, 0, 0, width);
+        line(vc, p, x1, y0, z0, x1, y0, z1, r, g, b, a, 0, 0, 1, width);
+        line(vc, p, x1, y0, z1, x0, y0, z1, r, g, b, a, -1, 0, 0, width);
+        line(vc, p, x0, y0, z1, x0, y0, z0, r, g, b, a, 0, 0, -1, width);
+        // Top rectangle
+        line(vc, p, x0, y1, z0, x1, y1, z0, r, g, b, a, 1, 0, 0, width);
+        line(vc, p, x1, y1, z0, x1, y1, z1, r, g, b, a, 0, 0, 1, width);
+        line(vc, p, x1, y1, z1, x0, y1, z1, r, g, b, a, -1, 0, 0, width);
+        line(vc, p, x0, y1, z1, x0, y1, z0, r, g, b, a, 0, 0, -1, width);
+        // Verticals
+        line(vc, p, x0, y0, z0, x0, y1, z0, r, g, b, a, 0, 1, 0, width);
+        line(vc, p, x1, y0, z0, x1, y1, z0, r, g, b, a, 0, 1, 0, width);
+        line(vc, p, x1, y0, z1, x1, y1, z1, r, g, b, a, 0, 1, 0, width);
+        line(vc, p, x0, y0, z1, x0, y1, z1, r, g, b, a, 0, 1, 0, width);
+    }
+
+    private static void line(VertexConsumer vc, PoseStack.Pose pose,
+                             float x0, float y0, float z0, float x1, float y1, float z1,
+                             float r, float g, float b, float a,
+                             float nx, float ny, float nz, float width) {
+        int ri = Math.min(255, Math.max(0, (int)(r * 255f)));
+        int gi = Math.min(255, Math.max(0, (int)(g * 255f)));
+        int bi = Math.min(255, Math.max(0, (int)(b * 255f)));
+        int ai = Math.min(255, Math.max(0, (int)(a * 255f)));
+        int color = (ai << 24) | (ri << 16) | (gi << 8) | bi;
+        vc.addVertex(pose, x0, y0, z0).setColor(color).setNormal(pose, nx, ny, nz).setLineWidth(width);
+        vc.addVertex(pose, x1, y1, z1).setColor(color).setNormal(pose, nx, ny, nz).setLineWidth(width);
     }
 
     private void v(VertexConsumer vc, org.joml.Matrix4f mat,

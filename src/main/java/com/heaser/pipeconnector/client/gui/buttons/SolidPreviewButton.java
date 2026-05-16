@@ -15,7 +15,7 @@ public class SolidPreviewButton extends BaseButton {
     @Override
     public void onClick(Button clickedButton, ItemStack itemStack) {
         TagUtils.setSolidPreview(itemStack, true);
-        net.neoforged.neoforge.network.PacketDistributor.sendToServer(new com.heaser.pipeconnector.network.UpdateSolidPreview(true));
+        net.neoforged.neoforge.client.network.ClientPacketDistributor.sendToServer(new com.heaser.pipeconnector.network.UpdateSolidPreview(true));
         updateLabel(itemStack);
     }
 

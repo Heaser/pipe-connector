@@ -53,14 +53,13 @@ public class PipeConnectorUtils {
         int missingPipes = getMissingPipesInInventory(player, numOfPipes, blockPosMap, blockToPlace);
         if (missingPipes > 0) {
             PipeConnector.LOGGER.debug("Not enough pipes in inventory, missing " + missingPipes + " pipes.");
-            player.displayClientMessage(Component.translatable("item.pipe_connector.message.notEnoughPipes", missingPipes).withStyle(ChatFormatting.BOLD, ChatFormatting.YELLOW), true);
+            player.sendOverlayMessage(Component.translatable("item.pipe_connector.message.notEnoughPipes", missingPipes).withStyle(ChatFormatting.BOLD, ChatFormatting.YELLOW));
             return false;
         }
 
-        // Checks if the pipe limit has been reached
         if (pipeLimit < blockPosMap.size()) {
             PipeConnector.LOGGER.debug("Unable to place more than " + pipeLimit + " at once");
-            player.displayClientMessage(Component.translatable("item.pipe_connector.message.reachedPipeLimit", pipeLimit).withStyle(ChatFormatting.BOLD, ChatFormatting.YELLOW), true);
+            player.sendOverlayMessage(Component.translatable("item.pipe_connector.message.reachedPipeLimit", pipeLimit).withStyle(ChatFormatting.BOLD, ChatFormatting.YELLOW));
             return false;
         }
         // Checks if the block is unbreakable and handles inventory-guard behavior
@@ -69,17 +68,17 @@ public class PipeConnectorUtils {
         boolean avoidInventoryBlocks = TagUtils.getAvoidInventoryBlocks(context.getItemInHand());
         boolean isAStar = bridgeType == BridgeType.A_STAR;
 
-        for (Map.Entry<BlockPos, BlockState> set : blockPosMap.entrySet()) {
-            String blockName = set.getValue().getBlock().getName().getString();
-            if (isNotBreakable(level, set.getKey())) {
-                player.displayClientMessage(Component.translatable("item.pipe_connector.message.unbreakableBlockReached", blockName).withStyle(ChatFormatting.BOLD, ChatFormatting.DARK_RED), true);
+        for (Map.Entry<BlockPos, BlockState> entry : blockPosMap.entrySet()) {
+            String blockName = entry.getValue().getBlock().getName().getString();
+            if (isNotBreakable(level, entry.getKey())) {
+                player.sendOverlayMessage(Component.translatable("item.pipe_connector.message.unbreakableBlockReached", blockName).withStyle(ChatFormatting.BOLD, ChatFormatting.DARK_RED));
                 return false;
             }
-            if (hasInventoryCapabilities(level, set.getKey()) && inventoryGuard) {
+            if (hasInventoryCapabilities(level, entry.getKey()) && inventoryGuard) {
                 if (avoidInventoryBlocks && isAStar) {
                     inventoryFoundInPath = true; // Keep checking all to see if any remain
                 } else {
-                    player.displayClientMessage(Component.translatable("item.pipe_connector.gui.button.tooltip.disabledInventoryInPath", blockName).withStyle(ChatFormatting.BOLD, ChatFormatting.DARK_RED), true);
+                    player.sendOverlayMessage(Component.translatable("item.pipe_connector.gui.button.tooltip.disabledInventoryInPath", blockName).withStyle(ChatFormatting.BOLD, ChatFormatting.DARK_RED));
                     return false;
                 }
             }
@@ -87,14 +86,14 @@ public class PipeConnectorUtils {
 
         if (inventoryFoundInPath) {
             // With avoidance enabled for A*, the path should not include inventories; if it still does, we couldn't avoid.
-            player.displayClientMessage(Component.translatable("item.pipe_connector.message.inventoryBlocksNotAvoided").withStyle(ChatFormatting.BOLD, ChatFormatting.DARK_RED), true);
+            player.sendOverlayMessage(Component.translatable("item.pipe_connector.message.inventoryBlocksNotAvoided").withStyle(ChatFormatting.BOLD, ChatFormatting.DARK_RED));
             return false;
         }
 
-        for (Map.Entry<BlockPos, BlockState> set : blockPosMap.entrySet()) {
-            if (!CompatibilityBlockEqualsChecker.isPlacementAlreadySatisfied(set.getKey(), blockToPlace, itemToPlace, level)) {
-                BlockPos position = set.getKey();
-                ParticleHelper.serverSpawnMarkerParticle((ServerLevel) level, set.getKey());
+        for (Map.Entry<BlockPos, BlockState> entry : blockPosMap.entrySet()) {
+            if (!CompatibilityBlockEqualsChecker.isPlacementAlreadySatisfied(entry.getKey(), blockToPlace, itemToPlace, level)) {
+                BlockPos position = entry.getKey();
+                ParticleHelper.serverSpawnMarkerParticle((ServerLevel) level, entry.getKey());
                 List<Direction> directions = getNeighboringDirections(position, blockPosMap);
                 breakAndSetBlock(level, position, blockToPlace, player, context, directions);
             }
@@ -154,8 +153,8 @@ public class PipeConnectorUtils {
     }
     public static int getMissingPipesInInventory(Player player, int NumberOfPipesInInventory, Map<BlockPos, BlockState> blockPosMap, Block block) {
         int existingPipesInPath = 0;
-        for (Map.Entry<BlockPos, BlockState> set : blockPosMap.entrySet()) {
-            if (CompatibilityBlockEqualsChecker.isPlacementAlreadySatisfied(set.getKey(), block, player.getOffhandItem(), player.level())) {
+        for (Map.Entry<BlockPos, BlockState> entry : blockPosMap.entrySet()) {
+            if (CompatibilityBlockEqualsChecker.isPlacementAlreadySatisfied(entry.getKey(), block, player.getOffhandItem(), player.level())) {
                 existingPipesInPath++;
             }
         }
@@ -176,8 +175,8 @@ public class PipeConnectorUtils {
 
     public static HashSet<PreviewInfo> getBlockPosSet(Map<BlockPos, BlockState> blockPosMap) {
         HashSet<PreviewInfo> previewSet = new HashSet<>();
-        for (Map.Entry<BlockPos, BlockState> blockPair : blockPosMap.entrySet()) {
-            previewSet.add(new PreviewInfo(blockPair.getKey()));
+        for (Map.Entry<BlockPos, BlockState> entry : blockPosMap.entrySet()) {
+            previewSet.add(new PreviewInfo(entry.getKey()));
         }
         return previewSet;
     }
@@ -356,9 +355,9 @@ public class PipeConnectorUtils {
         numberOfPipes = player.getOffhandItem().getCount();
         Inventory inventory = player.getInventory();
 
-        for (ItemStack itemStack : inventory.items) {
+        for (ItemStack itemStack : inventory.getNonEquipmentItems()) {
             Item inventoryItem = itemStack.getItem();
-            if (inventoryItem == offhandPipe && offhandPipe.getDescriptionId(offhandStack) == inventoryItem.getDescriptionId(itemStack)) {
+            if (inventoryItem == offhandPipe && offhandPipe.getDescriptionId().equals(inventoryItem.getDescriptionId())) {
                 numberOfPipes += itemStack.getCount();
             }
         }
@@ -372,13 +371,13 @@ public class PipeConnectorUtils {
     // -----------------------------------------------------------------------------------------------------------------
     public static void reduceNumberOfPipesInInventory(Player player) {
 
-        // Check if the player is not in creative mode
         if(!player.getAbilities().instabuild) {
             ItemStack offhandStack = player.getOffhandItem();
             Inventory inventory = player.getInventory();
 
-            for (int i = 0; i < inventory.items.size(); i++) {
-                ItemStack inventoryItemStack = inventory.items.get(i);
+            var slots = inventory.getNonEquipmentItems();
+            for (int i = 0; i < slots.size(); i++) {
+                ItemStack inventoryItemStack = slots.get(i);
                 if (isExactlySamePipeItem(offhandStack, inventoryItemStack)) {
                     handlePipeReduction(inventoryItemStack);
                     return;
@@ -402,7 +401,7 @@ public class PipeConnectorUtils {
 
     private static boolean isExactlySamePipeItem(ItemStack ItemToTestStack, ItemStack inventoryItemStack) {
         boolean isSameItem = ItemToTestStack.getItem() == inventoryItemStack.getItem();
-        boolean doesHaveSameName = ItemToTestStack.getItem().getDescriptionId(ItemToTestStack) == inventoryItemStack.getItem().getDescriptionId(inventoryItemStack);
+        boolean doesHaveSameName = ItemToTestStack.getItem().getDescriptionId().equals(inventoryItemStack.getItem().getDescriptionId());
         return isSameItem && doesHaveSameName;
     }
     // -----------------------------------------------------------------------------------------------------------------

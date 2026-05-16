@@ -1,4 +1,12 @@
 package com.heaser.pipeconnector.compatibility.gtceu;
+
+//  GTCEU Modern not yet available for 26.2.1
+public final class GTCEUCompatibility {
+    private GTCEUCompatibility() {}
+}
+
+/*
+
 import com.gregtechceu.gtceu.api.block.PipeBlock;
 import com.gregtechceu.gtceu.api.item.PipeBlockItem;
 import com.gregtechceu.gtceu.api.pipenet.IPipeNode;
@@ -80,3 +88,5 @@ public class GTCEUCompatibility implements IPlacer {
         return false;
     }
 }
+
+*/

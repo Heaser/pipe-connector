@@ -10,8 +10,8 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 
 public class ModItems {
 	public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(PipeConnector.MODID);
-	public static final DeferredItem<PipeConnectorItem> PIPE_CONNECTOR = ITEMS.register("pipe_connector",
-			() -> new PipeConnectorItem(new Item.Properties().stacksTo(1)));
+	public static final DeferredItem<PipeConnectorItem> PIPE_CONNECTOR = ITEMS.registerItem("pipe_connector",
+			properties -> new PipeConnectorItem(properties.stacksTo(1)));
 
 	public static void register(IEventBus eventBus) {
 		ITEMS.register(eventBus);

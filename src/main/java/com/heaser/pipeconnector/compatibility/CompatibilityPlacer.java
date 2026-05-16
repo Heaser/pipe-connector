@@ -1,13 +1,14 @@
 package com.heaser.pipeconnector.compatibility;
 
 import com.heaser.pipeconnector.compatibility.ae2.AE2Compatiblity;
-//import com.heaser.pipeconnector.compatibility.enderio.EnderIoCompatibility;
-import com.heaser.pipeconnector.compatibility.gtceu.GTCEUCompatibility;
-import com.heaser.pipeconnector.compatibility.mi.MICompatibility;
+// Disabled compats (mod not on this MC version):
+// import com.heaser.pipeconnector.compatibility.mi.MICompatibility;
+// import com.heaser.pipeconnector.compatibility.gtceu.GTCEUCompatibility;
+// import com.heaser.pipeconnector.compatibility.prettypipes.PrettyPipesCompatibility;
+// import com.heaser.pipeconnector.compatibility.prettypipes.PrettyPipesFluidsCompatibility;
+// import com.heaser.pipeconnector.compatibility.xnet.XNetCompatibility;
+// import com.heaser.pipeconnector.compatibility.enderio.EnderIoCompatibility;
 import com.heaser.pipeconnector.compatibility.interfaces.IPlacer;
-import com.heaser.pipeconnector.compatibility.prettypipes.PrettyPipesCompatibility;
-import com.heaser.pipeconnector.compatibility.prettypipes.PrettyPipesFluidsCompatibility;
-import com.heaser.pipeconnector.compatibility.xnet.XNetCompatibility;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
@@ -37,24 +38,25 @@ public class CompatibilityPlacer {
         if (isModLoaded("ae2")) {
             itemClassToPlacerMap.put(AE2Compatiblity.getItemStackClassToRegister(), new AE2Compatiblity());
         }
-        if(isModLoaded("prettypipes")) {
-            blockClassToPlacerMap.put(PrettyPipesCompatibility.getBlockToRegister(), new PrettyPipesCompatibility());
-        }
-        if(isModLoaded("ppfluids")) {
-            blockClassToPlacerMap.put(PrettyPipesFluidsCompatibility.getBlockToRegister(), new PrettyPipesCompatibility());
-        }
-        if(isModLoaded("gtceu")) {
-            blockClassToPlacerMap.put(GTCEUCompatibility.getBlockToRegister(), new GTCEUCompatibility());
-        }
-//      if(isModLoaded("enderio_conduits")) {
-//          blockClassToPlacerMap.put(EnderIoCompatibility.getBlockToRegister(), new EnderIoCompatibility());
-//      }
-        if (isModLoaded("xnet")) {
-            blockClassToPlacerMap.put(XNetCompatibility.getBlockToRegister(), new XNetCompatibility());
-        }
-        if (isModLoaded("modern_industrialization")) {
-            itemClassToPlacerMap.put(MICompatibility.getItemToRegister(), new MICompatibility());
-        }
+        // Disabled registrations (mod not on this MC version):
+        // if (isModLoaded("prettypipes")) {
+        //     blockClassToPlacerMap.put(PrettyPipesCompatibility.getBlockToRegister(), new PrettyPipesCompatibility());
+        // }
+        // if (isModLoaded("ppfluids")) {
+        //     blockClassToPlacerMap.put(PrettyPipesFluidsCompatibility.getBlockToRegister(), new PrettyPipesCompatibility());
+        // }
+        // if (isModLoaded("gtceu")) {
+        //     blockClassToPlacerMap.put(GTCEUCompatibility.getBlockToRegister(), new GTCEUCompatibility());
+        // }
+        // if (isModLoaded("xnet")) {
+        //     blockClassToPlacerMap.put(XNetCompatibility.getBlockToRegister(), new XNetCompatibility());
+        // }
+        // if (isModLoaded("enderio_conduits")) {
+        //     blockClassToPlacerMap.put(EnderIoCompatibility.getBlockToRegister(), new EnderIoCompatibility());
+        // }
+        // if (isModLoaded("modern_industrialization")) {
+        //     itemClassToPlacerMap.put(MICompatibility.getItemToRegister(), new MICompatibility());
+        // }
     }
 
     private boolean isModLoaded(String modId) {
@@ -98,18 +100,18 @@ public class CompatibilityPlacer {
     public boolean place(Level level, BlockPos pos, Player player, ItemStack stack, List<Direction> adjacentDirectionSides) {
         IPlacer placer = null;
         Item item = stack.getItem();
-        for (Map.Entry<Class<? extends Item>, IPlacer> set : itemClassToPlacerMap.entrySet()) {
-            if (set.getKey().isAssignableFrom(item.getClass())) {
+        for (Map.Entry<Class<? extends Item>, IPlacer> entry : itemClassToPlacerMap.entrySet()) {
+            if (entry.getKey().isAssignableFrom(item.getClass())) {
 
-                placer = set.getValue();
+                placer = entry.getValue();
                 break;
             }
         }
         if (placer == null && item instanceof BlockItem) {
-            for (Map.Entry<Class<? extends Block>, IPlacer> set : blockClassToPlacerMap.entrySet()) {
-                if (set.getKey().isAssignableFrom(((BlockItem) item).getBlock().getClass())) {
+            for (Map.Entry<Class<? extends Block>, IPlacer> entry : blockClassToPlacerMap.entrySet()) {
+                if (entry.getKey().isAssignableFrom(((BlockItem) item).getBlock().getClass())) {
 
-                    placer = set.getValue();
+                    placer = entry.getValue();
                     break;
                 }
             }

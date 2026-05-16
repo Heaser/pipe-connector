@@ -80,13 +80,13 @@ public class NodeGraph {
         List<Edge> result = new ArrayList<>();
         Collections.sort(edges);
 
-        UnionFind uf = new UnionFind(nodes.size());
+        UnionFind unionFind = new UnionFind(nodes.size());
         for (Edge edge : edges) {
             int nodeIndex = nodes.indexOf(edge.nodePosition);
             int nextNodeIndex = nodes.indexOf(edge.nextNodePosition);
-            if (uf.find(nodeIndex) != uf.find(nextNodeIndex)) {
+            if (unionFind.find(nodeIndex) != unionFind.find(nextNodeIndex)) {
                 result.add(edge);
-                uf.union(nodeIndex, nextNodeIndex);
+                unionFind.union(nodeIndex, nextNodeIndex);
             }
         }
         return result;

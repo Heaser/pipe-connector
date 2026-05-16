@@ -10,7 +10,6 @@ public class ComponentDataTags {
     public static String kPipeConnectorUtilizeExistingPipes = PipeConnector.MODID + "_UtilizeExistingPipes";
     public static String kPipeConnectorInventoryGuard = PipeConnector.MODID + "_InventoryGuard";
     public static String kPipeConnectorAvoidInventoryBlocks = PipeConnector.MODID + "_AvoidInventoryBlocks";
-    public static String kPipeConnectorCustomModelData = PipeConnector.MODID + "_CustomModelData";
     public static String kPipeConnectorSolidPreview = PipeConnector.MODID + "_SolidPreview";
     public static String kPipeConnectorPipeVision = PipeConnector.MODID + "_PipeVision";
     public static String kPipeConnectorMirrorManhattan = PipeConnector.MODID + "_MirrorManhattan";
