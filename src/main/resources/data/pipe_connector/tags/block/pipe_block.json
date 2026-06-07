@@ -2847,6 +2847,183 @@
     {
       "id": "modern_industrialization:pipe",
       "required": false
+    },
+    {
+      "id": "classicpipes:oak_pipe",
+      "required": false
+    },
+    {
+      "id": "classicpipes:oak_pipe",
+      "required": false
+    },
+    {
+      "id": "classicpipes:acacia_pipe",
+      "required": false
+    },
+    {
+      "id": "classicpipes:bamboo_pipe",
+      "required": false
+    },
+    {
+      "id": "classicpipes:birch_pipe",
+      "required": false
+    },
+    {
+      "id": "classicpipes:bone_pipe",
+      "required": false
+    },
+    {
+      "id": "classicpipes:brick_pipe",
+      "required": false
+    },
+    {
+      "id": "classicpipes:cherry_pipe",
+      "required": false
+    },
+    {
+      "id": "classicpipes:crimson_pipe",
+      "required": false
+    },
+    {
+      "id": "classicpipes:dark_oak_pipe",
+      "required": false
+    },
+    {
+      "id": "classicpipes:diamond_pipe",
+      "required": false
+    },
+    {
+      "id": "classicpipes:golden_pipe",
+      "required": false
+    },
+    {
+      "id": "classicpipes:iron_pipe",
+      "required": false
+    },
+    {
+      "id": "classicpipes:jungle_pipe",
+      "required": false
+    },
+    {
+      "id": "classicpipes:lapis_pipe",
+      "required": false
+    },
+    {
+      "id": "classicpipes:mangrove_pipe",
+      "required": false
+    },
+    {
+      "id": "classicpipes:matching_pipe",
+      "required": false
+    },
+    {
+      "id": "classicpipes:nether_brick_pipe",
+      "required": false
+    }, {
+      "id": "classicpipes:pale_oak_pipe",
+      "required": false
+    }, {
+      "id": "classicpipes:provider_pipe",
+      "required": false
+    }, {
+      "id": "classicpipes:redstone_pipe",
+      "required": false
+    },
+    {
+      "id": "classicpipes:request_pipe",
+      "required": false
+    },
+    {
+      "id": "classicpipes:routing_pipe",
+      "required": false
+    },
+    {
+      "id": "classicpipes:spruce_pipe",
+      "required": false
+    },
+    {
+      "id": "classicpipes:stocking_pipe",
+      "required": false
+    },
+    {
+      "id": "classicpipes:storage_pipe",
+      "required": false
+    },
+    {
+      "id": "classicpipes:warped_pipe",
+      "required": false
+    },
+    {
+      "id": "classicpipes:acacia_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "classicpipes:bamboo_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "classicpipes:birch_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "classicpipes:brick_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "classicpipes:cherry_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "classicpipes:crimson_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "classicpipes:dark_oak_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "classicpipes:diamond_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "classicpipes:iron_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "classicpipes:jungle_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "classicpipes:lapis_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "classicpipes:mangrove_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "classicpipes:nether_brick_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "classicpipes:oak_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "classicpipes:pale_oak_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "classicpipes:spruce_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "classicpipes:warped_fluid_pipe",
+      "required": false
+    },
+    {
+      "id": "classicpipes:recipe_pipe",
+      "required": false
     }
   ]
 }
