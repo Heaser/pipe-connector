@@ -1,8 +1,8 @@
 package com.heaser.pipeconnector.client.gui.buttons;
 
 import com.heaser.pipeconnector.client.ClientSetup;
+import com.heaser.pipeconnector.client.gui.PipeCostCalculator;
 import com.heaser.pipeconnector.constants.BridgeType;
-import com.heaser.pipeconnector.compatibility.CompatibilityBlockGetter;
 import com.heaser.pipeconnector.config.PipeConnectorConfig;
 import com.heaser.pipeconnector.network.BuildPipesPacket;
 import com.heaser.pipeconnector.utils.*;
@@ -49,9 +49,7 @@ public class BuildPipesButton extends BaseButton {
     private Component getErrorMessage(ItemStack itemStack) {
         String blockName;
         List<NodeParameter> nodes = TagUtils.getNodesFromStack(itemStack);
-        int existingPipes = PipeConnectorUtils.getNumberOfPipesInInventory(player);
-        int missingPipes = PipeConnectorUtils.getMissingPipesInInventory(player, existingPipes, player.level(), ClientSetup.PREVIEW_DRAWER.previewMap,
-                CompatibilityBlockGetter.getInstance().getBlock(player.getOffhandItem()));
+        int missingPipes = PipeCostCalculator.get(player).missing();
         int maxAllowedPipes = PipeConnectorConfig.MAX_ALLOWED_PIPES_TO_PLACE.get();
         Optional<BlockPos> inventoryBlockPos = pathContainsInventory();
         Optional<BlockPos> unbreakableBlockPos = pathContainsUnbreakableBlocks();

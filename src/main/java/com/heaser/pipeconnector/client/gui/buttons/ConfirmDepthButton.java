@@ -19,16 +19,11 @@ public class ConfirmDepthButton extends BaseButton {
 
     @Override
     public void onClick(Button clickedButton, ItemStack itemStack) {
-        if (depthEditBox == null) return;
-        
-        try {
-            String val = depthEditBox.getValue();
-            if (val.isEmpty()) return;
-            int depth = Integer.parseInt(val);
-            int max = PipeConnectorConfig.MAX_DEPTH.get();
+        if (depthEditBox == null || !depthEditBox.isValueValid()) return;
 
-            if (depth < 0) depth = 0;
-            if (depth > max) depth = max;
+        try {
+            int max = PipeConnectorConfig.MAX_DEPTH.get();
+            int depth = Math.min(Integer.parseInt(depthEditBox.getValue()), max);
 
             ClientPacketDistributor.sendToServer(new UpdateDepthPacket(depth));
             TagUtils.setDepthToStack(itemStack, depth);
@@ -36,5 +31,19 @@ public class ConfirmDepthButton extends BaseButton {
         } catch (NumberFormatException e) {
             // ignore
         }
+    }
+
+    @Override
+    public boolean isActive(ItemStack itemStack) {
+        return depthEditBox != null && depthEditBox.isValueValid();
+    }
+
+    @Override
+    public Component getTooltip(ItemStack itemStack) {
+        if (depthEditBox != null && !depthEditBox.isValueValid()) {
+            return Component.translatable("item.pipe_connector.gui.tooltip.depthOutOfRange",
+                    PipeConnectorConfig.MAX_DEPTH.get());
+        }
+        return null;
     }
 }

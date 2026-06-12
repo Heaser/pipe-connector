@@ -25,6 +25,9 @@
   "item.pipe_connector.gui.label.depth": "Depth",
   "item.pipe_connector.gui.label.requiredPipes": "Required Pipes: %s",
   "item.pipe_connector.gui.label.availablePipes": "Available Pipes: %s",
+  "item.pipe_connector.gui.label.reusedPipes": "Reusing %s laid pipes",
+  "item.pipe_connector.gui.label.missingPipes": "Missing %s pipes",
+  "item.pipe_connector.gui.tooltip.depthOutOfRange": "Depth must be between 0 and %s",
   "item.pipe_connector.gui.button.bridgeType": "Bridge Type: %s",
   "item.pipe_connector.gui.button.aStarPathfinding": "A* Pathfinding",
   "item.pipe_connector.gui.tooltip.Pathfinding": "This will try to find the shortest path between positions",
@@ -59,7 +62,6 @@
   "item.pipe_connector.message.maxNodesReached": "Reached the maximum number of nodes, Sneak+Right-Click on an existing node to remove it",
   "item.pipe_connector.gui.button.preview_outline": "Outline",
   "item.pipe_connector.gui.button.preview_solid": "Solid",
-  "item.pipe_connector.gui.tooltip.comingSoon": "Coming SoonTM...",
   "item.pipe_connector.gui.label.preview_style": "Preview Style",
   "item.pipe_connector.gui.label.pipe_vision": "Pipe Vision",
   "item.pipe_connector.gui.button.tooltip.manhattanMirror": "Mirrors the path - Only works for Manhattan Pathfinding."

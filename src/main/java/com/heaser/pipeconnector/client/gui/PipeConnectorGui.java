@@ -80,6 +80,7 @@ public class PipeConnectorGui extends Screen {
         drawTooltipList(extractor, mouseX, mouseY, avoidInventoryBlocksButton);
         drawTooltip(extractor, mouseX, mouseY, pipeVisionButton);
         drawTooltip(extractor, mouseX, mouseY, manhattanMirrorButton);
+        drawTooltip(extractor, mouseX, mouseY, confirmDepthButton);
 
         extractor.blit(RenderPipelines.GUI_TEXTURED, PIPE_CONNECTOR_TEXTURE,
                 drawStartX, drawStartY, 0, 0, imageWidth, imageHeight, imageWidth, imageHeight);
@@ -104,6 +105,7 @@ public class PipeConnectorGui extends Screen {
         }
 
         buildPipesButton.button.active = buildPipesButton.isActive(pipeConnectorStack);
+        confirmDepthButton.button.active = confirmDepthButton.isActive(pipeConnectorStack);
         if (outlinePreviewButton instanceof OutlinePreviewButton opb) {
             opb.updateLabel(pipeConnectorStack);
         }
@@ -118,6 +120,9 @@ public class PipeConnectorGui extends Screen {
         createLabel(extractor, 0.08, 0.62, new PipeVisionText());
         createLabel(extractor, 0.62, 0.55, new PreviewStyleText());
         createLabel(extractor, 0.12, 0.72, new DepthLabel());
+        createLabel(extractor, 0.08, 0.79, new RequiredPipesText());
+        createLabel(extractor, 0.08, 0.845, new AvailablePipesText());
+        createLabel(extractor, 0.08, 0.90, new PipeCostStatusText());
     }
 
     @Override
@@ -130,8 +135,12 @@ public class PipeConnectorGui extends Screen {
 
         if (this.depthEditBox.isFocused()) {
             if (keyCode == 257 || keyCode == 335) { // Enter and numpad enter
-                confirmDepthButton.onClick(confirmDepthButton.button, pipeConnectorStack);
-                this.depthEditBox.setFocused(false);
+                if (this.depthEditBox.isValueValid()) {
+                    confirmDepthButton.onClick(confirmDepthButton.button, pipeConnectorStack);
+                    // Clear focus via the screen, not the widget — unfocusing the widget directly
+                    // desyncs it from the screen's focus tracking and the box can't be re-clicked
+                    this.setFocused(null);
+                }
                 return true;
             }
             if (this.depthEditBox.keyPressed(event) || this.depthEditBox.canConsumeInput()) {
