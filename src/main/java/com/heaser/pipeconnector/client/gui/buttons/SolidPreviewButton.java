@@ -8,7 +8,7 @@ import net.minecraft.world.item.ItemStack;
 
 public class SolidPreviewButton extends BaseButton {
     public SolidPreviewButton(ItemStack stack) {
-        super(Component.translatable("item.pipe_connector.gui.button.preview_solid"), 20, 50);
+        super(Component.translatable("item.pipe_connector.gui.button.preview_solid"), 20, 48);
         updateLabel(stack);
     }
 

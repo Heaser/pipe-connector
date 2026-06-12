@@ -19,13 +19,13 @@ public class PipeCostStatusText implements ILabelable {
         }
         PipeCostCalculator.PipeCost cost = PipeCostCalculator.get(player);
         if (!cost.hasEnough()) {
-            return Component.translatable("item.pipe_connector.gui.label.missingPipes", cost.missing())
-                    .withStyle(ChatFormatting.DARK_RED);
+            Component count = Component.literal(String.valueOf(cost.missing())).withStyle(ChatFormatting.DARK_RED);
+            return Component.translatable("item.pipe_connector.gui.label.missingPipes", count);
         }
         if (cost.reused() > 0) {
-            // Matches the magenta already-placed color used by the world preview
-            return Component.translatable("item.pipe_connector.gui.label.reusedPipes", cost.reused())
-                    .withStyle(ChatFormatting.DARK_PURPLE);
+            // same color as render path for used pipes
+            Component count = Component.literal(String.valueOf(cost.reused())).withStyle(ChatFormatting.DARK_PURPLE);
+            return Component.translatable("item.pipe_connector.gui.label.reusedPipes", count);
         }
         return Component.empty();
     }

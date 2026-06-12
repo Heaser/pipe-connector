@@ -9,7 +9,7 @@ import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 
 public class ResetButton extends BaseButton {
     public ResetButton() {
-        super(Component.translatable("item.pipe_connector.gui.button.ResetPipePos"), 20, 85);
+        super(Component.translatable("item.pipe_connector.gui.button.ResetPipePos"), 20, 118);
     }
 
     @Override

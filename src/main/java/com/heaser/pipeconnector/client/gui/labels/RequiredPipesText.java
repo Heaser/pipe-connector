@@ -20,6 +20,6 @@ public class RequiredPipesText implements ILabelable {
         PipeCostCalculator.PipeCost cost = PipeCostCalculator.get(player);
         Component count = Component.literal(String.valueOf(cost.required()))
                 .withStyle(cost.hasEnough() ? ChatFormatting.DARK_GREEN : ChatFormatting.DARK_RED);
-        return Component.translatable("item.pipe_connector.gui.label.requiredPipes", count);
+        return Component.translatable("item.pipe_connector.gui.label.required", count);
     }
 }

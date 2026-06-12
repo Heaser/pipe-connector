@@ -8,7 +8,7 @@ import net.minecraft.world.item.ItemStack;
 
 public class OutlinePreviewButton extends BaseButton {
     public OutlinePreviewButton(ItemStack stack) {
-        super(Component.translatable("item.pipe_connector.gui.button.preview_outline"), 20, 50);
+        super(Component.translatable("item.pipe_connector.gui.button.preview_outline"), 20, 48);
         updateLabel(stack);
     }
 

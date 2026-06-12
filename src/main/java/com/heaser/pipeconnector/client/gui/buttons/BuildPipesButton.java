@@ -22,7 +22,7 @@ public class BuildPipesButton extends BaseButton {
     private final LocalPlayer player;
 
     public BuildPipesButton(LocalPlayer player) {
-        super(Component.translatable("item.pipe_connector.gui.button.PlacePipes"), 20, 95);
+        super(Component.translatable("item.pipe_connector.gui.button.PlacePipes"), 20, 96);
         this.player = player;
     }
 

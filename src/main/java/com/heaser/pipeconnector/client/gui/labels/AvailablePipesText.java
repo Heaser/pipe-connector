@@ -18,6 +18,6 @@ public class AvailablePipesText implements ILabelable {
         }
         PipeCostCalculator.PipeCost cost = PipeCostCalculator.get(player);
         String available = cost.creative() ? "∞" : String.valueOf(cost.available());
-        return Component.translatable("item.pipe_connector.gui.label.availablePipes", available);
+        return Component.translatable("item.pipe_connector.gui.label.available", available);
     }
 }
