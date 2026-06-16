@@ -29,6 +29,22 @@
       "required": false
     },
     {
+      "id": "sfm:tough_cable",
+      "required": false
+    },
+    {
+      "id": "sfm:tough_fancy_cable",
+      "required": false
+    },
+    {
+      "id": "sfm:tunnelled_cable",
+      "required": false
+    },
+    {
+      "id": "sfm:tunnelled_fancy_cable",
+      "required": false
+    },
+    {
       "id": "mekanism:basic_universal_cable",
       "required": false
     },
