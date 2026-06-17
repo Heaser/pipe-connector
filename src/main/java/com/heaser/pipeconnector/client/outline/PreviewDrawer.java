@@ -310,7 +310,7 @@ public class PreviewDrawer {
                                double x1, double y1, double z1,
                                float[] rgba) {
         float r = rgba[0], g = rgba[1], b = rgba[2], a = rgba[3];
-        VertexConsumer vc = buffer.getBuffer(PipeConnectorRenderType.QUADS_NO_DEPTH_TEST);
+        VertexConsumer vc = buffer.getBuffer(PipeConnectorRenderType.QUADS_TEXTURED_NO_DEPTH);
         org.joml.Matrix4f mat = pose.last().pose();
 
         float X0 = (float)Math.min(x0, x1);
@@ -321,35 +321,35 @@ public class PreviewDrawer {
         float Z1 = (float)Math.max(z0, z1);
 
         // -X
-        v(vc, mat, X0, Y0, Z0, r,g,b,a);
-        v(vc, mat, X0, Y1, Z0, r,g,b,a);
-        v(vc, mat, X0, Y1, Z1, r,g,b,a);
-        v(vc, mat, X0, Y0, Z1, r,g,b,a);
+        PipeConnectorRenderType.filledVertex(vc, mat, X0, Y0, Z0, r,g,b,a);
+        PipeConnectorRenderType.filledVertex(vc, mat, X0, Y1, Z0, r,g,b,a);
+        PipeConnectorRenderType.filledVertex(vc, mat, X0, Y1, Z1, r,g,b,a);
+        PipeConnectorRenderType.filledVertex(vc, mat, X0, Y0, Z1, r,g,b,a);
         // +X
-        v(vc, mat, X1, Y0, Z1, r,g,b,a);
-        v(vc, mat, X1, Y1, Z1, r,g,b,a);
-        v(vc, mat, X1, Y1, Z0, r,g,b,a);
-        v(vc, mat, X1, Y0, Z0, r,g,b,a);
+        PipeConnectorRenderType.filledVertex(vc, mat, X1, Y0, Z1, r,g,b,a);
+        PipeConnectorRenderType.filledVertex(vc, mat, X1, Y1, Z1, r,g,b,a);
+        PipeConnectorRenderType.filledVertex(vc, mat, X1, Y1, Z0, r,g,b,a);
+        PipeConnectorRenderType.filledVertex(vc, mat, X1, Y0, Z0, r,g,b,a);
         // -Y
-        v(vc, mat, X0, Y0, Z1, r,g,b,a);
-        v(vc, mat, X1, Y0, Z1, r,g,b,a);
-        v(vc, mat, X1, Y0, Z0, r,g,b,a);
-        v(vc, mat, X0, Y0, Z0, r,g,b,a);
+        PipeConnectorRenderType.filledVertex(vc, mat, X0, Y0, Z1, r,g,b,a);
+        PipeConnectorRenderType.filledVertex(vc, mat, X1, Y0, Z1, r,g,b,a);
+        PipeConnectorRenderType.filledVertex(vc, mat, X1, Y0, Z0, r,g,b,a);
+        PipeConnectorRenderType.filledVertex(vc, mat, X0, Y0, Z0, r,g,b,a);
         // +Y
-        v(vc, mat, X0, Y1, Z0, r,g,b,a);
-        v(vc, mat, X1, Y1, Z0, r,g,b,a);
-        v(vc, mat, X1, Y1, Z1, r,g,b,a);
-        v(vc, mat, X0, Y1, Z1, r,g,b,a);
+        PipeConnectorRenderType.filledVertex(vc, mat, X0, Y1, Z0, r,g,b,a);
+        PipeConnectorRenderType.filledVertex(vc, mat, X1, Y1, Z0, r,g,b,a);
+        PipeConnectorRenderType.filledVertex(vc, mat, X1, Y1, Z1, r,g,b,a);
+        PipeConnectorRenderType.filledVertex(vc, mat, X0, Y1, Z1, r,g,b,a);
         // -Z
-        v(vc, mat, X1, Y0, Z0, r,g,b,a);
-        v(vc, mat, X1, Y1, Z0, r,g,b,a);
-        v(vc, mat, X0, Y1, Z0, r,g,b,a);
-        v(vc, mat, X0, Y0, Z0, r,g,b,a);
+        PipeConnectorRenderType.filledVertex(vc, mat, X1, Y0, Z0, r,g,b,a);
+        PipeConnectorRenderType.filledVertex(vc, mat, X1, Y1, Z0, r,g,b,a);
+        PipeConnectorRenderType.filledVertex(vc, mat, X0, Y1, Z0, r,g,b,a);
+        PipeConnectorRenderType.filledVertex(vc, mat, X0, Y0, Z0, r,g,b,a);
         // +Z
-        v(vc, mat, X0, Y0, Z1, r,g,b,a);
-        v(vc, mat, X0, Y1, Z1, r,g,b,a);
-        v(vc, mat, X1, Y1, Z1, r,g,b,a);
-        v(vc, mat, X1, Y0, Z1, r,g,b,a);
+        PipeConnectorRenderType.filledVertex(vc, mat, X0, Y0, Z1, r,g,b,a);
+        PipeConnectorRenderType.filledVertex(vc, mat, X0, Y1, Z1, r,g,b,a);
+        PipeConnectorRenderType.filledVertex(vc, mat, X1, Y1, Z1, r,g,b,a);
+        PipeConnectorRenderType.filledVertex(vc, mat, X1, Y0, Z1, r,g,b,a);
 
     }
 
@@ -358,7 +358,7 @@ public class PreviewDrawer {
                                 double x1, double y1, double z1,
                                 float[] rgba) {
         org.joml.Matrix4f mat = pose.last().pose();
-        VertexConsumer vc = buffer.getBuffer(PipeConnectorRenderType.QUADS_NO_DEPTH_TEST);
+        VertexConsumer vc = buffer.getBuffer(PipeConnectorRenderType.QUADS_TEXTURED_NO_DEPTH);
 
         float X0 = (float)Math.min(x0, x1);
         float Y0 = (float)Math.min(y0, y1);
@@ -385,35 +385,35 @@ public class PreviewDrawer {
         float r = rgba[0], g = rgba[1], b = rgba[2], a = rgba[3];
 
         // -X
-        v(vc, mat, X0, Y0, Z0, r*m[0],g*m[0],b*m[0],a);
-        v(vc, mat, X0, Y1, Z0, r*m[0],g*m[0],b*m[0],a);
-        v(vc, mat, X0, Y1, Z1, r*m[0],g*m[0],b*m[0],a);
-        v(vc, mat, X0, Y0, Z1, r*m[0],g*m[0],b*m[0],a);
+        PipeConnectorRenderType.filledVertex(vc, mat, X0, Y0, Z0, r*m[0],g*m[0],b*m[0],a);
+        PipeConnectorRenderType.filledVertex(vc, mat, X0, Y1, Z0, r*m[0],g*m[0],b*m[0],a);
+        PipeConnectorRenderType.filledVertex(vc, mat, X0, Y1, Z1, r*m[0],g*m[0],b*m[0],a);
+        PipeConnectorRenderType.filledVertex(vc, mat, X0, Y0, Z1, r*m[0],g*m[0],b*m[0],a);
         // +X
-        v(vc, mat, X1, Y0, Z1, r*m[1],g*m[1],b*m[1],a);
-        v(vc, mat, X1, Y1, Z1, r*m[1],g*m[1],b*m[1],a);
-        v(vc, mat, X1, Y1, Z0, r*m[1],g*m[1],b*m[1],a);
-        v(vc, mat, X1, Y0, Z0, r*m[1],g*m[1],b*m[1],a);
+        PipeConnectorRenderType.filledVertex(vc, mat, X1, Y0, Z1, r*m[1],g*m[1],b*m[1],a);
+        PipeConnectorRenderType.filledVertex(vc, mat, X1, Y1, Z1, r*m[1],g*m[1],b*m[1],a);
+        PipeConnectorRenderType.filledVertex(vc, mat, X1, Y1, Z0, r*m[1],g*m[1],b*m[1],a);
+        PipeConnectorRenderType.filledVertex(vc, mat, X1, Y0, Z0, r*m[1],g*m[1],b*m[1],a);
         // -Y
-        v(vc, mat, X0, Y0, Z1, r*m[2],g*m[2],b*m[2],a);
-        v(vc, mat, X1, Y0, Z1, r*m[2],g*m[2],b*m[2],a);
-        v(vc, mat, X1, Y0, Z0, r*m[2],g*m[2],b*m[2],a);
-        v(vc, mat, X0, Y0, Z0, r*m[2],g*m[2],b*m[2],a);
+        PipeConnectorRenderType.filledVertex(vc, mat, X0, Y0, Z1, r*m[2],g*m[2],b*m[2],a);
+        PipeConnectorRenderType.filledVertex(vc, mat, X1, Y0, Z1, r*m[2],g*m[2],b*m[2],a);
+        PipeConnectorRenderType.filledVertex(vc, mat, X1, Y0, Z0, r*m[2],g*m[2],b*m[2],a);
+        PipeConnectorRenderType.filledVertex(vc, mat, X0, Y0, Z0, r*m[2],g*m[2],b*m[2],a);
         // +Y (top) — a bit brighter
-        v(vc, mat, X0, Y1, Z0, r*m[3],g*m[3],b*m[3],a);
-        v(vc, mat, X1, Y1, Z0, r*m[3],g*m[3],b*m[3],a);
-        v(vc, mat, X1, Y1, Z1, r*m[3],g*m[3],b*m[3],a);
-        v(vc, mat, X0, Y1, Z1, r*m[3],g*m[3],b*m[3],a);
+        PipeConnectorRenderType.filledVertex(vc, mat, X0, Y1, Z0, r*m[3],g*m[3],b*m[3],a);
+        PipeConnectorRenderType.filledVertex(vc, mat, X1, Y1, Z0, r*m[3],g*m[3],b*m[3],a);
+        PipeConnectorRenderType.filledVertex(vc, mat, X1, Y1, Z1, r*m[3],g*m[3],b*m[3],a);
+        PipeConnectorRenderType.filledVertex(vc, mat, X0, Y1, Z1, r*m[3],g*m[3],b*m[3],a);
         // -Z
-        v(vc, mat, X1, Y0, Z0, r*m[4],g*m[4],b*m[4],a);
-        v(vc, mat, X1, Y1, Z0, r*m[4],g*m[4],b*m[4],a);
-        v(vc, mat, X0, Y1, Z0, r*m[4],g*m[4],b*m[4],a);
-        v(vc, mat, X0, Y0, Z0, r*m[4],g*m[4],b*m[4],a);
+        PipeConnectorRenderType.filledVertex(vc, mat, X1, Y0, Z0, r*m[4],g*m[4],b*m[4],a);
+        PipeConnectorRenderType.filledVertex(vc, mat, X1, Y1, Z0, r*m[4],g*m[4],b*m[4],a);
+        PipeConnectorRenderType.filledVertex(vc, mat, X0, Y1, Z0, r*m[4],g*m[4],b*m[4],a);
+        PipeConnectorRenderType.filledVertex(vc, mat, X0, Y0, Z0, r*m[4],g*m[4],b*m[4],a);
         // +Z
-        v(vc, mat, X0, Y0, Z1, r*m[5],g*m[5],b*m[5],a);
-        v(vc, mat, X0, Y1, Z1, r*m[5],g*m[5],b*m[5],a);
-        v(vc, mat, X1, Y1, Z1, r*m[5],g*m[5],b*m[5],a);
-        v(vc, mat, X1, Y0, Z1, r*m[5],g*m[5],b*m[5],a);
+        PipeConnectorRenderType.filledVertex(vc, mat, X0, Y0, Z1, r*m[5],g*m[5],b*m[5],a);
+        PipeConnectorRenderType.filledVertex(vc, mat, X0, Y1, Z1, r*m[5],g*m[5],b*m[5],a);
+        PipeConnectorRenderType.filledVertex(vc, mat, X1, Y1, Z1, r*m[5],g*m[5],b*m[5],a);
+        PipeConnectorRenderType.filledVertex(vc, mat, X1, Y0, Z1, r*m[5],g*m[5],b*m[5],a);
 
         // Small top highlight inset to enhance 3D read
         float inset = 0.12f;
@@ -424,10 +424,10 @@ public class PreviewDrawer {
         float hz1 = Z1 - inset;
         float hr = Math.min(1.0f, r * 1.2f), hg = Math.min(1.0f, g * 1.2f), hb = Math.min(1.0f, b * 1.2f);
         float ha = Math.min(1.0f, a * 0.8f);
-        v(vc, mat, hx0, Y1 + eps, hz0, hr, hg, hb, ha);
-        v(vc, mat, hx1, Y1 + eps, hz0, hr, hg, hb, ha);
-        v(vc, mat, hx1, Y1 + eps, hz1, hr, hg, hb, ha);
-        v(vc, mat, hx0, Y1 + eps, hz1, hr, hg, hb, ha);
+        PipeConnectorRenderType.filledVertex(vc, mat, hx0, Y1 + eps, hz0, hr, hg, hb, ha);
+        PipeConnectorRenderType.filledVertex(vc, mat, hx1, Y1 + eps, hz0, hr, hg, hb, ha);
+        PipeConnectorRenderType.filledVertex(vc, mat, hx1, Y1 + eps, hz1, hr, hg, hb, ha);
+        PipeConnectorRenderType.filledVertex(vc, mat, hx0, Y1 + eps, hz1, hr, hg, hb, ha);
 
         VertexConsumer lineVC = buffer.getBuffer(PipeConnectorRenderType.THIN_LINES_NO_DEPTH_TEST);
         double epsOutline = 0.0015;
@@ -479,17 +479,6 @@ public class PreviewDrawer {
         int color = (ai << 24) | (ri << 16) | (gi << 8) | bi;
         vc.addVertex(pose, x0, y0, z0).setColor(color).setNormal(pose, nx, ny, nz).setLineWidth(width);
         vc.addVertex(pose, x1, y1, z1).setColor(color).setNormal(pose, nx, ny, nz).setLineWidth(width);
-    }
-
-    private void v(VertexConsumer vc, org.joml.Matrix4f mat,
-                   float x, float y, float z,
-                   float r, float g, float b, float a) {
-        int ri = Math.min(255, Math.max(0, (int)(r * 255f)));
-        int gi = Math.min(255, Math.max(0, (int)(g * 255f)));
-        int bi = Math.min(255, Math.max(0, (int)(b * 255f)));
-        int ai = Math.min(255, Math.max(0, (int)(a * 255f)));
-        int color = (ai << 24) | (ri << 16) | (gi << 8) | bi;
-        vc.addVertex(mat, x, y, z).setColor(color);
     }
 
     private float[] argbToRgba(int argb) {

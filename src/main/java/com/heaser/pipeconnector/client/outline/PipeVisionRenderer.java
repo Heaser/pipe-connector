@@ -144,7 +144,7 @@ public class PipeVisionRenderer {
 
     private void render(PoseStack pose, MultiBufferSource buffer, Player player) {
         Vec3 cameraPos = Minecraft.getInstance().gameRenderer.getMainCamera().position();
-        VertexConsumer vc = buffer.getBuffer(PipeConnectorRenderType.QUADS_NO_DEPTH_TEST);
+        VertexConsumer vc = buffer.getBuffer(PipeConnectorRenderType.QUADS_TEXTURED_NO_DEPTH);
 
         for (Map.Entry<BlockPos, PipeRenderInfo> entry : cachedPipes.entrySet()) {
             BlockPos pos = entry.getKey();
@@ -209,35 +209,35 @@ public class PipeVisionRenderer {
         int color = (ai << 24) | (ri << 16) | (gi << 8) | bi;
 
         // -X
-        vc.addVertex(mat, X0, Y0, Z0).setColor(color);
-        vc.addVertex(mat, X0, Y1, Z0).setColor(color);
-        vc.addVertex(mat, X0, Y1, Z1).setColor(color);
-        vc.addVertex(mat, X0, Y0, Z1).setColor(color);
+        PipeConnectorRenderType.filledVertex(vc, mat, X0, Y0, Z0, color);
+        PipeConnectorRenderType.filledVertex(vc, mat, X0, Y1, Z0, color);
+        PipeConnectorRenderType.filledVertex(vc, mat, X0, Y1, Z1, color);
+        PipeConnectorRenderType.filledVertex(vc, mat, X0, Y0, Z1, color);
         // +X
-        vc.addVertex(mat, X1, Y0, Z1).setColor(color);
-        vc.addVertex(mat, X1, Y1, Z1).setColor(color);
-        vc.addVertex(mat, X1, Y1, Z0).setColor(color);
-        vc.addVertex(mat, X1, Y0, Z0).setColor(color);
+        PipeConnectorRenderType.filledVertex(vc, mat, X1, Y0, Z1, color);
+        PipeConnectorRenderType.filledVertex(vc, mat, X1, Y1, Z1, color);
+        PipeConnectorRenderType.filledVertex(vc, mat, X1, Y1, Z0, color);
+        PipeConnectorRenderType.filledVertex(vc, mat, X1, Y0, Z0, color);
         // -Y
-        vc.addVertex(mat, X0, Y0, Z1).setColor(color);
-        vc.addVertex(mat, X1, Y0, Z1).setColor(color);
-        vc.addVertex(mat, X1, Y0, Z0).setColor(color);
-        vc.addVertex(mat, X0, Y0, Z0).setColor(color);
+        PipeConnectorRenderType.filledVertex(vc, mat, X0, Y0, Z1, color);
+        PipeConnectorRenderType.filledVertex(vc, mat, X1, Y0, Z1, color);
+        PipeConnectorRenderType.filledVertex(vc, mat, X1, Y0, Z0, color);
+        PipeConnectorRenderType.filledVertex(vc, mat, X0, Y0, Z0, color);
         // +Y
-        vc.addVertex(mat, X0, Y1, Z0).setColor(color);
-        vc.addVertex(mat, X1, Y1, Z0).setColor(color);
-        vc.addVertex(mat, X1, Y1, Z1).setColor(color);
-        vc.addVertex(mat, X0, Y1, Z1).setColor(color);
+        PipeConnectorRenderType.filledVertex(vc, mat, X0, Y1, Z0, color);
+        PipeConnectorRenderType.filledVertex(vc, mat, X1, Y1, Z0, color);
+        PipeConnectorRenderType.filledVertex(vc, mat, X1, Y1, Z1, color);
+        PipeConnectorRenderType.filledVertex(vc, mat, X0, Y1, Z1, color);
         // -Z
-        vc.addVertex(mat, X1, Y0, Z0).setColor(color);
-        vc.addVertex(mat, X1, Y1, Z0).setColor(color);
-        vc.addVertex(mat, X0, Y1, Z0).setColor(color);
-        vc.addVertex(mat, X0, Y0, Z0).setColor(color);
+        PipeConnectorRenderType.filledVertex(vc, mat, X1, Y0, Z0, color);
+        PipeConnectorRenderType.filledVertex(vc, mat, X1, Y1, Z0, color);
+        PipeConnectorRenderType.filledVertex(vc, mat, X0, Y1, Z0, color);
+        PipeConnectorRenderType.filledVertex(vc, mat, X0, Y0, Z0, color);
         // +Z
-        vc.addVertex(mat, X0, Y0, Z1).setColor(color);
-        vc.addVertex(mat, X0, Y1, Z1).setColor(color);
-        vc.addVertex(mat, X1, Y1, Z1).setColor(color);
-        vc.addVertex(mat, X1, Y0, Z1).setColor(color);
+        PipeConnectorRenderType.filledVertex(vc, mat, X0, Y0, Z1, color);
+        PipeConnectorRenderType.filledVertex(vc, mat, X0, Y1, Z1, color);
+        PipeConnectorRenderType.filledVertex(vc, mat, X1, Y1, Z1, color);
+        PipeConnectorRenderType.filledVertex(vc, mat, X1, Y0, Z1, color);
     }
 
     private static class PipeRenderInfo {

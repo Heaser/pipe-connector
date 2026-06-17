@@ -1,6 +1,7 @@
 package com.heaser.pipeconnector.client;
 
 import com.heaser.pipeconnector.PipeConnector;
+import com.heaser.pipeconnector.compatibility.iris.IrisCompatibility;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
@@ -18,6 +19,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 public class ClientEvents {
     @SubscribeEvent(priority = EventPriority.LOW)
     public static void onRenderWorld(RenderLevelStageEvent.AfterWeather event) {
+        IrisCompatibility.registerShaderPipelines();
         PoseStack stack = event.getPoseStack();
         MultiBufferSource.BufferSource buffer = Minecraft.getInstance().renderBuffers().bufferSource();
         Camera camera = Minecraft.getInstance().gameRenderer.getMainCamera();

@@ -156,6 +156,10 @@ dependencies {
 //    implementation ("curse.maven:guideme-1173950:7127444")
 
 
+    // Sodium & Iris Shaders
+//    implementation "curse.maven:sodium-394468:8111040"
+//    implementation "curse.maven:irisshaders-455508:7867946"
+
     // Required
     compileOnly("curse.maven:jei-238222:8014757")
     // implementation ("curse.maven:guideme-1173950:7929350")

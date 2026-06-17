@@ -140,7 +140,7 @@ public class BuildAnimationRenderer {
                                double x1, double y1, double z1,
                                float alpha) {
         float r = GLOW_R, g = GLOW_G, b = GLOW_B, a = alpha;
-        VertexConsumer vc = buffer.getBuffer(PipeConnectorRenderType.QUADS_NO_DEPTH_TEST);
+        VertexConsumer vc = buffer.getBuffer(PipeConnectorRenderType.QUADS_TEXTURED_NO_DEPTH);
         Matrix4f mat = pose.last().pose();
 
         float X0 = (float) Math.min(x0, x1);
@@ -151,32 +151,22 @@ public class BuildAnimationRenderer {
         float Z1 = (float) Math.max(z0, z1);
 
         // -X
-        v(vc, mat, X0, Y0, Z0, r, g, b, a); v(vc, mat, X0, Y1, Z0, r, g, b, a);
-        v(vc, mat, X0, Y1, Z1, r, g, b, a); v(vc, mat, X0, Y0, Z1, r, g, b, a);
+        PipeConnectorRenderType.filledVertex(vc, mat, X0, Y0, Z0, r, g, b, a); PipeConnectorRenderType.filledVertex(vc, mat, X0, Y1, Z0, r, g, b, a);
+        PipeConnectorRenderType.filledVertex(vc, mat, X0, Y1, Z1, r, g, b, a); PipeConnectorRenderType.filledVertex(vc, mat, X0, Y0, Z1, r, g, b, a);
         // +X
-        v(vc, mat, X1, Y0, Z1, r, g, b, a); v(vc, mat, X1, Y1, Z1, r, g, b, a);
-        v(vc, mat, X1, Y1, Z0, r, g, b, a); v(vc, mat, X1, Y0, Z0, r, g, b, a);
+        PipeConnectorRenderType.filledVertex(vc, mat, X1, Y0, Z1, r, g, b, a); PipeConnectorRenderType.filledVertex(vc, mat, X1, Y1, Z1, r, g, b, a);
+        PipeConnectorRenderType.filledVertex(vc, mat, X1, Y1, Z0, r, g, b, a); PipeConnectorRenderType.filledVertex(vc, mat, X1, Y0, Z0, r, g, b, a);
         // -Y
-        v(vc, mat, X0, Y0, Z1, r, g, b, a); v(vc, mat, X1, Y0, Z1, r, g, b, a);
-        v(vc, mat, X1, Y0, Z0, r, g, b, a); v(vc, mat, X0, Y0, Z0, r, g, b, a);
+        PipeConnectorRenderType.filledVertex(vc, mat, X0, Y0, Z1, r, g, b, a); PipeConnectorRenderType.filledVertex(vc, mat, X1, Y0, Z1, r, g, b, a);
+        PipeConnectorRenderType.filledVertex(vc, mat, X1, Y0, Z0, r, g, b, a); PipeConnectorRenderType.filledVertex(vc, mat, X0, Y0, Z0, r, g, b, a);
         // +Y
-        v(vc, mat, X0, Y1, Z0, r, g, b, a); v(vc, mat, X1, Y1, Z0, r, g, b, a);
-        v(vc, mat, X1, Y1, Z1, r, g, b, a); v(vc, mat, X0, Y1, Z1, r, g, b, a);
+        PipeConnectorRenderType.filledVertex(vc, mat, X0, Y1, Z0, r, g, b, a); PipeConnectorRenderType.filledVertex(vc, mat, X1, Y1, Z0, r, g, b, a);
+        PipeConnectorRenderType.filledVertex(vc, mat, X1, Y1, Z1, r, g, b, a); PipeConnectorRenderType.filledVertex(vc, mat, X0, Y1, Z1, r, g, b, a);
         // -Z
-        v(vc, mat, X1, Y0, Z0, r, g, b, a); v(vc, mat, X1, Y1, Z0, r, g, b, a);
-        v(vc, mat, X0, Y1, Z0, r, g, b, a); v(vc, mat, X0, Y0, Z0, r, g, b, a);
+        PipeConnectorRenderType.filledVertex(vc, mat, X1, Y0, Z0, r, g, b, a); PipeConnectorRenderType.filledVertex(vc, mat, X1, Y1, Z0, r, g, b, a);
+        PipeConnectorRenderType.filledVertex(vc, mat, X0, Y1, Z0, r, g, b, a); PipeConnectorRenderType.filledVertex(vc, mat, X0, Y0, Z0, r, g, b, a);
         // +Z
-        v(vc, mat, X0, Y0, Z1, r, g, b, a); v(vc, mat, X0, Y1, Z1, r, g, b, a);
-        v(vc, mat, X1, Y1, Z1, r, g, b, a); v(vc, mat, X1, Y0, Z1, r, g, b, a);
-    }
-
-    private void v(VertexConsumer vc, Matrix4f mat, float x, float y, float z,
-                   float r, float g, float b, float a) {
-        int ri = Math.min(255, Math.max(0, (int) (r * 255f)));
-        int gi = Math.min(255, Math.max(0, (int) (g * 255f)));
-        int bi = Math.min(255, Math.max(0, (int) (b * 255f)));
-        int ai = Math.min(255, Math.max(0, (int) (a * 255f)));
-        int color = (ai << 24) | (ri << 16) | (gi << 8) | bi;
-        vc.addVertex(mat, x, y, z).setColor(color);
+        PipeConnectorRenderType.filledVertex(vc, mat, X0, Y0, Z1, r, g, b, a); PipeConnectorRenderType.filledVertex(vc, mat, X0, Y1, Z1, r, g, b, a);
+        PipeConnectorRenderType.filledVertex(vc, mat, X1, Y1, Z1, r, g, b, a); PipeConnectorRenderType.filledVertex(vc, mat, X1, Y0, Z1, r, g, b, a);
     }
 }
