@@ -350,14 +350,12 @@ public class PipeConnectorUtils {
     // Check how many items that were in the players offhand are also available in the players inventory
     public static int getNumberOfPipesInInventory(Player player) {
         ItemStack offhandStack = player.getOffhandItem();
-        Item offhandPipe = offhandStack.getItem();
         int numberOfPipes;
         numberOfPipes = player.getOffhandItem().getCount();
         Inventory inventory = player.getInventory();
 
         for (ItemStack itemStack : inventory.getNonEquipmentItems()) {
-            Item inventoryItem = itemStack.getItem();
-            if (inventoryItem == offhandPipe && offhandPipe.getDescriptionId().equals(inventoryItem.getDescriptionId())) {
+            if (isExactlySamePipeItem(offhandStack, itemStack)) {
                 numberOfPipes += itemStack.getCount();
             }
         }
@@ -400,9 +398,8 @@ public class PipeConnectorUtils {
     // -----------------------------------------------------------------------------------------------------------------
 
     private static boolean isExactlySamePipeItem(ItemStack ItemToTestStack, ItemStack inventoryItemStack) {
-        boolean isSameItem = ItemToTestStack.getItem() == inventoryItemStack.getItem();
-        boolean doesHaveSameName = ItemToTestStack.getItem().getDescriptionId().equals(inventoryItemStack.getItem().getDescriptionId());
-        return isSameItem && doesHaveSameName;
+        // Ender IO conduits all share one Item and differ only by data component
+        return ItemStack.isSameItemSameComponents(ItemToTestStack, inventoryItemStack);
     }
     // -----------------------------------------------------------------------------------------------------------------
 

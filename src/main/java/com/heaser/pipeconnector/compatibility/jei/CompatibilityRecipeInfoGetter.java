@@ -1,5 +1,5 @@
 package com.heaser.pipeconnector.compatibility.jei;
-//import com.heaser.pipeconnector.compatibility.enderio.EnderIoCompatibility;
+import com.heaser.pipeconnector.compatibility.enderio.EnderIoCompatibility;
 import com.heaser.pipeconnector.compatibility.interfaces.IRecipeInfoGetter;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -14,9 +14,9 @@ public class CompatibilityRecipeInfoGetter {
     private static final HashMap<Class<? extends Item>, IRecipeInfoGetter> classToGetterMap = new HashMap<>();
 
     private CompatibilityRecipeInfoGetter() {
-//        if (isModLoaded("enderio_conduits")) {
-//            classToGetterMap.put(EnderIoCompatibility.getItemToRegister(), new EnderIoCompatibility());
-//        }
+        if (isModLoaded("enderio") && EnderIoCompatibility.isAvailable()) {
+            classToGetterMap.put(EnderIoCompatibility.getItemToRegister(), new EnderIoCompatibility());
+        }
     }
 
     public static CompatibilityRecipeInfoGetter getInstance() {

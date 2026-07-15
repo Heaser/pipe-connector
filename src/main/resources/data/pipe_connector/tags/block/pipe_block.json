@@ -2677,6 +2677,10 @@
       "required": false
     },
     {
+      "id": "enderio:conduit",
+      "required": false
+    },
+    {
       "id": "mekanism_extras:absolute_universal_cable",
       "required": false
     },

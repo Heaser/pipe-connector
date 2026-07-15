@@ -110,12 +110,20 @@ configurations {
 }
 
 dependencies {
-//
+
+
+//    For tests:
+//    implementation ("curse.maven:ender-io-64578:8192909"
+
 //    implementation "curse.maven:toms-storage-378609:6418144"
-//      implementation "curse.maven:pipez-443900:8053422"
+//    implementation "curse.maven:pipez-443900:8053422"
 //    implementation "curse.maven:modern-dynamics-552758:5465437"
 //    implementation "curse.maven:mekanism-268560:6327955"
 //    implementation "curse.maven:mekanism-extras-1026040:6381324"
+//
+//    ----------------------------------------------------------------------
+//
+
 //
 //    // Loves mixins
 //    implementation "curse.maven:ender-io-64578:5981524"
@@ -128,22 +136,22 @@ dependencies {
 
 
 //
-//   implementation "curse.maven:powah-rearchitected-633483:5735677"
-//   implementation "curse.maven:cloth-config-348521:5729127"
+//    implementation "curse.maven:powah-rearchitected-633483:5735677"
+//    implementation "curse.maven:cloth-config-348521:5729127"
 //    implementation "curse.maven:super-factory-manager-306935:8228239"
 
 //    implementation "curse.maven:probejs-585406:5820894"
 //    implementation "curse.maven:kubejs-238086:5810100"
 //    implementation "curse.maven:rhino-416294:5691686"
 
-//      implementation "curse.maven:classic-pipes-1351745:8054946"
+//     implementation "curse.maven:classic-pipes-1351745:8054946"
 
-//    Replication Mod
-//    implementation "curse.maven:replication-638351:7331983"
-//    implementation "curse.maven:titanium-287342:6875285"
+//     Replication Mod
+//     implementation "curse.maven:replication-638351:7331983"
+//     implementation "curse.maven:titanium-287342:6875285"
 
 //   Refined Storage
-//    implementation "curse.maven:refined-storage-243076:8086589"
+//   implementation "curse.maven:refined-storage-243076:8086589"
 
 //    Oritech stuff
 //    implementation "curse.maven:oritech-1030830:6548040"
@@ -176,8 +184,6 @@ dependencies {
 
 
 
-
-//    compileOnly("com.enderio:enderio-conduits:8.0.4-alpha")  TODO: Fix after ender io finishes their conduit API updates
 
 
 

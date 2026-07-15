@@ -1,6 +1,7 @@
 package com.heaser.pipeconnector;
 
 import com.heaser.pipeconnector.client.ClientEvents;
+import com.heaser.pipeconnector.compatibility.enderio.EnderIoCompatibility;
 import com.heaser.pipeconnector.config.PipeConnectorConfig;
 import com.heaser.pipeconnector.items.ModItems;
 import com.heaser.pipeconnector.network.NetworkHandler;
@@ -31,6 +32,8 @@ public class PipeConnector {
 
     private void commonSetup(final FMLCommonSetupEvent event) {
 //        NeoForge.EVENT_BUS.register(new ModItems());
+        // Resolve now so an API mismatch shows up at startup instead of on first use
+        event.enqueueWork(EnderIoCompatibility::isAvailable);
     }
 
     private void clientSetup(final FMLClientSetupEvent event) {

@@ -7,7 +7,7 @@ import com.heaser.pipeconnector.compatibility.ae2.AE2Compatiblity;
 // import com.heaser.pipeconnector.compatibility.prettypipes.PrettyPipesCompatibility;
 // import com.heaser.pipeconnector.compatibility.prettypipes.PrettyPipesFluidsCompatibility;
 // import com.heaser.pipeconnector.compatibility.xnet.XNetCompatibility;
-// import com.heaser.pipeconnector.compatibility.enderio.EnderIoCompatibility;
+import com.heaser.pipeconnector.compatibility.enderio.EnderIoCompatibility;
 import com.heaser.pipeconnector.compatibility.interfaces.IPlacer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -38,6 +38,9 @@ public class CompatibilityPlacer {
         if (isModLoaded("ae2")) {
             itemClassToPlacerMap.put(AE2Compatiblity.getItemStackClassToRegister(), new AE2Compatiblity());
         }
+        if (isModLoaded("enderio") && EnderIoCompatibility.isAvailable()) {
+            blockClassToPlacerMap.put(EnderIoCompatibility.getBlockToRegister(), new EnderIoCompatibility());
+        }
         // Disabled registrations (mod not on this MC version):
         // if (isModLoaded("prettypipes")) {
         //     blockClassToPlacerMap.put(PrettyPipesCompatibility.getBlockToRegister(), new PrettyPipesCompatibility());
@@ -50,9 +53,6 @@ public class CompatibilityPlacer {
         // }
         // if (isModLoaded("xnet")) {
         //     blockClassToPlacerMap.put(XNetCompatibility.getBlockToRegister(), new XNetCompatibility());
-        // }
-        // if (isModLoaded("enderio_conduits")) {
-        //     blockClassToPlacerMap.put(EnderIoCompatibility.getBlockToRegister(), new EnderIoCompatibility());
         // }
         // if (isModLoaded("modern_industrialization")) {
         //     itemClassToPlacerMap.put(MICompatibility.getItemToRegister(), new MICompatibility());

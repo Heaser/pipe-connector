@@ -1,6 +1,7 @@
 package com.heaser.pipeconnector.compatibility;
 
 import com.heaser.pipeconnector.compatibility.ae2.AE2Compatiblity;
+import com.heaser.pipeconnector.compatibility.enderio.EnderIoCompatibility;
 // Disabled (mod not on this MC version):
 // import com.heaser.pipeconnector.compatibility.mi.MICompatibility;
 import com.heaser.pipeconnector.compatibility.interfaces.IColorProvider;
@@ -26,9 +27,9 @@ public class CompatibilityBlockEqualsChecker {
         if (isModLoaded("ae2")) {
             classToCheckerMap.put(AE2Compatiblity.getBlockToRegister(), new AE2Compatiblity());
         }
-        // if (isModLoaded("enderio_conduits")) {
-        //     classToCheckerMap.put(EnderIoCompatibility.getBlockToRegister(), new EnderIoCompatibility());
-        // }
+        if (isModLoaded("enderio") && EnderIoCompatibility.isAvailable()) {
+            classToCheckerMap.put(EnderIoCompatibility.getBlockToRegister(), new EnderIoCompatibility());
+        }
         // if (isModLoaded("modern_industrialization")) {
         //     classToCheckerMap.put(MICompatibility.getBlockToRegister(), new MICompatibility());
         // }
