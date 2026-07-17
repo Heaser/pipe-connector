@@ -2,8 +2,10 @@ package com.heaser.pipeconnector.compatibility.enderio;
 
 import com.heaser.pipeconnector.PipeConnector;
 import com.heaser.pipeconnector.compatibility.interfaces.IBlockEqualsChecker;
+import com.heaser.pipeconnector.compatibility.interfaces.IMultiPipeColorProvider;
 import com.heaser.pipeconnector.compatibility.interfaces.IPlacer;
 import com.heaser.pipeconnector.compatibility.interfaces.IRecipeInfoGetter;
+import com.heaser.pipeconnector.compatibility.interfaces.PipeRenderEntry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -28,7 +30,7 @@ import java.util.List;
 
 import static com.heaser.pipeconnector.utils.GeneralUtils.isVoidableBlock;
 
-public class EnderIoCompatibility implements IPlacer, IBlockEqualsChecker, IRecipeInfoGetter {
+public class EnderIoCompatibility implements IPlacer, IBlockEqualsChecker, IRecipeInfoGetter, IMultiPipeColorProvider {
     // Reflections this time
     private record ConduitApiHandles(Class<? extends Block> bundleBlockClass,
                                      Class<? extends Item> conduitItemClass,
@@ -40,7 +42,8 @@ public class EnderIoCompatibility implements IPlacer, IBlockEqualsChecker, IReci
                                      Method canAddConduit,
                                      Method addConduit,
                                      Method addResultHasChanged,
-                                     Method getConduitItem) {
+                                     Method getConduitItem,
+                                     Method getConduits) {
     }
 
     private static ConduitApiHandles api;
@@ -86,17 +89,19 @@ public class EnderIoCompatibility implements IPlacer, IBlockEqualsChecker, IReci
             Method addConduit = bundleInterface.getMethod("addConduit", Holder.class, Direction.class, Player.class);
             Method addResultHasChanged = addResultClass.getMethod("hasChanged");
             Method getConduitItem = conduitApiClass.getMethod("getConduitItem", Holder.class);
+            Method getConduits = bundleInterface.getMethod("getConduits");
 
             if (conduitComponent == null || conduitRegistryKey == null || conduitApiInstance == null
                     || hasCompatibleConduit.getReturnType() != boolean.class
                     || canAddConduit.getReturnType() != boolean.class
                     || addResultHasChanged.getReturnType() != boolean.class
-                    || getConduitItem.getReturnType() != ItemStack.class) {
+                    || getConduitItem.getReturnType() != ItemStack.class
+                    || getConduits.getReturnType() != List.class) {
                 throw new NoSuchMethodException("Ender IO conduit API shape changed");
             }
 
             api = new ConduitApiHandles(bundleBlockClass, conduitItemClass, bundleInterface, conduitComponent,
-                    conduitRegistryKey, conduitApiInstance, hasCompatibleConduit, canAddConduit, addConduit, addResultHasChanged, getConduitItem);
+                    conduitRegistryKey, conduitApiInstance, hasCompatibleConduit, canAddConduit, addConduit, addResultHasChanged, getConduitItem, getConduits);
             PipeConnector.LOGGER.info("Resolved Ender IO conduit API, conduit support enabled.");
         } catch (Throwable t) {
             PipeConnector.LOGGER.warn("Could not resolve Ender IO conduit API, conduit support disabled. Their conduit API likely changed again.", t);
@@ -225,6 +230,52 @@ public class EnderIoCompatibility implements IPlacer, IBlockEqualsChecker, IReci
             PipeConnector.LOGGER.warn("Ender IO compatibility error in getSupportedPipeItems", e);
             return fallback;
         }
+    }
+
+    @Override
+    public List<PipeRenderEntry> getPipeEntries(Level level, BlockPos pos) {
+        if (!isAvailable()) {
+            return List.of();
+        }
+        try {
+            BlockEntity blockEntity = level.getBlockEntity(pos);
+            if (!isConduitBundle(blockEntity)) {
+                return List.of();
+            }
+            List<?> conduits = (List<?>) api.getConduits().invoke(blockEntity);
+            List<PipeRenderEntry> entries = new ArrayList<>(conduits.size());
+            for (Object element : conduits) {
+                if (!(element instanceof Holder<?> holder)) {
+                    continue;
+                }
+                ResourceKey<?> key = holder.unwrapKey().orElse(null);
+                if (key == null) {
+                    continue;
+                }
+                entries.add(new PipeRenderEntry(key, conduitColor(key)));
+            }
+            return entries;
+        } catch (Exception e) {
+            PipeConnector.LOGGER.warn("Ender IO compatibility error in getPipeEntries at {}", pos, e);
+            return List.of();
+        }
+    }
+
+    private static int conduitColor(ResourceKey<?> key) {
+        String path = key.identifier().getPath();
+        if (path.contains("redstone")) return 0xFFE53935;
+        if (path.contains("energy")) return 0xFF4CAF50;
+        if (path.contains("fluid")) return 0xFF2196F3;
+        if (path.contains("item")) return 0xFFFFC107;
+
+        int hash = key.identifier().toString().hashCode();
+        int r = (hash & 0xFF0000) >> 16;
+        int g = (hash & 0x00FF00) >> 8;
+        int b = (hash & 0x0000FF);
+        if (r < 50) r += 100;
+        if (g < 50) g += 100;
+        if (b < 50) b += 100;
+        return 0xFF000000 | (r << 16) | (g << 8) | b;
     }
 
     private static Object getConduit(ItemStack stack) {

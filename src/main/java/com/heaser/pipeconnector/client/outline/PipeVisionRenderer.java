@@ -34,7 +34,8 @@ public class PipeVisionRenderer {
 
     private static final float PIPE_RADIUS = 0.04f;
     private static final float ENDPOINT_RADIUS = 0.05f;
-    private static final float MULTI_PIPE_OFFSET_STEP = 0.15f;
+    private static final float MULTI_PIPE_OFFSET_STEP = 0.18f;
+    private static final float DIAGONAL_NORM = 0.5774f;
 
     public void handleOnRenderLevel(PoseStack pose, MultiBufferSource buffer, Player player) {
         if (!isHoldingPipeConnector(player)) {
@@ -125,8 +126,8 @@ public class PipeVisionRenderer {
         int n = sorted.size();
         for (int i = 0; i < n; i++) {
             PipeRenderEntry entry = sorted.get(i);
-            float yOffset = (n == 1) ? 0f : (i - (n - 1) / 2f) * MULTI_PIPE_OFFSET_STEP;
-            subPipes.add(new SubPipe(entry.typeKey(), entry.color(), yOffset));
+            float offset = (n == 1) ? 0f : (i - (n - 1) / 2f) * MULTI_PIPE_OFFSET_STEP;
+            subPipes.add(new SubPipe(entry.typeKey(), entry.color(), offset));
         }
         return subPipes;
     }
@@ -160,16 +161,17 @@ public class PipeVisionRenderer {
                 float g = ((sp.color >> 8) & 0xFF) / 255f;
                 float b = (sp.color & 0xFF) / 255f;
 
-                renderPipe(pose, vc, x, y, z, sp.yOffset, sp.connections, r, g, b, a);
+                renderPipe(pose, vc, x, y, z, sp.offset, sp.connections, r, g, b, a);
             }
         }
     }
 
-    private void renderPipe(PoseStack pose, VertexConsumer vc, double x, double y, double z, float yOffset, int connections, float r, float g, float b, float a) {
+    private void renderPipe(PoseStack pose, VertexConsumer vc, double x, double y, double z, float offset, int connections, float r, float g, float b, float a) {
         org.joml.Matrix4f mat = pose.last().pose();
-        double cx = x + 0.5;
-        double cy = y + 0.5 + yOffset;
-        double cz = z + 0.5;
+        double d = offset * DIAGONAL_NORM;
+        double cx = x + 0.5 + d;
+        double cy = y + 0.5 + d;
+        double cz = z + 0.5 + d;
 
         // Center node
         drawBox(vc, mat, cx - PIPE_RADIUS, cy - PIPE_RADIUS, cz - PIPE_RADIUS, cx + PIPE_RADIUS, cy + PIPE_RADIUS, cz + PIPE_RADIUS, r, g, b, a);
@@ -251,13 +253,13 @@ public class PipeVisionRenderer {
     private static class SubPipe {
         final Object typeKey;
         final int color;
-        final float yOffset;
+        final float offset;
         int connections; // Bitmask of Direction.ordinal()
 
-        SubPipe(Object typeKey, int color, float yOffset) {
+        SubPipe(Object typeKey, int color, float offset) {
             this.typeKey = typeKey;
             this.color = color;
-            this.yOffset = yOffset;
+            this.offset = offset;
             this.connections = 0;
         }
     }
