@@ -113,7 +113,7 @@ dependencies {
 
 
 //    For tests:
-//    implementation ("curse.maven:ender-io-64578:8192909"
+//    implementation ("curse.maven:ender-io-64578:8192909")
 
 //    implementation "curse.maven:toms-storage-378609:6418144"
 //    implementation "curse.maven:pipez-443900:8053422"
@@ -124,9 +124,6 @@ dependencies {
 //    ----------------------------------------------------------------------
 //
 
-//
-//    // Loves mixins
-//    implementation "curse.maven:ender-io-64578:5981524"
 
 
 //    xnet Stuff
@@ -170,7 +167,7 @@ dependencies {
 
     // Required
     compileOnly("curse.maven:jei-238222:8014757")
-    // implementation ("curse.maven:guideme-1173950:7929350")
+//     implementation ("curse.maven:guideme-1173950:7929350")
     compileOnly("curse.maven:applied-energistics-2-223794:8059221")
     // The following are commented out  cause they aren't on 26.2.1 yet
     // compileOnly("curse.maven:mcjtylib-233105:6541819")
