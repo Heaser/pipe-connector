@@ -3,6 +3,7 @@ package com.heaser.pipeconnector.compatibility.enderio;
 import com.heaser.pipeconnector.PipeConnector;
 import com.heaser.pipeconnector.compatibility.interfaces.IBlockEqualsChecker;
 import com.heaser.pipeconnector.compatibility.interfaces.IMultiPipeColorProvider;
+import com.heaser.pipeconnector.compatibility.interfaces.IPipeReplacer;
 import com.heaser.pipeconnector.compatibility.interfaces.IPlacer;
 import com.heaser.pipeconnector.compatibility.interfaces.IRecipeInfoGetter;
 import com.heaser.pipeconnector.compatibility.interfaces.PipeRenderEntry;
@@ -12,6 +13,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponentType;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
@@ -27,10 +29,11 @@ import net.neoforged.fml.ModList;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import org.jetbrains.annotations.Nullable;
 
 import static com.heaser.pipeconnector.utils.GeneralUtils.isVoidableBlock;
 
-public class EnderIoCompatibility implements IPlacer, IBlockEqualsChecker, IRecipeInfoGetter, IMultiPipeColorProvider {
+public class EnderIoCompatibility implements IPlacer, IBlockEqualsChecker, IRecipeInfoGetter, IMultiPipeColorProvider, IPipeReplacer {
     // Reflections this time
     private record ConduitApiHandles(Class<? extends Block> bundleBlockClass,
                                      Class<? extends Item> conduitItemClass,
@@ -43,7 +46,11 @@ public class EnderIoCompatibility implements IPlacer, IBlockEqualsChecker, IReci
                                      Method addConduit,
                                      Method addResultHasChanged,
                                      Method getConduitItem,
-                                     Method getConduits) {
+                                     Method getConduits,
+                                     Method hasConduitStrict,
+                                     Method getCompatibleConduit,
+                                     Class<?> upgradeResultClass,
+                                     Method upgradeReplacedConduit) {
     }
 
     private static ConduitApiHandles api;
@@ -84,24 +91,34 @@ public class EnderIoCompatibility implements IPlacer, IBlockEqualsChecker, IReci
             ResourceKey<Registry<Object>> conduitRegistryKey = (ResourceKey<Registry<Object>>) registryKeysClass.getField("CONDUIT").get(null);
             Object conduitApiInstance = conduitApiClass.getField("INSTANCE").get(null);
 
+            Class<?> upgradeResultClass = Class.forName("com.enderio.enderio.api.conduits.bundle.AddConduitResult$Upgrade");
+
             Method hasCompatibleConduit = bundleInterface.getMethod("hasCompatibleConduit", Holder.class);
             Method canAddConduit = bundleInterface.getMethod("canAddConduit", Holder.class);
             Method addConduit = bundleInterface.getMethod("addConduit", Holder.class, Direction.class, Player.class);
             Method addResultHasChanged = addResultClass.getMethod("hasChanged");
             Method getConduitItem = conduitApiClass.getMethod("getConduitItem", Holder.class);
             Method getConduits = bundleInterface.getMethod("getConduits");
+            Method hasConduitStrict = bundleInterface.getMethod("hasConduitStrict", Holder.class);
+            Method getCompatibleConduit = bundleInterface.getMethod("getCompatibleConduit", Holder.class);
+            Method upgradeReplacedConduit = upgradeResultClass.getMethod("replacedConduit");
 
             if (conduitComponent == null || conduitRegistryKey == null || conduitApiInstance == null
                     || hasCompatibleConduit.getReturnType() != boolean.class
                     || canAddConduit.getReturnType() != boolean.class
                     || addResultHasChanged.getReturnType() != boolean.class
                     || getConduitItem.getReturnType() != ItemStack.class
-                    || getConduits.getReturnType() != List.class) {
+                    || getConduits.getReturnType() != List.class
+                    || hasConduitStrict.getReturnType() != boolean.class
+                    || getCompatibleConduit.getReturnType() != Holder.class
+                    || upgradeReplacedConduit.getReturnType() != Holder.class
+                    || !addResultClass.isAssignableFrom(upgradeResultClass)) {
                 throw new NoSuchMethodException("Ender IO conduit API shape changed");
             }
 
             api = new ConduitApiHandles(bundleBlockClass, conduitItemClass, bundleInterface, conduitComponent,
-                    conduitRegistryKey, conduitApiInstance, hasCompatibleConduit, canAddConduit, addConduit, addResultHasChanged, getConduitItem, getConduits);
+                    conduitRegistryKey, conduitApiInstance, hasCompatibleConduit, canAddConduit, addConduit, addResultHasChanged, getConduitItem, getConduits,
+                    hasConduitStrict, getCompatibleConduit, upgradeResultClass, upgradeReplacedConduit);
             PipeConnector.LOGGER.info("Resolved Ender IO conduit API, conduit support enabled.");
         } catch (Throwable t) {
             PipeConnector.LOGGER.warn("Could not resolve Ender IO conduit API, conduit support disabled. Their conduit API likely changed again.", t);
@@ -276,6 +293,178 @@ public class EnderIoCompatibility implements IPlacer, IBlockEqualsChecker, IReci
         if (g < 50) g += 100;
         if (b < 50) b += 100;
         return 0xFF000000 | (r << 16) | (g << 8) | b;
+    }
+
+    // IPipeReplacer: kind = the conduit Holder being swapped. Only that conduit is touched (mixed bundles keep
+    // the rest), only upgrades no downgrades
+
+    @Override
+    @Nullable
+    public Object resolveKind(Level level, BlockPos pos, ItemStack offhandStack) {
+        if (!isAvailable()) {
+            return null;
+        }
+        try {
+            BlockEntity blockEntity = level.getBlockEntity(pos);
+            if (!isConduitBundle(blockEntity)) {
+                return null;
+            }
+            Object offhandConduit = getConduit(offhandStack);
+            if (offhandConduit != null) {
+                // Offhand conduit picks which conduit of a mixed bundle gets replaced
+                Object compatible = getCompatibleConduit(blockEntity, offhandConduit);
+                if (compatible != null) {
+                    return compatible;
+                }
+            }
+            List<?> conduits = (List<?>) api.getConduits().invoke(blockEntity);
+            return conduits.size() == 1 ? conduits.getFirst() : null;
+        } catch (Exception e) {
+            PipeConnector.LOGGER.warn("Ender IO compatibility error in resolveKind at {}", pos, e);
+            return null;
+        }
+    }
+
+    @Override
+    @Nullable
+    public Component getSeedRejectionReason(Level level, BlockPos pos, ItemStack offhandStack) {
+        if (!isAvailable()) {
+            return null;
+        }
+        try {
+            BlockEntity blockEntity = level.getBlockEntity(pos);
+            if (!isConduitBundle(blockEntity)) {
+                return null;
+            }
+            List<?> conduits = (List<?>) api.getConduits().invoke(blockEntity);
+            if (conduits.size() > 1) {
+                return Component.translatable("item.pipe_connector.message.replaceEioAmbiguous");
+            }
+        } catch (Exception e) {
+            PipeConnector.LOGGER.warn("Ender IO compatibility error in getSeedRejectionReason at {}", pos, e);
+        }
+        return null;
+    }
+
+    @Override
+    public boolean matchesKind(Level level, BlockPos pos, Object kind) {
+        if (!isAvailable()) {
+            return false;
+        }
+        try {
+            BlockEntity blockEntity = level.getBlockEntity(pos);
+            // Strict match so a tier boundary ends the path
+            return isConduitBundle(blockEntity) && (boolean) api.hasConduitStrict().invoke(blockEntity, kind);
+        } catch (Exception e) {
+            PipeConnector.LOGGER.warn("Ender IO compatibility error in matchesKind at {}", pos, e);
+            return false;
+        }
+    }
+
+    @Override
+    public String describeKind(Object kind) {
+        if (kind instanceof Holder<?> holder) {
+            ResourceKey<?> key = holder.unwrapKey().orElse(null);
+            if (key != null) {
+                return key.identifier().toString();
+            }
+        }
+        return "enderio:unknown_conduit";
+    }
+
+    @Override
+    public ItemStack getKindDisplayStack(Level level, BlockPos seedPos, Object kind) {
+        if (!isAvailable()) {
+            return ItemStack.EMPTY;
+        }
+        try {
+            ItemStack stack = (ItemStack) api.getConduitItem().invoke(api.conduitApiInstance(), kind);
+            return stack != null ? stack : ItemStack.EMPTY;
+        } catch (Exception e) {
+            PipeConnector.LOGGER.warn("Ender IO compatibility error in getKindDisplayStack at {}", seedPos, e);
+            return ItemStack.EMPTY;
+        }
+    }
+
+    @Override
+    public boolean isSameFamily(Level level, BlockPos seedPos, Object kind, ItemStack offhandStack) {
+        if (!isAvailable()) {
+            return false;
+        }
+        try {
+            Object offhandConduit = getConduit(offhandStack);
+            BlockEntity blockEntity = level.getBlockEntity(seedPos);
+            if (offhandConduit == null || !isConduitBundle(blockEntity)) {
+                return false;
+            }
+            return kind.equals(getCompatibleConduit(blockEntity, offhandConduit));
+        } catch (Exception e) {
+            PipeConnector.LOGGER.warn("Ender IO compatibility error in isSameFamily at {}", seedPos, e);
+            return false;
+        }
+    }
+
+    @Override
+    public boolean isAlreadyTarget(Level level, BlockPos seedPos, Object kind, ItemStack offhandStack) {
+        return kind.equals(getConduit(offhandStack));
+    }
+
+    @Override
+    @Nullable
+    public Component getReplaceBlockedReason(Level level, BlockPos seedPos, Object kind, ItemStack offhandStack) {
+        if (!isAvailable()) {
+            return Component.translatable("item.pipe_connector.message.replaceInvalidSeed");
+        }
+        try {
+            Object offhandConduit = getConduit(offhandStack);
+            BlockEntity blockEntity = level.getBlockEntity(seedPos);
+            if (offhandConduit == null || !isConduitBundle(blockEntity)) {
+                return null; // family check already rejects these
+            }
+            // canAddConduit is false unless the swap is a sanctioned upgrade (or the bundle is full)
+            if (!canAddConduit(blockEntity, offhandConduit)) {
+                return Component.translatable("item.pipe_connector.message.replaceEioDowngrade");
+            }
+            return null;
+        } catch (Exception e) {
+            PipeConnector.LOGGER.warn("Ender IO compatibility error in getReplaceBlockedReason at {}", seedPos, e);
+            return Component.translatable("item.pipe_connector.message.replaceInvalidSeed");
+        }
+    }
+
+    @Override
+    public boolean replaceAt(Level level, BlockPos pos, Player player, ItemStack offhandStack, Object kind, List<Direction> adjacentInRun) {
+        if (!isAvailable()) {
+            return false;
+        }
+        try {
+            Object newConduit = getConduit(offhandStack);
+            BlockEntity blockEntity = level.getBlockEntity(pos);
+            if (newConduit == null || !isConduitBundle(blockEntity)) {
+                return false;
+            }
+            Direction direction = adjacentInRun.isEmpty() ? Direction.UP : adjacentInRun.getFirst();
+            Object result = api.addConduit().invoke(blockEntity, newConduit, direction, player);
+            if (result == null || !api.upgradeResultClass().isInstance(result)) {
+                return false; // Blocked, nothing was changed
+            }
+            Object replacedConduit = api.upgradeReplacedConduit().invoke(result);
+            ItemStack oldConduitItem = (ItemStack) api.getConduitItem().invoke(api.conduitApiInstance(), replacedConduit);
+            if (oldConduitItem != null && !oldConduitItem.isEmpty()) {
+                if (!player.getInventory().add(oldConduitItem)) {
+                    player.drop(oldConduitItem, false);
+                }
+            }
+            level.gameEvent(GameEvent.BLOCK_PLACE, pos, GameEvent.Context.of(player, level.getBlockState(pos)));
+            return true;
+        } catch (Exception e) {
+            PipeConnector.LOGGER.warn("Ender IO compatibility error in replaceAt at {}", pos, e);
+            return false;
+        }
+    }
+
+    private static Object getCompatibleConduit(BlockEntity bundle, Object conduit) throws Exception {
+        return api.getCompatibleConduit().invoke(bundle, conduit);
     }
 
     private static Object getConduit(ItemStack stack) {

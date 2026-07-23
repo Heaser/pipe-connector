@@ -12,9 +12,13 @@ import com.heaser.pipeconnector.network.UpdateAvoidInventoryBlocks;
 import com.heaser.pipeconnector.network.UpdateDepthPacket;
 import com.heaser.pipeconnector.network.UpdateInventoryGuard;
 import com.heaser.pipeconnector.network.UpdateManhattanMirrorPacket;
+import com.heaser.pipeconnector.client.ClientSetup;
+import com.heaser.pipeconnector.compatibility.CompatibilityPipeReplacer;
+import com.heaser.pipeconnector.compatibility.interfaces.IPipeReplacer;
 import com.heaser.pipeconnector.network.UpdatePipeVision;
 import com.heaser.pipeconnector.network.UpdateUtilizeExistingPipes;
 import com.heaser.pipeconnector.utils.GeneralUtils;
+import com.heaser.pipeconnector.utils.ReplaceSeed;
 import com.heaser.pipeconnector.utils.TagUtils;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
@@ -52,6 +56,7 @@ public class PipeConnectorGui extends Screen {
     private static final int TOGGLE_ROW_2_Y = 158;
     private static final int TOGGLE_ROW_3_Y = 180;
     private static final int ACTIONS_Y = 212;
+    private static final int MODE_TABS_Y = 8;
 
     private static final int LABEL_COLOR = 0xFF000000;
     private static final int HEADER_COLOR = 0xFF5A5A5A;
@@ -63,6 +68,8 @@ public class PipeConnectorGui extends Screen {
     private BaseButton bridgeTypeButton;
     private BaseButton outlinePreviewButton;
     private BaseButton solidPreviewButton;
+    private BaseButton buildModeButton;
+    private BaseButton replaceModeButton;
 
     private Checkbox mirrorCheckbox;
     private Checkbox inventoryGuardCheckbox;
@@ -112,6 +119,9 @@ public class PipeConnectorGui extends Screen {
             TagUtils.setUtilizeExistingPipes(pipeConnectorStack, value);
             ClientPacketDistributor.sendToServer(new UpdateUtilizeExistingPipes(value));
         });
+        // Mode tabs (top right)
+        buildModeButton = createButton(x0 + RIGHT_X, y0 + MODE_TABS_Y, new BuildModeButton(pipeConnectorStack));
+        replaceModeButton = createButton(x0 + RIGHT_X + RIGHT_WIDTH / 2, y0 + MODE_TABS_Y, new ReplaceModeButton(pipeConnectorStack));
 
         // Preview section (right)
         outlinePreviewButton = createButton(x0 + RIGHT_X, y0 + ROW_1_Y, new OutlinePreviewButton(pipeConnectorStack));
@@ -134,23 +144,53 @@ public class PipeConnectorGui extends Screen {
         drawTooltipList(extractor, mouseX, mouseY, bridgeTypeButton);
         drawTooltip(extractor, mouseX, mouseY, resetBaseButton);
         drawTooltip(extractor, mouseX, mouseY, buildPipesButton);
+        drawTooltip(extractor, mouseX, mouseY, buildModeButton);
+        drawTooltip(extractor, mouseX, mouseY, replaceModeButton);
 
         extractor.blit(RenderPipelines.GUI_TEXTURED, PIPE_CONNECTOR_TEXTURE,
                 x0, y0, 0, 0, imageWidth, imageHeight, imageWidth, imageHeight);
 
-        // Title
+        // Title at 1.5x so it clears the mode tabs
         extractor.pose().pushMatrix();
-        extractor.pose().scale(2f, 2f);
-        extractor.text(this.font, this.getTitle(), (x0 + LEFT_X) / 2, (y0 + TITLE_Y) / 2, LABEL_COLOR, false);
+        extractor.pose().scale(1.5f, 1.5f);
+        extractor.text(this.font, this.getTitle(), Math.round((x0 + LEFT_X) / 1.5f), Math.round((y0 + TITLE_Y + 1) / 1.5f), LABEL_COLOR, false);
         extractor.pose().popMatrix();
 
-        drawSectionHeader(extractor, "item.pipe_connector.gui.section.pathfinding", x0 + LEFT_X, y0 + HEADER_TOP_Y, LEFT_WIDTH);
+        boolean isAStar = TagUtils.getBridgeType(pipeConnectorStack) == BridgeType.A_STAR;
+        boolean replaceMode = TagUtils.getReplaceMode(pipeConnectorStack);
+
+        // The left column belongs to the active mode
+        bridgeTypeButton.button.visible = !replaceMode;
+        depthEditBox.visible = !replaceMode;
+        depthSlider.visible = !replaceMode;
+        mirrorCheckbox.visible = !replaceMode && !isAStar;
+        inventoryGuardCheckbox.visible = !replaceMode;
+        avoidInventoryBlocksCheckbox.visible = !replaceMode;
+        utilizeExistingPipesCheckbox.visible = !replaceMode;
+
+        if (replaceMode) {
+            drawSectionHeader(extractor, "item.pipe_connector.gui.section.replace", x0 + LEFT_X, y0 + HEADER_TOP_Y, LEFT_WIDTH);
+            extractor.text(this.font, Component.translatable("item.pipe_connector.gui.label.replaceHint1"),
+                    x0 + LEFT_X, y0 + ROW_1_Y, LABEL_COLOR, false);
+            extractor.text(this.font, Component.translatable("item.pipe_connector.gui.label.replaceHint2"),
+                    x0 + LEFT_X, y0 + ROW_1_Y + 12, LABEL_COLOR, false);
+            extractor.text(this.font, Component.translatable("item.pipe_connector.gui.label.replaceHint3"),
+                    x0 + LEFT_X, y0 + ROW_1_Y + 24, LABEL_COLOR, false);
+            extractor.text(this.font, Component.translatable("item.pipe_connector.gui.label.replaceHint4"),
+                    x0 + LEFT_X, y0 + ROW_1_Y + 36, HEADER_COLOR, false);
+
+            drawSectionHeader(extractor, "item.pipe_connector.gui.section.selection", x0 + LEFT_X, y0 + HEADER_BOTTOM_Y, LEFT_WIDTH);
+            if (!drawSwapReadout(extractor, x0 + LEFT_X, y0 + TOGGLE_ROW_1_Y)) {
+                extractor.text(this.font, Component.translatable("item.pipe_connector.gui.label.noRunSelected"),
+                        x0 + LEFT_X, y0 + TOGGLE_ROW_1_Y + 4, LABEL_COLOR, false);
+            }
+        } else {
+            drawSectionHeader(extractor, "item.pipe_connector.gui.section.pathfinding", x0 + LEFT_X, y0 + HEADER_TOP_Y, LEFT_WIDTH);
+            drawSectionHeader(extractor, "item.pipe_connector.gui.section.buildOptions", x0 + LEFT_X, y0 + HEADER_BOTTOM_Y, LEFT_WIDTH);
+        }
         drawSectionHeader(extractor, "item.pipe_connector.gui.label.preview_style", x0 + RIGHT_X, y0 + HEADER_TOP_Y, RIGHT_WIDTH);
-        drawSectionHeader(extractor, "item.pipe_connector.gui.section.buildOptions", x0 + LEFT_X, y0 + HEADER_BOTTOM_Y, LEFT_WIDTH);
         drawSectionHeader(extractor, "item.pipe_connector.gui.section.pipes", x0 + RIGHT_X, y0 + HEADER_BOTTOM_Y, RIGHT_WIDTH);
 
-        boolean isAStar = TagUtils.getBridgeType(pipeConnectorStack) == BridgeType.A_STAR;
-        mirrorCheckbox.visible = !isAStar;
         avoidInventoryBlocksCheckbox.active = isAStar;
         utilizeExistingPipesCheckbox.active = isAStar;
         avoidInventoryBlocksCheckbox.setTooltip(Tooltip.create(isAStar
@@ -173,7 +213,20 @@ public class PipeConnectorGui extends Screen {
         if (solidPreviewButton instanceof SolidPreviewButton spb) {
             spb.updateLabel(pipeConnectorStack);
         }
+        if (buildModeButton instanceof BuildModeButton bmb) {
+            bmb.updateLabel(pipeConnectorStack);
+        }
+        if (replaceModeButton instanceof ReplaceModeButton rmb) {
+            rmb.updateLabel(pipeConnectorStack);
+        }
         buildPipesButton.button.active = buildPipesButton.isActive(pipeConnectorStack);
+        resetBaseButton.button.active = resetBaseButton.isActive(pipeConnectorStack);
+        resetBaseButton.button.setMessage(Component.translatable(replaceMode
+                ? "item.pipe_connector.gui.button.ClearSelection"
+                : "item.pipe_connector.gui.button.ResetPipePos"));
+        buildPipesButton.button.setMessage(Component.translatable(replaceMode
+                ? "item.pipe_connector.gui.button.ReplacePipes"
+                : "item.pipe_connector.gui.button.PlacePipes"));
 
         // Toggle labels — black text left of each checkbox
         drawWidgetLabel(extractor, "item.pipe_connector.gui.label.mirrorPath", x0 + LEFT_X, mirrorCheckbox);
@@ -185,15 +238,27 @@ public class PipeConnectorGui extends Screen {
         // Pipes section — offhand item icon + cost readout
         var player = this.getMinecraft().player;
         boolean showCost = player != null && GeneralUtils.isPlaceableBlock(player)
-                && TagUtils.getNodesFromStack(pipeConnectorStack).size() >= 2;
+                && PipeCostCalculator.hasSelection(pipeConnectorStack);
         if (showCost) {
             extractor.item(player.getOffhandItem(), x0 + RIGHT_X, y0 + TOGGLE_ROW_1_Y);
             extractor.text(this.font, new RequiredPipesText().getLabel(pipeConnectorStack),
                     x0 + RIGHT_X + 20, y0 + TOGGLE_ROW_1_Y + 1, LABEL_COLOR, false);
             extractor.text(this.font, new AvailablePipesText().getLabel(pipeConnectorStack),
                     x0 + RIGHT_X + 20, y0 + TOGGLE_ROW_1_Y + 11, LABEL_COLOR, false);
-            extractor.text(this.font, new PipeCostStatusText().getLabel(pipeConnectorStack),
+            Component statusLabel = new PipeCostStatusText().getLabel(pipeConnectorStack);
+            extractor.text(this.font, statusLabel,
                     x0 + RIGHT_X + 20, y0 + TOGGLE_ROW_1_Y + 21, LABEL_COLOR, false);
+            if (replaceMode) {
+                // Returned = the old pipes coming back, takes the status line's slot when it's free
+                int returnedY = y0 + TOGGLE_ROW_1_Y + (statusLabel.getString().isEmpty() ? 21 : 31);
+                ItemStack returnedStack = resolveSelectedRunStack();
+                if (!returnedStack.isEmpty()) {
+                    extractor.item(returnedStack, x0 + RIGHT_X, returnedY - 4);
+                }
+                extractor.text(this.font, Component.translatable("item.pipe_connector.gui.label.returnedPipes",
+                                String.valueOf(ClientSetup.PREVIEW_DRAWER.previewMap.size())),
+                        x0 + RIGHT_X + 20, returnedY, LABEL_COLOR, false);
+            }
         }
 
         super.extractRenderState(extractor, mouseX, mouseY, partialTick);
@@ -255,6 +320,75 @@ public class PipeConnectorGui extends Screen {
         baseButton.bindButton(button);
         addRenderableWidget(button);
         return baseButton;
+    }
+
+    // Empty when nothing is selected or the seed went stale
+    private ItemStack resolveSelectedRunStack() {
+        var player = this.getMinecraft().player;
+        ReplaceSeed seed = TagUtils.getReplaceSeed(pipeConnectorStack);
+        if (player == null || seed == null) {
+            return ItemStack.EMPTY;
+        }
+        var level = player.level();
+        IPipeReplacer replacer = CompatibilityPipeReplacer.getReplacerFor(level, seed.pos());
+        Object kind = replacer.resolveKind(level, seed.pos(), player.getOffhandItem());
+        if (kind == null || !replacer.describeKind(kind).equals(seed.kindDescriptor())) {
+            return ItemStack.EMPTY;
+        }
+        return replacer.getKindDisplayStack(level, seed.pos(), kind);
+    }
+
+    // Returns false when there is no valid selection to show
+    private boolean drawSwapReadout(GuiGraphicsExtractor extractor, int x, int y) {
+        var player = this.getMinecraft().player;
+        ReplaceSeed seed = TagUtils.getReplaceSeed(pipeConnectorStack);
+        if (player == null || seed == null) {
+            return false;
+        }
+        var level = player.level();
+        IPipeReplacer replacer = CompatibilityPipeReplacer.getReplacerFor(level, seed.pos());
+        Object kind = replacer.resolveKind(level, seed.pos(), player.getOffhandItem());
+        if (kind == null || !replacer.describeKind(kind).equals(seed.kindDescriptor())) {
+            return false;
+        }
+
+        ItemStack oldStack = replacer.getKindDisplayStack(level, seed.pos(), kind);
+        Component oldName = oldStack.isEmpty() ? level.getBlockState(seed.pos()).getBlock().getName() : oldStack.getHoverName();
+        drawPipeRow(extractor, oldStack, oldName, x, y);
+
+        if (GeneralUtils.isPlaceableBlock(player)) {
+            drawDownArrow(extractor, x + 8, y + 21);
+            drawPipeRow(extractor, player.getOffhandItem(), player.getOffhandItem().getHoverName(), x, y + 28);
+        }
+        return true;
+    }
+
+    private void drawPipeRow(GuiGraphicsExtractor extractor, ItemStack stack, Component name, int x, int y) {
+        if (!stack.isEmpty()) {
+            extractor.item(stack, x, y);
+        }
+        int width = LEFT_WIDTH - 20;
+        String full = name.getString();
+        String line1 = this.font.plainSubstrByWidth(full, width);
+        if (line1.length() < full.length()) {
+            int lastSpace = line1.lastIndexOf(' ');
+            if (lastSpace > 0) {
+                line1 = line1.substring(0, lastSpace);
+            }
+        }
+        String rest = full.substring(line1.length()).trim();
+        if (rest.isEmpty()) {
+            extractor.text(this.font, Component.literal(line1), x + 20, y + 4, LABEL_COLOR, false);
+        } else {
+            extractor.text(this.font, Component.literal(line1), x + 20, y, LABEL_COLOR, false);
+            extractor.text(this.font, Component.literal(this.font.plainSubstrByWidth(rest, width)), x + 20, y + 10, LABEL_COLOR, false);
+        }
+    }
+
+    private void drawDownArrow(GuiGraphicsExtractor extractor, int centerX, int y) {
+        for (int i = 0; i < 5; i++) {
+            extractor.horizontalLine(centerX - (4 - i), centerX + (4 - i) + 1, y + i, HEADER_COLOR);
+        }
     }
 
     private void drawSectionHeader(GuiGraphicsExtractor extractor, String translationKey, int x, int y, int width) {

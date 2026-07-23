@@ -3,9 +3,12 @@ package com.heaser.pipeconnector.client.gui;
 import com.heaser.pipeconnector.client.ClientSetup;
 import com.heaser.pipeconnector.compatibility.CompatibilityBlockEqualsChecker;
 import com.heaser.pipeconnector.compatibility.CompatibilityBlockGetter;
+import com.heaser.pipeconnector.utils.GeneralUtils;
 import com.heaser.pipeconnector.utils.PipeConnectorUtils;
 import com.heaser.pipeconnector.utils.PreviewInfo;
+import com.heaser.pipeconnector.utils.TagUtils;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 
 public final class PipeCostCalculator {
@@ -34,8 +37,22 @@ public final class PipeCostCalculator {
         return cached;
     }
 
+    public static boolean hasSelection(ItemStack itemStack) {
+        if (TagUtils.getReplaceMode(itemStack)) {
+            return TagUtils.getReplaceSeed(itemStack) != null;
+        }
+        return TagUtils.getNodesFromStack(itemStack).size() >= 2;
+    }
+
     private static PipeCost compute(Player player) {
         var previewMap = ClientSetup.PREVIEW_DRAWER.previewMap;
+
+        ItemStack connector = GeneralUtils.heldPipeConnector(player);
+        if (connector != null && TagUtils.getReplaceMode(connector)) {
+            int available = PipeConnectorUtils.getNumberOfPipesInInventory(player);
+            return new PipeCost(previewMap.size(), 0, available, player.getAbilities().instabuild);
+        }
+
         Block block = CompatibilityBlockGetter.getInstance().getBlock(player.getOffhandItem());
         int reused = 0;
         for (PreviewInfo previewInfo : previewMap) {

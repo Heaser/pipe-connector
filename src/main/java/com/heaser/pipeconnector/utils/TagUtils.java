@@ -3,6 +3,7 @@ package com.heaser.pipeconnector.utils;
 import com.heaser.pipeconnector.config.PipeConnectorConfig;
 import com.heaser.pipeconnector.constants.BridgeType;
 import com.heaser.pipeconnector.constants.ComponentDataTags;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -135,6 +136,7 @@ public class TagUtils {
     public static void resetPositionAndDirectionTags(ItemStack stack, Player player, boolean shouldShowMessage) {
         CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> {
             tag.remove(ComponentDataTags.kPipeConnectorNodes);
+            tag.remove(ComponentDataTags.kPipeConnectorReplaceSeed);
         });
         if (shouldShowMessage) {
             player.sendOverlayMessage(Component.translatable("item.pipe_connector.message.resettingPositions"));
@@ -160,6 +162,50 @@ public class TagUtils {
     public static void setPipeVision(ItemStack stack, boolean enabled) {
         CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> {
             tag.putBoolean(ComponentDataTags.kPipeConnectorPipeVision, enabled);
+        });
+    }
+
+    public static boolean getReplaceMode(ItemStack stack) {
+        CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+        return tag.getBooleanOr(ComponentDataTags.kPipeConnectorReplaceMode, false);
+    }
+
+    public static void setReplaceMode(ItemStack stack, boolean replaceMode) {
+        CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> {
+            tag.putBoolean(ComponentDataTags.kPipeConnectorReplaceMode, replaceMode);
+        });
+    }
+
+    public static ReplaceSeed getReplaceSeed(ItemStack stack) {
+        CompoundTag tag = stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
+        if (!tag.contains(ComponentDataTags.kPipeConnectorReplaceSeed)) {
+            return null;
+        }
+        CompoundTag seedTag = tag.getCompoundOrEmpty(ComponentDataTags.kPipeConnectorReplaceSeed);
+        BlockPos pos = new BlockPos(
+                seedTag.getIntOr(ComponentDataTags.kPipeConnectorNodePositionX, 0),
+                seedTag.getIntOr(ComponentDataTags.kPipeConnectorNodePositionY, 0),
+                seedTag.getIntOr(ComponentDataTags.kPipeConnectorNodePositionZ, 0));
+        return new ReplaceSeed(pos,
+                seedTag.getStringOr(ComponentDataTags.kPipeConnectorReplaceSeedKind, ""),
+                seedTag.getStringOr(ComponentDataTags.kPipeConnectorReplaceSeedDimension, ""));
+    }
+
+    public static void setReplaceSeed(ItemStack stack, ReplaceSeed seed) {
+        CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> {
+            CompoundTag seedTag = new CompoundTag();
+            seedTag.putInt(ComponentDataTags.kPipeConnectorNodePositionX, seed.pos().getX());
+            seedTag.putInt(ComponentDataTags.kPipeConnectorNodePositionY, seed.pos().getY());
+            seedTag.putInt(ComponentDataTags.kPipeConnectorNodePositionZ, seed.pos().getZ());
+            seedTag.putString(ComponentDataTags.kPipeConnectorReplaceSeedKind, seed.kindDescriptor());
+            seedTag.putString(ComponentDataTags.kPipeConnectorReplaceSeedDimension, seed.dimension());
+            tag.put(ComponentDataTags.kPipeConnectorReplaceSeed, seedTag);
+        });
+    }
+
+    public static void clearReplaceSeed(ItemStack stack) {
+        CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> {
+            tag.remove(ComponentDataTags.kPipeConnectorReplaceSeed);
         });
     }
 

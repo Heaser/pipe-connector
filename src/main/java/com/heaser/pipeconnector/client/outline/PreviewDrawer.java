@@ -2,6 +2,9 @@ package com.heaser.pipeconnector.client.outline;
 
 import com.heaser.pipeconnector.compatibility.CompatibilityBlockEqualsChecker;
 import com.heaser.pipeconnector.compatibility.CompatibilityBlockGetter;
+import com.heaser.pipeconnector.compatibility.CompatibilityPipeReplacer;
+import com.heaser.pipeconnector.compatibility.interfaces.IPipeReplacer;
+import com.heaser.pipeconnector.config.PipeConnectorConfig;
 import com.heaser.pipeconnector.utils.*;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -24,9 +27,14 @@ import java.util.List;
 import static com.heaser.pipeconnector.utils.GeneralUtils.*;
 
 public class PreviewDrawer {
+    private static final long REPLACE_RETRACE_INTERVAL_MS = 1000;
+
     public HashSet<PreviewInfo> previewMap = new HashSet<>();
+    public boolean replaceRunValid = true;
+    public boolean replaceRunTruncated = false;
     private BuildParameters cachedParameters = new BuildParameters();
     private Item cachedOffhandItem = Items.AIR;
+    private long lastReplaceTraceMs = 0;
 
     public PreviewDrawer() {
     }
@@ -41,6 +49,19 @@ public class PreviewDrawer {
         boolean offhandChanged = offhandItem != cachedOffhandItem;
         cachedOffhandItem = offhandItem;
 
+        if (TagUtils.getReplaceMode(heldItem)) {
+            long now = System.currentTimeMillis();
+            boolean retraceDue = now - lastReplaceTraceMs > REPLACE_RETRACE_INTERVAL_MS;
+            if (!GeneralUtils.isPlaceableBlock(player)) {
+                previewMap.clear();
+            } else if (shouldUpdatePreview(heldItem) || offhandChanged || retraceDue) {
+                lastReplaceTraceMs = now;
+                previewMap = getNewReplacePreview(heldItem, player.level(), player);
+            }
+            drawReplacePreview(pose, buffer, player, heldItem);
+            return;
+        }
+
         if (!GeneralUtils.isPlaceableBlock(player)) {
             previewMap.clear();
         } else if (shouldUpdatePreview(heldItem) || offhandChanged) {
@@ -49,6 +70,61 @@ public class PreviewDrawer {
         }
 
         draw(pose, buffer, player, heldItem);
+    }
+
+    private HashSet<PreviewInfo> getNewReplacePreview(ItemStack pipeConnector, Level level, Player player) {
+        replaceRunValid = true;
+        replaceRunTruncated = false;
+        ReplaceSeed seed = TagUtils.getReplaceSeed(pipeConnector);
+        if (seed == null || !level.dimensionTypeRegistration().getRegisteredName().equals(seed.dimension())) {
+            return new HashSet<>();
+        }
+        ItemStack offhandStack = player.getOffhandItem();
+        IPipeReplacer replacer = CompatibilityPipeReplacer.getReplacerFor(level, seed.pos());
+        Object kind = replacer.resolveKind(level, seed.pos(), offhandStack);
+        if (kind == null || !replacer.describeKind(kind).equals(seed.kindDescriptor())) {
+            return new HashSet<>();
+        }
+        replaceRunValid = replacer.isSameFamily(level, seed.pos(), kind, offhandStack)
+                && !replacer.isAlreadyTarget(level, seed.pos(), kind, offhandStack)
+                && replacer.getReplaceBlockedReason(level, seed.pos(), kind, offhandStack) == null;
+        ReplaceRunTracer.TraceResult result = ReplaceRunTracer.trace(level, seed.pos(), replacer, kind,
+                PipeConnectorConfig.MAX_ALLOWED_PIPES_TO_PLACE.get());
+        replaceRunTruncated = result.truncated();
+        HashSet<PreviewInfo> set = new HashSet<>();
+        for (BlockPos pos : result.run()) {
+            set.add(new PreviewInfo(pos));
+        }
+        return set;
+    }
+
+    private void drawReplacePreview(PoseStack pose, MultiBufferSource buffer, Player player, ItemStack pipeConnector) {
+        Vec3 offset = Minecraft.getInstance().gameRenderer.getMainCamera().position();
+        ReplaceSeed seed = TagUtils.getReplaceSeed(pipeConnector);
+        BlockPos seedPos = seed != null ? seed.pos() : null;
+
+        java.util.Set<BlockPos> previewPositions = new java.util.HashSet<>();
+        for (PreviewInfo pi : previewMap) previewPositions.add(pi.pos);
+
+        long time = System.currentTimeMillis();
+        float pulseAlpha = (float) (Math.sin(time / 250.0) * 0.15 + 0.75);
+        float pulseScale = (float) (Math.sin(time / 250.0) * 0.02 + 1.0);
+
+        boolean solid = TagUtils.getSolidPreview(pipeConnector);
+        for (PreviewInfo previewInfo : previewMap) {
+            BlockPos pos = previewInfo.pos;
+            float[] color = replaceRunValid
+                    ? new float[]{1f, 0.8f, 0.1f, 0.6f}   // Gold
+                    : new float[]{1f, 0.2f, 0.2f, 0.6f};  // Neon Red
+            color[3] *= pulseAlpha;
+
+            boolean isNode = pos.equals(seedPos);
+            float[] nodeColor = null;
+            if (isNode) {
+                nodeColor = new float[]{0f, 1f, 1f, Math.min(1.0f, pulseAlpha + 0.2f)};
+            }
+            drawPipePiece(pose, buffer, pos, offset, previewPositions, color, isNode, nodeColor, solid, pulseScale);
+        }
     }
 
     private HashSet<PreviewInfo> getNewPreview(ItemStack pipeConnector, Level currentLevel, Player player) {

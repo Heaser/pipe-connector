@@ -5,10 +5,13 @@ import com.heaser.pipeconnector.client.proxy.IClientProxy;
 import com.heaser.pipeconnector.client.proxy.items.IPipeConnectorItemProxy;
 import com.heaser.pipeconnector.client.proxy.items.PipeConnectorItemProxy;
 import com.heaser.pipeconnector.compatibility.CompatibilityDirectionGetter;
+import com.heaser.pipeconnector.compatibility.CompatibilityPipeReplacer;
+import com.heaser.pipeconnector.compatibility.interfaces.IPipeReplacer;
 import com.heaser.pipeconnector.particles.ParticleHelper;
 import com.heaser.pipeconnector.utils.GeneralUtils;
 import com.heaser.pipeconnector.utils.NodeParameter;
 import com.heaser.pipeconnector.utils.PipeConnectorUtils;
+import com.heaser.pipeconnector.utils.ReplaceSeed;
 import com.heaser.pipeconnector.utils.TagUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.resources.sounds.Sound;
@@ -124,6 +127,9 @@ public class PipeConnectorItem extends Item {
                         .withStyle(ChatFormatting.GOLD));
                 return InteractionResult.FAIL;
             }
+            if (TagUtils.getReplaceMode(interactedItem)) {
+                return handleReplaceSeedSelection(level, usingPlayer, interactedItem, clickedPosition);
+            }
             if (clickedFace == Direction.UP) {
                 usingPlayer.sendOverlayMessage(Component.translatable("item.pipe_connector.message.UpSideNotAllowed")
                         .withStyle(ChatFormatting.BOLD, ChatFormatting.GREEN));
@@ -156,6 +162,35 @@ public class PipeConnectorItem extends Item {
                 level.playSound(null, relativePosition, com.heaser.pipeconnector.ModSounds.nextAlternating(usingPlayer.getUUID()), net.minecraft.sounds.SoundSource.PLAYERS, 1.0f, 1.0f);
             }
         }
+        return InteractionResult.SUCCESS;
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+    private InteractionResult handleReplaceSeedSelection(Level level, Player usingPlayer, ItemStack interactedItem, BlockPos clickedPosition) {
+        ReplaceSeed existingSeed = TagUtils.getReplaceSeed(interactedItem);
+        if (existingSeed != null && existingSeed.pos().equals(clickedPosition)) {
+            TagUtils.clearReplaceSeed(interactedItem);
+            ParticleHelper.serverSpawnMarkerParticle((ServerLevel) level, clickedPosition);
+            level.playSound(null, clickedPosition, com.heaser.pipeconnector.ModSounds.nextAlternating(usingPlayer.getUUID()), net.minecraft.sounds.SoundSource.PLAYERS, 1.0f, 1.0f);
+            return InteractionResult.SUCCESS;
+        }
+
+        IPipeReplacer replacer = CompatibilityPipeReplacer.getReplacerFor(level, clickedPosition);
+        Object kind = replacer.resolveKind(level, clickedPosition, usingPlayer.getOffhandItem());
+        if (kind == null) {
+            Component reason = replacer.getSeedRejectionReason(level, clickedPosition, usingPlayer.getOffhandItem());
+            if (reason == null) {
+                reason = Component.translatable("item.pipe_connector.message.replaceInvalidSeed");
+            }
+            usingPlayer.sendOverlayMessage(reason.copy().withStyle(ChatFormatting.GOLD));
+            return InteractionResult.FAIL;
+        }
+
+        ReplaceSeed newSeed = new ReplaceSeed(clickedPosition, replacer.describeKind(kind),
+                level.dimensionTypeRegistration().getRegisteredName());
+        TagUtils.setReplaceSeed(interactedItem, newSeed);
+        ParticleHelper.serverSpawnMarkerParticle((ServerLevel) level, clickedPosition);
+        level.playSound(null, clickedPosition, com.heaser.pipeconnector.ModSounds.nextAlternating(usingPlayer.getUUID()), net.minecraft.sounds.SoundSource.PLAYERS, 1.0f, 1.0f);
         return InteractionResult.SUCCESS;
     }
 

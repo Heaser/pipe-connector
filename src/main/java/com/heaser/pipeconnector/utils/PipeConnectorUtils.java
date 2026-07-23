@@ -4,7 +4,9 @@ package com.heaser.pipeconnector.utils;
 import com.heaser.pipeconnector.PipeConnector;
 import com.heaser.pipeconnector.compatibility.CompatibilityBlockEqualsChecker;
 import com.heaser.pipeconnector.compatibility.CompatibilityBlockGetter;
+import com.heaser.pipeconnector.compatibility.CompatibilityPipeReplacer;
 import com.heaser.pipeconnector.compatibility.CompatibilityPlacer;
+import com.heaser.pipeconnector.compatibility.interfaces.IPipeReplacer;
 import com.heaser.pipeconnector.config.PipeConnectorConfig;
 import com.heaser.pipeconnector.constants.BridgeType;
 import com.heaser.pipeconnector.network.BuildAnimationPacket;
@@ -106,6 +108,94 @@ public class PipeConnectorUtils {
 
         return true;
     }
+
+    public static boolean replacePipeRun(ServerPlayer player, ItemStack connector) {
+        Level level = player.level();
+        ItemStack offhandStack = player.getOffhandItem();
+
+        ReplaceSeed seed = TagUtils.getReplaceSeed(connector);
+        if (seed == null) {
+            player.sendOverlayMessage(Component.translatable("item.pipe_connector.message.replaceNoSeed").withStyle(ChatFormatting.BOLD, ChatFormatting.YELLOW));
+            return false;
+        }
+        if (!level.dimensionTypeRegistration().getRegisteredName().equals(seed.dimension())) {
+            TagUtils.clearReplaceSeed(connector);
+            player.sendOverlayMessage(Component.translatable("item.pipe_connector.message.replaceSeedChanged").withStyle(ChatFormatting.BOLD, ChatFormatting.RED));
+            return false;
+        }
+
+        IPipeReplacer replacer = CompatibilityPipeReplacer.getReplacerFor(level, seed.pos());
+        Object kind = replacer.resolveKind(level, seed.pos(), offhandStack);
+        if (kind == null || !replacer.describeKind(kind).equals(seed.kindDescriptor())) {
+            TagUtils.clearReplaceSeed(connector);
+            player.sendOverlayMessage(Component.translatable("item.pipe_connector.message.replaceSeedChanged").withStyle(ChatFormatting.BOLD, ChatFormatting.RED));
+            return false;
+        }
+        if (replacer.isAlreadyTarget(level, seed.pos(), kind, offhandStack)) {
+            player.sendOverlayMessage(Component.translatable("item.pipe_connector.message.replaceSameAsTarget").withStyle(ChatFormatting.BOLD, ChatFormatting.YELLOW));
+            return false;
+        }
+        if (!replacer.isSameFamily(level, seed.pos(), kind, offhandStack)) {
+            player.sendOverlayMessage(Component.translatable("item.pipe_connector.message.replaceWrongFamily",
+                    offhandStack.getHoverName(), level.getBlockState(seed.pos()).getBlock().getName())
+                    .withStyle(ChatFormatting.BOLD, ChatFormatting.YELLOW));
+            return false;
+        }
+        Component blockedReason = replacer.getReplaceBlockedReason(level, seed.pos(), kind, offhandStack);
+        if (blockedReason != null) {
+            player.sendOverlayMessage(blockedReason.copy().withStyle(ChatFormatting.BOLD, ChatFormatting.YELLOW));
+            return false;
+        }
+
+        int pipeLimit = PipeConnectorConfig.MAX_ALLOWED_PIPES_TO_PLACE.get();
+        ReplaceRunTracer.TraceResult traceResult = ReplaceRunTracer.trace(level, seed.pos(), replacer, kind, pipeLimit);
+        if (traceResult.truncated()) {
+            player.sendOverlayMessage(Component.translatable("item.pipe_connector.message.reachedPipeLimit", pipeLimit).withStyle(ChatFormatting.BOLD, ChatFormatting.YELLOW));
+            return false;
+        }
+        LinkedHashSet<BlockPos> run = traceResult.run();
+        if (run.isEmpty()) {
+            TagUtils.clearReplaceSeed(connector);
+            player.sendOverlayMessage(Component.translatable("item.pipe_connector.message.replaceSeedChanged").withStyle(ChatFormatting.BOLD, ChatFormatting.RED));
+            return false;
+        }
+
+        for (BlockPos pos : run) {
+            if (isNotBreakable(level, pos)) {
+                String blockName = level.getBlockState(pos).getBlock().getName().getString();
+                player.sendOverlayMessage(Component.translatable("item.pipe_connector.message.unbreakableBlockReached", blockName).withStyle(ChatFormatting.BOLD, ChatFormatting.DARK_RED));
+                return false;
+            }
+        }
+        // No inventory-guard here - pipes themselves expose item handlers and the path was explicitly clicked
+
+        int numOfPipes = getNumberOfPipesInInventory(player);
+        int missingPipes = getMissingPipesInInventory(player, numOfPipes, run.size());
+        if (missingPipes > 0) {
+            player.sendOverlayMessage(Component.translatable("item.pipe_connector.message.notEnoughPipes", missingPipes).withStyle(ChatFormatting.BOLD, ChatFormatting.YELLOW));
+            return false;
+        }
+
+        // BFS insertion order doubles as the animation sweep order
+        List<BlockPos> orderedRun = new ArrayList<>(run);
+        for (BlockPos pos : orderedRun) {
+            List<Direction> adjacentInRun = getNeighboringDirections(pos, run);
+            if (adjacentInRun.isEmpty()) {
+                adjacentInRun = List.of(Direction.UP);
+            }
+            if (replacer.replaceAt(level, pos, player, offhandStack, kind, adjacentInRun)) {
+                handleBlockUpdates(level, pos);
+                handlePlaceEvent(level, pos, level.getBlockState(pos), player);
+                reduceNumberOfPipesInInventory(player);
+                ParticleHelper.serverSpawnMarkerParticle((ServerLevel) level, pos);
+            }
+        }
+
+        PacketDistributor.sendToPlayer(player, new BuildAnimationPacket(orderedRun));
+        return true;
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
 
     private static List<BlockPos> toOrderedPath(Map<BlockPos, BlockState> map, BlockPos startHint) {
         if (map.isEmpty()) return new ArrayList<>();
@@ -319,10 +409,14 @@ public class PipeConnectorUtils {
 
     // -----------------------------------------------------------------------------------------------------------------
     private static List<Direction> getNeighboringDirections(BlockPos pos, Map<BlockPos, BlockState> blockPosBlockStateMap) {
+        return getNeighboringDirections(pos, blockPosBlockStateMap.keySet());
+    }
+
+    private static List<Direction> getNeighboringDirections(BlockPos pos, Set<BlockPos> positions) {
         List<Direction> directions = new ArrayList<>();
         for (Direction direction : Direction.values()) {
             BlockPos relativePos = pos.relative(direction);
-            if (blockPosBlockStateMap.containsKey(relativePos)) {
+            if (positions.contains(relativePos)) {
                 directions.add(direction);
             }
         }

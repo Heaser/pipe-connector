@@ -36,6 +36,11 @@ public record ResetPacket() implements ServerboundPacket {
         if (!GeneralUtils.isHoldingPipeConnector(sender)) {
             return;
         }
+        // Replace mode only clears the selection, build nodes stay
+        if (TagUtils.getReplaceMode(sender.getMainHandItem())) {
+            TagUtils.clearReplaceSeed(sender.getMainHandItem());
+            return;
+        }
         TagUtils.resetPositionAndDirectionTags(sender.getMainHandItem(), sender, true);
     }
 }

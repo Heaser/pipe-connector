@@ -20,6 +20,7 @@ public class NetworkHandler {
         serverbound(registrar, UpdateSolidPreview.TYPE, UpdateSolidPreview.STREAM_CODEC);
         serverbound(registrar, UpdatePipeVision.TYPE, UpdatePipeVision.STREAM_CODEC);
         serverbound(registrar, UpdateManhattanMirrorPacket.TYPE, UpdateManhattanMirrorPacket.STREAM_CODEC);
+        serverbound(registrar, UpdateReplaceModePacket.TYPE, UpdateReplaceModePacket.STREAM_CODEC);
         serverbound(registrar, ResetPacket.TYPE, ResetPacket.STREAM_CODEC);
         serverbound(registrar, BuildPipesPacket.TYPE, BuildPipesPacket.STREAM_CODEC);
         clientbound(registrar, BuildAnimationPacket.TYPE, BuildAnimationPacket.STREAM_CODEC);

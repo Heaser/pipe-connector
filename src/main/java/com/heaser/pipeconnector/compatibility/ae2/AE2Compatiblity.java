@@ -1,5 +1,6 @@
 package com.heaser.pipeconnector.compatibility.ae2;
 
+import appeng.api.implementations.parts.ICablePart;
 import appeng.api.parts.IPart;
 import appeng.api.parts.IPartHost;
 import appeng.api.parts.IPartItem;
@@ -13,10 +14,13 @@ import com.heaser.pipeconnector.compatibility.interfaces.IBlockEqualsChecker;
 import com.heaser.pipeconnector.compatibility.interfaces.IBlockGetter;
 import com.heaser.pipeconnector.compatibility.interfaces.IColorProvider;
 import com.heaser.pipeconnector.compatibility.interfaces.IDirectionGetter;
+import com.heaser.pipeconnector.compatibility.interfaces.IPipeReplacer;
 import com.heaser.pipeconnector.compatibility.interfaces.IPlacer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -27,12 +31,14 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static com.heaser.pipeconnector.utils.GeneralUtils.isVoidableBlock;
 
 
-public class AE2Compatiblity implements IBlockGetter, IPlacer, IBlockEqualsChecker, IDirectionGetter, IColorProvider {
+public class AE2Compatiblity implements IBlockGetter, IPlacer, IBlockEqualsChecker, IDirectionGetter, IColorProvider, IPipeReplacer {
     static public Class<? extends Item> getItemStackClassToRegister() {
         return PartItem.class;
     }
@@ -173,6 +179,105 @@ public class AE2Compatiblity implements IBlockGetter, IPlacer, IBlockEqualsCheck
             return null;
         }
         return context.getClickedFace();
+    }
+
+    // IPipeReplacer: only the center (null-direction) cable part is swapped, side attachments stay put
+
+    private record Ae2Kind(IPartItem<?> partItem, @Nullable AEColor color) {
+    }
+
+    @Nullable
+    private static Ae2Kind kindAt(Level level, BlockPos pos) {
+        BlockEntity blockEntity = level.getBlockEntity(pos);
+        if (!(blockEntity instanceof IPartHost host)) {
+            return null;
+        }
+        IPart part = host.getPart(null);
+        if (part == null) {
+            return null;
+        }
+        IPartItem<?> partItem = part.getPartItem();
+        AEColor color = partItem instanceof ColoredPartItem<?> colored ? colored.getColor() : null;
+        return new Ae2Kind(partItem, color);
+    }
+
+    @Nullable
+    private static AEColor colorOf(Item item) {
+        return item instanceof ColoredPartItem<?> colored ? colored.getColor() : null;
+    }
+
+    @Override
+    @Nullable
+    public Object resolveKind(Level level, BlockPos pos, ItemStack offhandStack) {
+        return kindAt(level, pos);
+    }
+
+    @Override
+    public boolean matchesKind(Level level, BlockPos pos, Object kind) {
+        Ae2Kind seedKind = (Ae2Kind) kind;
+        Ae2Kind hereKind = kindAt(level, pos);
+        return hereKind != null
+                && hereKind.partItem().getPartClass() == seedKind.partItem().getPartClass()
+                && Objects.equals(hereKind.color(), seedKind.color());
+    }
+
+    @Override
+    public String describeKind(Object kind) {
+        Ae2Kind ae2Kind = (Ae2Kind) kind;
+        String id = BuiltInRegistries.ITEM.getKey(ae2Kind.partItem().asItem()).toString();
+        return ae2Kind.color() != null ? id + "#" + ae2Kind.color().name() : id;
+    }
+
+    @Override
+    public ItemStack getKindDisplayStack(Level level, BlockPos seedPos, Object kind) {
+        return new ItemStack(((Ae2Kind) kind).partItem().asItem());
+    }
+
+    @Override
+    public boolean isSameFamily(Level level, BlockPos seedPos, Object kind, ItemStack offhandStack) {
+        return offhandStack.getItem() instanceof IPartItem<?> partItem
+                && ICablePart.class.isAssignableFrom(partItem.getPartClass());
+    }
+
+    @Override
+    public boolean isAlreadyTarget(Level level, BlockPos seedPos, Object kind, ItemStack offhandStack) {
+        Ae2Kind ae2Kind = (Ae2Kind) kind;
+        return offhandStack.getItem() instanceof IPartItem<?> partItem
+                && partItem.getPartClass() == ae2Kind.partItem().getPartClass()
+                && Objects.equals(colorOf(offhandStack.getItem()), ae2Kind.color());
+    }
+
+    @Override
+    public boolean replaceAt(Level level, BlockPos pos, Player player, ItemStack offhandStack, Object kind, List<Direction> adjacentInRun) {
+        if (!(offhandStack.getItem() instanceof IPartItem<?> newPartItem)) {
+            return false;
+        }
+        BlockEntity blockEntity = level.getBlockEntity(pos);
+        if (!(blockEntity instanceof IPartHost host)) {
+            return false;
+        }
+        IPart oldPart = host.getPart(null);
+        if (oldPart == null) {
+            return false;
+        }
+        IPartItem<?> oldPartItem = oldPart.getPartItem();
+
+        List<ItemStack> drops = new ArrayList<>();
+        oldPart.addPartDrop(drops, false);
+        oldPart.addAdditionalDrops(drops, false);
+
+        IPart newPart = host.replacePart(newPartItem, null, player, InteractionHand.OFF_HAND);
+        if (newPart == null) {
+            // replacePart removes before adding, put the old cable back so it isn't lost
+            host.addPart(oldPartItem, null, player);
+            return false;
+        }
+        for (ItemStack drop : drops) {
+            if (!player.getInventory().add(drop)) {
+                player.drop(drop, false);
+            }
+        }
+        return true;
     }
 }
 

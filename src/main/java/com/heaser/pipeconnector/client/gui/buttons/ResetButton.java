@@ -24,13 +24,18 @@ public class ResetButton extends BaseButton {
 
     @Override
     public boolean isActive(ItemStack itemStack) {
+        if (TagUtils.getReplaceMode(itemStack)) {
+            return TagUtils.getReplaceSeed(itemStack) != null;
+        }
         return !TagUtils.getNodesFromStack(itemStack).isEmpty();
     }
 
     @Override
     public Component getTooltip(ItemStack itemStack) {
         if (!isActive(itemStack)) {
-            return Component.translatable("item.pipe_connector.gui.button.tooltip.disabledResetPipePos");
+            return Component.translatable(TagUtils.getReplaceMode(itemStack)
+                    ? "item.pipe_connector.gui.button.tooltip.disabledClearSelection"
+                    : "item.pipe_connector.gui.button.tooltip.disabledResetPipePos");
         }
         return null;
     }

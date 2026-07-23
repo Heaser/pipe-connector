@@ -3,6 +3,7 @@ package com.heaser.pipeconnector.network;
 import com.heaser.pipeconnector.constants.BridgeType;
 import com.heaser.pipeconnector.utils.GeneralUtils;
 import com.heaser.pipeconnector.utils.NodeParameter;
+import com.heaser.pipeconnector.utils.PipeConnectorUtils;
 import com.heaser.pipeconnector.utils.TagUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -49,6 +50,15 @@ public record BuildPipesPacket() implements ServerboundPacket {
             return;
         }
         ItemStack interactedItem = sender.getMainHandItem();
+
+        if (TagUtils.getReplaceMode(interactedItem)) {
+            boolean wasSuccessful = PipeConnectorUtils.replacePipeRun(sender, interactedItem);
+            if (wasSuccessful) {
+                TagUtils.clearReplaceSeed(interactedItem);
+            }
+            return;
+        }
+
         int depth = TagUtils.getDepthFromStack(interactedItem);
         List<NodeParameter> nodes = TagUtils.getNodesFromStack(interactedItem);
 

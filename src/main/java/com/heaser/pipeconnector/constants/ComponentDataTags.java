@@ -13,6 +13,12 @@ public class ComponentDataTags {
     public static String kPipeConnectorSolidPreview = PipeConnector.MODID + "_SolidPreview";
     public static String kPipeConnectorPipeVision = PipeConnector.MODID + "_PipeVision";
     public static String kPipeConnectorMirrorManhattan = PipeConnector.MODID + "_MirrorManhattan";
+    public static String kPipeConnectorReplaceMode = PipeConnector.MODID + "_ReplaceMode";
+    public static String kPipeConnectorReplaceSeed = PipeConnector.MODID + "_ReplaceSeed";
+
+    // Replace seed Compound Tags (position reuses the node X/Y/Z keys)
+    public static String kPipeConnectorReplaceSeedKind = PipeConnector.MODID + "_ReplaceSeedKind";
+    public static String kPipeConnectorReplaceSeedDimension = PipeConnector.MODID + "_ReplaceSeedDimension";
 
     // Node Compound Tags
     public static String kPipeConnectorNodePositionX = PipeConnector.MODID + "_X";

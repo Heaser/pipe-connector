@@ -17,6 +17,8 @@ public class BuildParameters {
     public boolean avoidInventoryBlocks;
     public boolean mirrorManhattan;
     public String dimension;
+    public boolean replaceMode;
+    public ReplaceSeed replaceSeed;
 
     public BuildParameters() {
         this.depth = -1;
@@ -26,6 +28,8 @@ public class BuildParameters {
         this.utilizeExistingPipes = true;
         this.avoidInventoryBlocks = false;
         this.mirrorManhattan = false;
+        this.replaceMode = false;
+        this.replaceSeed = null;
     }
 
     public BuildParameters(ItemStack pipeConnectorItem) {
@@ -36,6 +40,8 @@ public class BuildParameters {
         this.utilizeExistingPipes = TagUtils.getUtilizeExistingPipes(pipeConnectorItem);
         this.avoidInventoryBlocks = TagUtils.getAvoidInventoryBlocks(pipeConnectorItem);
         this.mirrorManhattan = TagUtils.getMirrorManhattan(pipeConnectorItem);
+        this.replaceMode = TagUtils.getReplaceMode(pipeConnectorItem);
+        this.replaceSeed = TagUtils.getReplaceSeed(pipeConnectorItem);
     }
 
     public BuildParameters(int depth,
@@ -61,6 +67,8 @@ public class BuildParameters {
         boolean isUtilizeExistingPipesEqual = other.utilizeExistingPipes == this.utilizeExistingPipes;
         boolean isAvoidInventoryBlocksEqual = other.avoidInventoryBlocks == this.avoidInventoryBlocks;
         boolean isMirrorManhattanEqual = other.mirrorManhattan == this.mirrorManhattan;
+        boolean isReplaceModeEqual = other.replaceMode == this.replaceMode;
+        boolean isReplaceSeedEqual = java.util.Objects.equals(other.replaceSeed, this.replaceSeed);
         boolean nodesEqual;
         nodesEqual = other.nodes.size() == this.nodes.size();
         if (nodesEqual) {
@@ -71,7 +79,8 @@ public class BuildParameters {
             }
         }
         return depthEqual && nodesEqual && isDimensionEqual
-                && isBridgeTypeEqual && isUtilizeExistingPipesEqual 
-                && isAvoidInventoryBlocksEqual && isMirrorManhattanEqual;
+                && isBridgeTypeEqual && isUtilizeExistingPipesEqual
+                && isAvoidInventoryBlocksEqual && isMirrorManhattanEqual
+                && isReplaceModeEqual && isReplaceSeedEqual;
     }
 }
