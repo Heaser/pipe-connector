@@ -170,7 +170,7 @@ public class PreviewDrawer {
         boolean solid = TagUtils.getSolidPreview(pipeConnector);
         for (PreviewInfo previewInfo : previewMap) {
             BlockPos pos = previewInfo.pos;
-            float[] color = getColorForPos(player, pos);
+            float[] color = getColorForPos(player, pos, nodes);
             // Apply pulse to alpha
             color[3] *= pulseAlpha;
 
@@ -289,9 +289,9 @@ public class PreviewDrawer {
         pose.popPose();
     }
 
-    private float[] getColorForPos(Player player, BlockPos pos) {
+    private float[] getColorForPos(Player player, BlockPos pos, List<NodeParameter> nodes) {
         // Returns RGBA floats for this preview position, matching previous color semantics
-        if (isNotBreakable(player.level(), pos) || hasInventoryCapabilities(player.level(), pos)) {
+        if (isNotBreakable(player.level(), pos) || hasInventoryCapabilities(player.level(), pos) || isTopNodeBlock(nodes, pos)) {
             return new float[]{1f, 0.2f, 0.2f, 1f}; // Neon Red
         } else if (isVoidableBlock(player.level(), pos)) {
             return new float[]{1f, 0.9f, 0.1f, 1f}; // Bright Yellow

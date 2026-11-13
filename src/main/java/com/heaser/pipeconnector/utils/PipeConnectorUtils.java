@@ -76,6 +76,10 @@ public class PipeConnectorUtils {
                 player.sendOverlayMessage(Component.translatable("item.pipe_connector.message.unbreakableBlockReached", blockName).withStyle(ChatFormatting.BOLD, ChatFormatting.DARK_RED));
                 return false;
             }
+            if (isTopNodeBlock(nodes, entry.getKey())) {
+                player.sendOverlayMessage(Component.translatable("item.pipe_connector.message.topNodeBlockReached", blockName).withStyle(ChatFormatting.BOLD, ChatFormatting.DARK_RED));
+                return false;
+            }
             if (hasInventoryCapabilities(level, entry.getKey()) && inventoryGuard) {
                 if (avoidInventoryBlocks && isAStar) {
                     inventoryFoundInPath = true; // Keep checking all to see if any remain
@@ -303,7 +307,7 @@ public class PipeConnectorUtils {
         return blockHashMap;
     }
 
-    public static  Map<BlockPos, BlockState> useManhattan(Map<BlockPos, BlockState> blockHashMap, Edge edge, Level level, int depth, boolean mirror) {
+    public static  Map<BlockPos, BlockState> useManhattan(Map<BlockPos, BlockState> blockHashMap, Edge edge, Level level, int depth, boolean mirror, Set<BlockPos> blockedPositions) {
         BlockPos startPos = edge.nodePosition;
         BlockPos endPos = edge.nextNodePosition;
         int deltaY = Math.abs(startPos.getY() - endPos.getY());
@@ -317,7 +321,7 @@ public class PipeConnectorUtils {
         startPos = moveAndStoreStates(startPos, depth, 0, -1, 0, level, blockHashMap);
         endPos = moveAndStoreStates(endPos, nextDepth, 0, -1, 0, level, blockHashMap);
 
-        List<BlockPos> blockPosPath = ManhattanAlgorithm.findPathManhattan(startPos, endPos, level, mirror);
+        List<BlockPos> blockPosPath = ManhattanAlgorithm.findPathManhattan(startPos, endPos, level, mirror, blockedPositions);
 
         for (BlockPos pos : blockPosPath) {
             blockHashMap.putIfAbsent(pos, level.getBlockState(pos));
@@ -342,6 +346,19 @@ public class PipeConnectorUtils {
             depthAnchorPos = startNode.position;
         }
 
+        Set<BlockPos> blockedPositions = new HashSet<>();
+        for (NodeParameter node : nodes) {
+            if (node.exitDirection != null) {
+                BlockPos abovePos = node.getRelativePosition();
+                BlockPos exitPos = node.getDescentPosition();
+                blockHashMap.putIfAbsent(abovePos, level.getBlockState(abovePos));
+                blockHashMap.putIfAbsent(exitPos, level.getBlockState(exitPos));
+                blockedPositions.add(node.position);
+                PositionAlgorithm.blockPosition(node.position);
+                DepthAlgorithm.blockPosition(node.position);
+            }
+        }
+
         NodeGraph graph = new NodeGraph(nodes);
         List<Edge> path = graph.createPath();
 
@@ -351,7 +368,7 @@ public class PipeConnectorUtils {
 
             switch (bridgeType) {
                 case A_STAR -> useAStar(blockHashMap, edge, level, relativeDepth, player, PositionAlgorithm, DepthAlgorithm);
-                case DEFAULT -> useManhattan(blockHashMap, edge, level, relativeDepth, mirrorManhattan);
+                case DEFAULT -> useManhattan(blockHashMap, edge, level, relativeDepth, mirrorManhattan, blockedPositions);
             }
         }
 

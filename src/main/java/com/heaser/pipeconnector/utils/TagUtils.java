@@ -47,6 +47,9 @@ public class TagUtils {
         if (node.direction != null) {
             nodeTag.putByte(ComponentDataTags.kPipeConnectorNodeDirection, (byte) node.direction.get3DDataValue());
         }
+        if (node.exitDirection != null) {
+            nodeTag.putByte(ComponentDataTags.kPipeConnectorNodeExitDirection, (byte) node.exitDirection.get3DDataValue());
+        }
         return nodeTag;
     }
 

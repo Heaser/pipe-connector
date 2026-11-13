@@ -53,7 +53,7 @@ public class PathfindingAStarAlgorithm {
             closedSet.add(currentPos);
 
             for (BlockPos neighbor : getNeighbors(currentPos, level, start, end, endY, player, connector)) {
-                if (closedSet.contains(neighbor)) continue;
+                if (closedSet.contains(neighbor) || checker.isBlocked(neighbor)) continue;
 
                 boolean isExistingPipe = checker.isExistingPipe(neighbor);
                 int stepCost = isExistingPipe ? 0 : 1;
@@ -149,6 +149,7 @@ public class PathfindingAStarAlgorithm {
         boolean isGoal(BlockPos current, BlockPos end, int endY);
         void addDraftPlacements(List<BlockPos> draftPlacements);
         boolean isExistingPipe(BlockPos pos);
+        boolean isBlocked(BlockPos pos);
     }
 
     // -----------------------------------------------------------------------------------------------------------------
@@ -159,6 +160,7 @@ public class PathfindingAStarAlgorithm {
         protected final ItemStack placedItemStack;
         protected final Level level;
         protected final Set<BlockPos> draftPlacements = new HashSet<>();
+        protected final Set<BlockPos> blockedPositions = new HashSet<>();
 
         protected BaseHeuristicChecker(boolean useExistingPipes, Block placedBlock,
                                        ItemStack placedItemStack, Level level) {
@@ -177,6 +179,15 @@ public class PathfindingAStarAlgorithm {
         public boolean isExistingPipe(BlockPos pos) {
             return useExistingPipes && CompatibilityBlockEqualsChecker.getInstance()
                     .isBlockStateSpecificBlock(pos, placedBlock, placedItemStack, level);
+        }
+
+        public void blockPosition(BlockPos pos) {
+            blockedPositions.add(pos);
+        }
+
+        @Override
+        public boolean isBlocked(BlockPos pos) {
+            return blockedPositions.contains(pos);
         }
     }
 

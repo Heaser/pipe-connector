@@ -85,6 +85,17 @@ public class GeneralUtils {
 
     // -----------------------------------------------------------------------------------------------------------------
 
+    public static boolean isTopNodeBlock(List<NodeParameter> nodes, BlockPos pos) {
+        for (NodeParameter node : nodes) {
+            if (node.exitDirection != null && node.position.equals(pos)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+
     public static boolean MaxAllowedNodesReached(List<NodeParameter> nodes) {
         return nodes.size() >= PipeConnectorConfig.MAX_ALLOWED_NODES.get();
     }

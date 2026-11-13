@@ -8,10 +8,12 @@ import net.minecraft.nbt.CompoundTag;
 public class NodeParameter {
     public BlockPos position;
     public Direction direction;
+    public Direction exitDirection;
 
-    public NodeParameter(BlockPos position, Direction direction) {
+    public NodeParameter(BlockPos position, Direction direction, Direction exitDirection) {
         this.position = position;
         this.direction = direction;
+        this.exitDirection = exitDirection;
     }
 
     public NodeParameter(CompoundTag nodeTag) {
@@ -24,6 +26,9 @@ public class NodeParameter {
         } else {
             this.direction = Direction.from3DDataValue(nodeTag.getByteOr(ComponentDataTags.kPipeConnectorNodeDirection, (byte) 0));
         }
+        if (nodeTag.contains(ComponentDataTags.kPipeConnectorNodeExitDirection)) {
+            this.exitDirection = Direction.from3DDataValue(nodeTag.getByteOr(ComponentDataTags.kPipeConnectorNodeExitDirection, (byte) 0));
+        }
     }
 
 
@@ -33,7 +38,8 @@ public class NodeParameter {
         }
         boolean positionEquals = this.position.equals(other.position);
         boolean directionEquals = this.direction.equals(other.direction);
-        return positionEquals && directionEquals;
+        boolean exitDirectionEquals = this.exitDirection == other.exitDirection;
+        return positionEquals && directionEquals && exitDirectionEquals;
     }
 
     public BlockPos getRelativePosition() {
@@ -42,5 +48,12 @@ public class NodeParameter {
         } else {
             return this.position.relative(direction);
         }
+    }
+
+    public BlockPos getDescentPosition() {
+        if (exitDirection == null) {
+            return getRelativePosition();
+        }
+        return getRelativePosition().relative(exitDirection);
     }
 }

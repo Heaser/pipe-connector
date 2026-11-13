@@ -130,13 +130,9 @@ public class PipeConnectorItem extends Item {
             if (TagUtils.getReplaceMode(interactedItem)) {
                 return handleReplaceSeedSelection(level, usingPlayer, interactedItem, clickedPosition);
             }
-            if (clickedFace == Direction.UP) {
-                usingPlayer.sendOverlayMessage(Component.translatable("item.pipe_connector.message.UpSideNotAllowed")
-                        .withStyle(ChatFormatting.BOLD, ChatFormatting.GREEN));
-                return InteractionResult.FAIL;
-            }
             List<NodeParameter> currentNodes = TagUtils.getNodesFromStack(interactedItem);
-            NodeParameter newNode = new NodeParameter(clickedPosition, clickedFace);
+            Direction exitDirection = clickedFace == Direction.UP ? getTopExitDirection(context) : null;
+            NodeParameter newNode = new NodeParameter(clickedPosition, clickedFace, exitDirection);
             boolean hasReachedMaxNodes = GeneralUtils.MaxAllowedNodesReached(currentNodes);
 
             // Always allow removing an existing node, even if max nodes has been reached
@@ -158,11 +154,27 @@ public class PipeConnectorItem extends Item {
                 currentNodes.add(newNode);
                 TagUtils.setDimension(interactedItem, level.dimensionTypeRegistration().getRegisteredName());
                 ParticleHelper.serverSpawnMarkerParticle((ServerLevel) level, relativePosition);
+                if (exitDirection != null) {
+                    ParticleHelper.serverSpawnMarkerParticle((ServerLevel) level, newNode.getDescentPosition());
+                }
                 TagUtils.setNodesToStack(interactedItem, currentNodes);
                 level.playSound(null, relativePosition, com.heaser.pipeconnector.ModSounds.nextAlternating(usingPlayer.getUUID()), net.minecraft.sounds.SoundSource.PLAYERS, 1.0f, 1.0f);
             }
         }
         return InteractionResult.SUCCESS;
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+    private Direction getTopExitDirection(UseOnContext context) {
+        Vec3 clickLocation = context.getClickLocation();
+        BlockPos clickedPosition = context.getClickedPos();
+        double offsetX = clickLocation.x - (clickedPosition.getX() + 0.5);
+        double offsetZ = clickLocation.z - (clickedPosition.getZ() + 0.5);
+
+        if (Math.abs(offsetX) > Math.abs(offsetZ)) {
+            return offsetX > 0 ? Direction.EAST : Direction.WEST;
+        }
+        return offsetZ > 0 ? Direction.SOUTH : Direction.NORTH;
     }
 
     // -----------------------------------------------------------------------------------------------------------------

@@ -25,6 +25,7 @@ public class ComponentDataTags {
     public static String kPipeConnectorNodePositionY = PipeConnector.MODID + "_Y";
     public static String kPipeConnectorNodePositionZ = PipeConnector.MODID + "_Z";
     public static String kPipeConnectorNodeDirection = PipeConnector.MODID + "_Direction";
+    public static String kPipeConnectorNodeExitDirection = PipeConnector.MODID + "_ExitDirection";
 }
 
 

@@ -59,6 +59,7 @@ public class BuildPipesButton extends BaseButton {
         int maxAllowedPipes = PipeConnectorConfig.MAX_ALLOWED_PIPES_TO_PLACE.get();
         Optional<BlockPos> inventoryBlockPos = pathContainsInventory();
         Optional<BlockPos> unbreakableBlockPos = pathContainsUnbreakableBlocks();
+        Optional<BlockPos> topNodeBlockPos = pathContainsTopNodeBlocks(nodes);
 
         if (nodes.size() < 2) {
             return Component.translatable("item.pipe_connector.gui.button.tooltip.disabledPlacePipes");
@@ -70,12 +71,16 @@ public class BuildPipesButton extends BaseButton {
         } else if (unbreakableBlockPos.isPresent()) {
             blockName = player.level().getBlockState(unbreakableBlockPos.get()).getBlock().getName().getString();
             return Component.translatable("item.pipe_connector.message.unbreakableBlockReached", blockName);
+        } else if (topNodeBlockPos.isPresent()) {
+            blockName = player.level().getBlockState(topNodeBlockPos.get()).getBlock().getName().getString();
+            return Component.translatable("item.pipe_connector.message.topNodeBlockReached", blockName);
         }
 
 
         // If using A*, ensure a real path exists (not just isolated nodes)
         if (TagUtils.getBridgeType(itemStack) == BridgeType.A_STAR) {
             var nodePositions = nodes.stream().map(NodeParameter::getRelativePosition).collect(java.util.stream.Collectors.toSet());
+            nodes.forEach(node -> nodePositions.add(node.getDescentPosition()));
             boolean anyNonNodePositions = ClientSetup.PREVIEW_DRAWER.previewMap.stream()
                     .anyMatch(preview -> !nodePositions.contains(preview.pos));
             if (!anyNonNodePositions) {
@@ -144,6 +149,13 @@ public class BuildPipesButton extends BaseButton {
     private Optional<BlockPos> pathContainsUnbreakableBlocks() {
         return ClientSetup.PREVIEW_DRAWER.previewMap.stream()
                 .filter(block -> isNotBreakable(player.level(), block.pos))
+                .map(block -> block.pos)
+                .findFirst();
+    }
+
+    private Optional<BlockPos> pathContainsTopNodeBlocks(List<NodeParameter> nodes) {
+        return ClientSetup.PREVIEW_DRAWER.previewMap.stream()
+                .filter(block -> isTopNodeBlock(nodes, block.pos))
                 .map(block -> block.pos)
                 .findFirst();
     }

@@ -29,7 +29,7 @@ public class NodeGraph {
     private List<Edge> edges = new ArrayList<>();
 
     public NodeGraph(List<NodeParameter> nodeParameters) {
-        nodes = nodeParameters.stream().map((node) -> node.getRelativePosition()).toList();
+        nodes = nodeParameters.stream().map((node) -> getSharedDescentPosition(node, nodeParameters)).toList();
         edges = new ArrayList<>();
         for (BlockPos nodePosition : nodes) {
             for (BlockPos nextNodePosition : nodes) {
@@ -39,6 +39,20 @@ public class NodeGraph {
                 }
             }
         }
+    }
+
+    // An exit that lands on top of another top node goes down with that node
+    private static BlockPos getSharedDescentPosition(NodeParameter node, List<NodeParameter> nodeParameters) {
+        BlockPos descentPosition = node.getDescentPosition();
+        for (int i = 0; i < nodeParameters.size(); i++) {
+            for (NodeParameter other : nodeParameters) {
+                if (other.exitDirection != null && other.getRelativePosition().equals(descentPosition)) {
+                    descentPosition = other.getDescentPosition();
+                    break;
+                }
+            }
+        }
+        return descentPosition;
     }
 
     static class UnionFind {
