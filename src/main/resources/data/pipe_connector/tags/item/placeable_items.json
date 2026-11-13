@@ -3216,6 +3216,74 @@
     {
       "id": "classicpipes:recipe_pipe",
       "required": false
+    },
+    {
+      "id": "omni_pipes:pipe",
+      "required": false
+    },
+    {
+      "id": "omni_pipes:white_pipe",
+      "required": false
+    },
+    {
+      "id": "omni_pipes:orange_pipe",
+      "required": false
+    },
+    {
+      "id": "omni_pipes:magenta_pipe",
+      "required": false
+    },
+    {
+      "id": "omni_pipes:light_blue_pipe",
+      "required": false
+    },
+    {
+      "id": "omni_pipes:yellow_pipe",
+      "required": false
+    },
+    {
+      "id": "omni_pipes:lime_pipe",
+      "required": false
+    },
+    {
+      "id": "omni_pipes:pink_pipe",
+      "required": false
+    },
+    {
+      "id": "omni_pipes:gray_pipe",
+      "required": false
+    },
+    {
+      "id": "omni_pipes:light_gray_pipe",
+      "required": false
+    },
+    {
+      "id": "omni_pipes:cyan_pipe",
+      "required": false
+    },
+    {
+      "id": "omni_pipes:purple_pipe",
+      "required": false
+    },
+    {
+      "id": "omni_pipes:blue_pipe",
+      "required": false
+    },
+    {
+      "id": "omni_pipes:brown_pipe",
+      "required": false
+    },
+    {
+      "id": "omni_pipes:green_pipe",
+      "required": false
+    },
+    {
+      "id": "omni_pipes:red_pipe",
+      "required": false
+    },
+    {
+      "id": "omni_pipes:black_pipe",
+      "required": false
     }
   ]
 }

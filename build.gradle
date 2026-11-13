@@ -160,6 +160,8 @@ dependencies {
 
 //    implementation ("curse.maven:guideme-1173950:7127444")
 
+    // Omni-Pipe
+//    implementation "curse.maven:omni-pipes-1709295:9504487"
 
     // Sodium & Iris Shaders
 //    implementation "curse.maven:sodium-394468:8111040"
