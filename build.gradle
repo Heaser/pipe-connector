@@ -161,7 +161,11 @@ dependencies {
 //    implementation ("curse.maven:guideme-1173950:7127444")
 
     // Omni-Pipe
-//    implementation "curse.maven:omni-pipes-1709295:9504487"
+    // implementation "curse.maven:omni-pipes-1709295:9504487"
+
+    // BBL Rifts
+//    implementation "curse.maven:bbl-rifts-1721086:9079632"
+//    implementation "curse.maven:bbl-core-1135181:8940984"
 
     // Sodium & Iris Shaders
 //    implementation "curse.maven:sodium-394468:8111040"

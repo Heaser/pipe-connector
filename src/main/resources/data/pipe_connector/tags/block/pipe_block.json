@@ -3112,6 +3112,10 @@
     {
       "id": "omni_pipes:black_pipe",
       "required": false
+    },
+    {
+      "id": "rifts:rift_pipe",
+      "required": false
     }
   ]
 }
