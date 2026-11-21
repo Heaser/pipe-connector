@@ -87,9 +87,8 @@ public class CompatibilityPlacer {
                 serverLevel.sendParticles(net.minecraft.core.particles.ParticleTypes.POOF, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 5, 0.1, 0.1, 0.1, 0.05);
                 level.playSound(null, pos, net.minecraft.sounds.SoundEvents.ITEM_PICKUP, net.minecraft.sounds.SoundSource.PLAYERS, 0.2f, ((player.getRandom().nextFloat() - player.getRandom().nextFloat()) * 0.7f + 1.0f) * 2.0f);
             }
-            // Remove the block without dropping items (since we manually handled them)
-            level.removeBlock(pos, false);
         }
+        level.removeBlock(pos, false);
 
         BlockHitResult hitResult = new BlockHitResult(new Vec3(pos.getX(), pos.getY(), pos.getZ()), directions.getFirst(), pos, false);
         BlockPlaceContext context = new BlockPlaceContext(level, player, InteractionHand.OFF_HAND, stack, hitResult);
